@@ -25,7 +25,7 @@ function App() {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          FIP Project
+          FIP Project Starter Code
         </h1>
         <button
           onClick={fetchData}
