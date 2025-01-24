@@ -30,9 +30,10 @@ The project consists of two main parts:
    ```bash
    git clone https://github.com/Jollibuilders/FIP_Project.git
 
+
 2. Navigate to the project directory:
    ```bash
-    cd FIP_Project
+   cd FIP_Project
 
 ### Backend Setup
 
