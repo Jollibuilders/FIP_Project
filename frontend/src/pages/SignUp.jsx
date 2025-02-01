@@ -1,31 +1,39 @@
-// src/components/SignUp.jsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 
 const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
-    // Initialize the navigate function
     const navigate = useNavigate();
 
     const handleSignUp = async (e) => {
         e.preventDefault();
         try {
+            // Create a new user with Firebase Auth
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            console.log('User signed up:', userCredential.user);
-            // Clear the form and error
+            const user = userCredential.user;
+            console.log('User signed up:', user);
+
+            // Create a new document in Firestore in the "users" collection
+            // using the user's UID as the document ID
+            await setDoc(doc(db, 'users', user.uid), {
+                email: user.email,
+                role: null, // default role is null until they select one
+                createdAt: serverTimestamp(),
+            });
+
             setEmail('');
             setPassword('');
             setError('');
-            // Navigate to the home page after successful signup
+
             navigate('/home');
         } catch (err) {
-            setError(err.message);
             console.error('Error signing up:', err);
+            setError(err.message);
         }
     };
 
