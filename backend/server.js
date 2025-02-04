@@ -7,6 +7,18 @@ fastify.get('/', async (request, reply) => {
     return { message: 'Hello from our backend!' };
 });
 
+fastify.post('/api/like', async (request, reply) => {
+    try {
+        const data = request.body;
+        const toUserId = data['toUserId'];
+        console.log(toUserId);
+    } catch (err) {
+        // catch error and report
+        fastify.log.error(err);
+        process.exit(1);
+    }
+});
+
 const start = async () => {
     try {
         await fastify.listen({ port: 3000 });
