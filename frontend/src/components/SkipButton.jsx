@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import Skip from "../assets/skip.svg";
 
-const SkipButton = () => {
+const SkipButton = ({ onClick }) => {
     return (
-        <div>
+        <button onClick={onClick}>
             <img src={Skip} className="w-10 h-10"/>
-        </div>
+        </button>
     )
 };
 

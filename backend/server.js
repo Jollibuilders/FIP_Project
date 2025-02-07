@@ -7,6 +7,19 @@ fastify.get('/', async (request, reply) => {
     return { message: 'Hello from our backend!' };
 });
 
+fastify.get('/profiles', async (request, reply) => {
+    try {
+        const snapshot = await db.collection('users').get();
+        let users = [];
+        snapshot.forEach(doc => {
+            users.push({ id: doc.id, ...doc.data() });
+        });
+        return { users };
+    } catch (error) {
+        reply.status(500).send({ error: 'Error fetching profiles for display' });
+    }
+});
+
 const start = async () => {
     try {
         await fastify.listen({ port: 3000 });

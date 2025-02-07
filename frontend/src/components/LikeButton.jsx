@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import Heart from "../assets/heart.svg";
 
-const LikeButton = () => {
+const LikeButton = ({ onClick }) => {
     return (
-        <div>
+        <button onClick={onClick}>
             <img src={Heart} className="w-10 h-10"/>
-        </div>
+        </button>
     )
 };
 
