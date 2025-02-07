@@ -4,7 +4,7 @@ import Heart from "../assets/heart.svg";
 const LikeButton = ({ onClick }) => {
     return (
         <button onClick={onClick}>
-            <img src={Heart} className="w-10 h-10"/>
+            <img src={Heart} className="w-8 h-8"/>
         </button>
     )
 };

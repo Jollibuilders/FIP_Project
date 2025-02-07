@@ -53,19 +53,32 @@ const ProfileCard = ({ userProfiles }) => {
     useEffect(() => {
         console.log("reload");
     }, [currentIdx]);
+    //might not need
 
     return (
         !noMoreProfiles ? (
-            <div className="flex flex-col justify-center items-center bg-white shadow-md shadow-gray-400 p-6 rounded-lg m-10">
-                <h1>{displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].name : "Loading..."}</h1>
+            <div className="flex flex-col justify-center items-center bg-white shadow-md shadow-gray-300 p-10 rounded-lg m-10">
+                <div className="flex flex-row text-left w-full space-x-2">
+                    <h1 className="font-bold">
+                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].name : "Loading..."}
+                    </h1>
+                    <span className="font-semibold">
+                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].age : "Loading..."}
+                    </span>
+                </div>
+                <div className="mt-10">
+                    {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].description : "Loading..."}
+                </div>
                 
-                <div className="flex flex-row space-x-4 items-center mt-10">
+                <div className="flex flex-row justify-between w-full items-center mt-6">
                     <SkipButton onClick={handleSkip} />
                     <LikeButton onClick={handleLike} />
                 </div>
             </div>
         ) : (
-            <div>No more profiles</div>
+            <div className="flex text-3xl font-bold bg-white shadow-md shadow-gray-300 p-20 rounded-lg m-10">
+                <h1>No More Profiles!</h1>
+            </div>
         )
     );
 };
