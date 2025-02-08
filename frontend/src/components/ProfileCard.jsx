@@ -61,14 +61,22 @@ const ProfileCard = ({ userProfiles }) => {
         !noMoreProfiles ? (
             <div className="flex flex-col justify-center items-center bg-white shadow-md shadow-gray-300 p-10 rounded-lg m-10">
                 <div className="flex flex-row text-left justify-center items-center w-full space-x-2">
-                    <img src={image} className="h-50 rounded-full mr-10"/>
+                    <img src={image} className="h-50 rounded-full mr-8"/>
                     <div className="">
-                        <h1 className="font-bold text-xl">
+                        <h1 className="font-bold text-2xl">
                             {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].name : "Loading..."}
                         </h1>
-                        <span className="font-semibold text-md">
-                            {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].age : "Loading..."}
-                        </span>
+                        <div className="flex space-x-2 mt-1 text-gray-400">
+                            <span className="font-semibold text-sm">
+                                Undergraduate {/* replace with what they're studying i.e. graduate, undergrad, etc. */}
+                            </span>
+                            <span className="font-semibold text-sm">
+                                {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].age : "Loading..."}
+                            </span>
+                        </div>
+                        <div className="inline-block bg-blue-300 rounded-md px-3 py-1 text-sm font-semibold mt-6">
+                            <span className="text-white">Full time</span>
+                        </div>
                     </div>
                 </div>
                 <SkillIcon text={"hi"}/>
