@@ -9,10 +9,16 @@ import SkillIcon from './SkillIcon.jsx';
 const ProfileCard = ({ userProfiles }) => {
     const [displayedProfiles, setDisplayedProfiles] = useState([]);
     const [currentIdx, setCurrentIdx] = useState(0);
-    const [justLoaded, setJustLoaded] = useState(true);
     const [noMoreProfiles, setNoMoreProfiles] = useState(true);
 
+    const jobStatusColors = {
+        "Internship": 'bg-green-300',
+        "Full-time": 'bg-indigo-300',
+        "Open to anything": 'bg-blue-300',
+    };
+
     const handleSkip = () => {
+        console.log("You skipped " + displayedProfiles[currentIdx].id);
         setCurrentIdx((prevIdx) => {
             if (prevIdx + 1 < displayedProfiles.length) {
                 return prevIdx + 1;
@@ -20,10 +26,10 @@ const ProfileCard = ({ userProfiles }) => {
             setNoMoreProfiles(true);
             return 0;
         });
-        console.log("skip");
     }
     
     const handleLike = () => {
+        console.log("You liked " + displayedProfiles[currentIdx].id);
         setCurrentIdx((prevIdx) => {
             if (prevIdx + 1 < displayedProfiles.length) {
                 return prevIdx + 1;
@@ -31,13 +37,15 @@ const ProfileCard = ({ userProfiles }) => {
             setNoMoreProfiles(true);
             return 0;
         });
-        console.log("like");
     }
     
     const getUsersToDisplay = async () => {
         try {
             const querySnapshot = await getDocs(collection(db, "test-users"));
-            const usersList = querySnapshot.docs.map(doc => doc.data());
+            const usersList = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
             setDisplayedProfiles(usersList);
         } catch (error) {
             console.error("Error fetching profiles:", error);
@@ -54,9 +62,11 @@ const ProfileCard = ({ userProfiles }) => {
 
     useEffect(() => {
         console.log("reload");
+        console.log(displayedProfiles[currentIdx]?.job_status);
     }, [currentIdx]);
     //might not need
 
+    //add grad year
     return (
         !noMoreProfiles ? (
             <div className="flex flex-col justify-center items-center bg-white shadow-md shadow-gray-300 p-10 rounded-lg m-10 sm:w-full sm:h-auto md:w-1/4 md:h-auto">
@@ -75,8 +85,8 @@ const ProfileCard = ({ userProfiles }) => {
                                     {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].age : "Loading..."}
                                 </span>
                             </div>
-                            <div className="inline-block bg-blue-300 rounded-md px-3 py-1 text-sm font-semibold mt-6">
-                                <span className="text-white">
+                            <div className={`inline-block rounded-md px-3 py-1 text-sm font-semibold mt-6 ${jobStatusColors[displayedProfiles[currentIdx]?.job_status]}`}>
+                                <span className="text-gray-700">
                                     {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].job_status : "Loading..."}
                                 </span>
                             </div>
@@ -96,7 +106,6 @@ const ProfileCard = ({ userProfiles }) => {
                         </span>
                     </div>
                 </div>
-                
                 
                 <div className="flex flex-row justify-between w-full items-center mt-6">
                     <SkipButton onClick={handleSkip} />
