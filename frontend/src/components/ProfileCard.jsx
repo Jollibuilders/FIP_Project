@@ -3,6 +3,8 @@ import { db } from '../firebase.js';
 import { collection, getDocs } from 'firebase/firestore';
 import LikeButton from './LikeButton';
 import SkipButton from './SkipButton';
+import image from '../assets/test_image.jpg';
+import SkillIcon from './SkillIcon.jsx';
 
 const ProfileCard = ({ userProfiles }) => {
     const [displayedProfiles, setDisplayedProfiles] = useState([]);
@@ -58,17 +60,18 @@ const ProfileCard = ({ userProfiles }) => {
     return (
         !noMoreProfiles ? (
             <div className="flex flex-col justify-center items-center bg-white shadow-md shadow-gray-300 p-10 rounded-lg m-10">
-                <div className="flex flex-row text-left w-full space-x-2">
-                    <h1 className="font-bold">
-                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].name : "Loading..."}
-                    </h1>
-                    <span className="font-semibold">
-                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].age : "Loading..."}
-                    </span>
+                <div className="flex flex-row text-left justify-center items-center w-full space-x-2">
+                    <img src={image} className="h-50 rounded-full mr-10"/>
+                    <div className="">
+                        <h1 className="font-bold text-xl">
+                            {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].name : "Loading..."}
+                        </h1>
+                        <span className="font-semibold text-md">
+                            {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].age : "Loading..."}
+                        </span>
+                    </div>
                 </div>
-                <div className="mt-10">
-                    {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].description : "Loading..."}
-                </div>
+                <SkillIcon text={"hi"}/>
                 
                 <div className="flex flex-row justify-between w-full items-center mt-6">
                     <SkipButton onClick={handleSkip} />
