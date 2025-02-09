@@ -6,7 +6,7 @@ import SkipButton from './SkipButton';
 import image from '../assets/test_image.jpg';
 import SkillIcon from './SkillIcon.jsx';
 
-const ProfileCard = ({ userProfiles }) => {
+const ProfileCard = () => {
     const [displayedProfiles, setDisplayedProfiles] = useState([]);
     const [currentIdx, setCurrentIdx] = useState(0);
     const [noMoreProfiles, setNoMoreProfiles] = useState(true);

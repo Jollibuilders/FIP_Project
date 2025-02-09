@@ -44,7 +44,7 @@ const Home = () => {
             <h1 className="text-4xl font-bold text-gray-800 mb-4">
                 Hi, {user.displayName ? user.displayName : user.email}!
             </h1>
-            <ProfileCard userProfiles={user}/> {/*currently just loads this user's data*/}
+            <ProfileCard /> 
             <button
                 onClick={handleLogout}
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
