@@ -4,7 +4,6 @@ const fastify = require('fastify')({ logger: true });
 const cors = require('@fastify/cors');
 fastify.register(cors, { origin: '*' });
 
-
 const serviceAccount = {
     projectId: process.env.FIREBASE_PROJECT_ID,
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
@@ -44,14 +43,14 @@ fastify.get('/', async (request, reply) => {
 });
 
 // like endpoint
-fastify.post('/api/like', async (request, reply) => {
+fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     try {
-        // get toUserId and fromUserId
-        const { toUserId, fromUserId } = request.body;
-        
-        // if userId is null, throw invalid payload
+        // get toUserId and authenticated user's id (from request.user)
+        const { toUserId } = request.body;
+        const fromUserId = request.user.uid; // Using the authenticated user's uid
+
+        // if toUserId is null, throw invalid payload
         if(!toUserId) { throw { message: 'Invalid payload.' }; }
-        if(!fromUserId) { throw { message: 'Missing authentication.' }; }
         
         // create a new document in Firestore likes with fromUserId, toUserId
         const userReference = db.collection('users').doc(fromUserId);
@@ -66,8 +65,8 @@ fastify.post('/api/like', async (request, reply) => {
 
         // otherwise, update userArray
         else {
-            await userRef.update({
-                likes: admin.firestore.FieldValue.arrayUnion(likedUserId),
+            await userReference.update({
+                likes: admin.firestore.FieldValue.arrayUnion(toUserId),
             });
         }
         
