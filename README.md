@@ -67,8 +67,9 @@ The project consists of two main parts:
 1. **Create the `.env` file:**
 
    Navigate to the `frontend` folder and create a `.env` file. This file will store all your environment-specific variables. You can find the code to include in this file in our developer chat on discord.
+   Do the same for the `backend` folder (create a `.env` file).
 
-2. **PREVENT the `.env` file from being pushed to GitHub:**
+3. **PREVENT the `.env` file from being pushed to GitHub:**
 
    Ensure that your `.env` file is added to your `.gitignore` file. This is IMPORTANT AND CRUCIAL to avoid exposing sensitive information. You can add the following line to your `.gitignore`:
 
