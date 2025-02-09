@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
+import SelectRole from './pages/SelectRole';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css'
 
@@ -15,6 +16,7 @@ function App() {
       {/* Public Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/select-role" element={<SelectRole />} />
 
       {/* Protected Route: Home can only be accessed by logged-in users */}
       <Route
