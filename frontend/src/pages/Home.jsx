@@ -68,18 +68,17 @@ const Home = () => {
                 </div>
             </div>
 
-            <div className="mt-8 w-full max-w-sm p-6 bg-white rounded-xl shadow-md border border-gray-200 text-center mx-auto">
+            <div className="mt-8 w-full max-w-xl p-6 bg-white rounded-xl shadow-sm border border-gray-200 text-center mx-auto">
                 <p className="mb-4 text-base font-medium text-gray-900">
                     You're all set! Start exploring your matches.
                 </p>
                 <Link
                     to="/match"
-                    className="w-1/2 mx-auto block px-4 py-2 bg-[#0A0F24] text-white rounded-md font-semibold hover:bg-[#0A0F24]/90 transition duration-300 ease-in-out"
+                    className="w-1/3 mx-auto block px-4 py-2 bg-[#0A0F24] text-white rounded-md font-semibold hover:bg-[#0A0F24]/90 transition duration-300 ease-in-out"
                 >
                     View Matches
                 </Link>
             </div>
-
 
             <button
                 onClick={handleLogout}
