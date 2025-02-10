@@ -1,31 +1,29 @@
 import profile from '../assets/user_logo.png';
 
 const NavigationBar = () => {
-    return (
-        <nav className="flex justify-between items-center bg-zinc-400 top-0 fixed z-50 w-full gap-5 p-4 sm:px-12">
-            <a href="/home" className="flex items-center gap-1">
-                {/* We can replace this with an actual logo later on */}
-                <img
-                    src="../../public/jollibuilders.png"
-                    className="w-8 h-8 sm:w-12 sm:h-12"
-                    alt="Jollibuilders FIP logo"
-                />
-
-                <h1 className="text-2xl font-bold text-dark-100 ml-2">
-                    Job
-                    <span> Connector</span>
-                </h1>
-            </a>
-
-            <a href="/account" className="flex items-center gap-1">
-                <img
-                    src={profile}
-                    className="w-8 h-8 sm:w-12 sm:h-12"
-                    alt="profile logo"
-                />
-            </a>
-        </nav>
-    )
-}
+  return (
+    <nav className="fixed top-0 left-0 w-full bg-white shadow-sm">
+      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+        <a href="/home" className="flex items-center space-x-2">
+          <img
+            src="../../public/jollibuilders.png"
+            alt="Jollibuilders FIP logo"
+            className="w-8 h-8 sm:w-10 sm:h-10"
+          />
+          <h1 className="text-base sm:text-lg font-medium text-gray-900">
+            Job <span className="text-gray-600">Connector</span>
+          </h1>
+        </a>
+        <a href="/account">
+          <img
+            src={profile}
+            alt="Profile logo"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+          />
+        </a>
+      </div>
+    </nav>
+  );
+};
 
 export default NavigationBar;
