@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import ProfileCard from '../components/ProfileCard';
-import NavigationBar from "../components/NavigationBar.jsx";
 
 const Home = () => {
     const [user, setUser] = useState(null);
@@ -42,7 +41,6 @@ const Home = () => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-            <NavigationBar />
 
             <h1 className="text-4xl font-bold text-center text-gray-800 md:mt-20 mb-4">
                 Hi, {user.displayName ? user.displayName : user.email}!
@@ -54,8 +52,6 @@ const Home = () => {
             <p className="text-xl text-center text-gray-800 mt-4 mb-8">
                 Swipe. Match. Intern. The easiest way for students and recruiters to connect instantly!
             </p>
-
-            <ProfileCard />
 
             <button
                 onClick={handleLogout}
