@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
+import SelectRole from './pages/SelectRole';
 import ProtectedRoute from './components/ProtectedRoute';
 import NavigationBar from './components/NavigationBar';
 import Match from './pages/Match';
@@ -22,6 +23,7 @@ function App() {
       {/* Public Routes: Login and Signup will render without NavigationBar */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/select-role" element={<SelectRole />} />
 
       {/* Routes wrapped with AppLayout will have the NavigationBar */}
       <Route element={<AppLayout />}>
