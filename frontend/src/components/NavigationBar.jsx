@@ -11,8 +11,8 @@ const NavigationBar = () => {
             alt="Jollibuilders FIP logo"
             className="w-8 h-8 sm:w-10 sm:h-10"
           />
-          <h1 className="text-base sm:text-lg font-medium text-gray-900">
-            Job <span className="text-gray-600">Connector</span>
+          <h1 className="text-base sm:text-lg font-bold text-gray-900">
+            Job Connector
           </h1>
         </Link>
         <Link to="/account">
