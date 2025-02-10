@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProfileSetup from './ProfileSetup';
 import './App.css'
 
 function App() {
@@ -15,6 +16,8 @@ function App() {
       {/* Public Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/profile-setup" element={<ProfileSetup />} />
+
 
       {/* Protected Route: Home can only be accessed by logged-in users */}
       <Route
