@@ -15,7 +15,7 @@ const NavigationBar = () => {
             Job Connector
           </h1>
         </Link>
-        <Link to="/account">
+        <Link to="/profile-setup">
           <img
             src={profile}
             alt="Profile logo"

@@ -24,15 +24,6 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
 
-      {/* Protected Route: profile-setup can only be accessed by signed up users */}
-      <Route
-        path="/profile-setup"
-        element={
-          <ProtectedRoute>
-            <ProfileSetup/>
-          </ProtectedRoute>
-        }
-      />
       {/* Routes wrapped with AppLayout will have the NavigationBar */}
       <Route element={<AppLayout />}>
         {/* Redirect root to /home */}
@@ -50,6 +41,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Match />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile-setup"
+          element={
+            <ProtectedRoute>
+              <ProfileSetup />
             </ProtectedRoute>
           }
         />
