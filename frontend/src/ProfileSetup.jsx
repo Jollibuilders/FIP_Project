@@ -1,15 +1,15 @@
 // Filename: ProfileSetup.jsx
 import React, { useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth'; 
-import { doc, updateDoc } from 'firebase/firestore'; 
-import { db } from './firebase'; 
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from './firebase';
 
 const ProfileSetup = () => {
-  const [fullName, setFullName] = useState(''); 
+  const [fullName, setFullName] = useState('');
   const [school, setSchool] = useState('');
-  const [error, setError] = useState(''); 
-  const [success, setSuccess] = useState(false); 
-  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [currentUserUID, setCurrentUserUID] = useState(null);
 
   const auth = getAuth(); // Initialize Firebase Auth
@@ -23,6 +23,15 @@ const ProfileSetup = () => {
     });
     return () => unsubscribe();
   }, [auth]);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (err) {
+      console.error('Error logging out:', err);
+    }
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -46,8 +55,8 @@ const ProfileSetup = () => {
 
       // Update only the specified fields without overwriting others
       await updateDoc(doc(db, 'users', currentUserUID), {
-        fullName, 
-        school: school || null, 
+        fullName,
+        school: school || null,
       });
 
       setSuccess(true);
@@ -60,7 +69,7 @@ const ProfileSetup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4">Set Up Your Profile</h2>
 
@@ -105,6 +114,12 @@ const ProfileSetup = () => {
           </button>
         </form>
       </div>
+      <button
+        onClick={handleLogout}
+        className="mt-4 px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+      >
+        Logout
+      </button>
     </div>
   );
 };
