@@ -1,9 +1,9 @@
-// Filename: ProfileSetup.jsx
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
+import { HiOutlineAcademicCap, HiOutlineUser, HiOutlineLogout } from 'react-icons/hi';
 
 const ProfileSetup = () => {
   const [fullName, setFullName] = useState('');
@@ -13,10 +13,8 @@ const ProfileSetup = () => {
   const [loading, setLoading] = useState(false);
   const [currentUserUID, setCurrentUserUID] = useState(null);
   const navigate = useNavigate();
+  const auth = getAuth();
 
-  const auth = getAuth(); // Initialize Firebase Auth
-
-  // Set up the auth state listener once on mount
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -26,7 +24,6 @@ const ProfileSetup = () => {
     return () => unsubscribe();
   }, [auth]);
 
-  // Handle logout
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -35,17 +32,14 @@ const ProfileSetup = () => {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Client-side validation: Ensure Full Name is not empty
     if (!fullName.trim()) {
       setError('Full Name is required.');
       return;
     }
 
-    // Ensure we have a current user UID
     if (!currentUserUID) {
       setError('User not authenticated.');
       return;
@@ -55,7 +49,6 @@ const ProfileSetup = () => {
       setLoading(true);
       setError('');
 
-      // Update only the specified fields without overwriting others
       await updateDoc(doc(db, 'users', currentUserUID), {
         fullName,
         school: school || null,
@@ -72,57 +65,85 @@ const ProfileSetup = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Set Up Your Profile</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-sm bg-white rounded-lg shadow-sm border border-gray-100">
+        <div className="p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-1">Complete your profile</h2>
+          <p className="text-sm text-gray-500 mb-6">Tell us a bit about yourself</p>
 
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        {success && <p className="text-green-500 mb-4">Profile updated successfully!</p>}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-100 text-red-600 text-xs rounded-md">
+              {error}
+            </div>
+          )}
+          
+          {success && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-100 text-green-600 text-xs rounded-md">
+              Profile updated successfully!
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-              Full Name (required)
-            </label>
-            <input
-              type="text"
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Enter your full name"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <HiOutlineUser className="h-4 w-4 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="fullName"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="pl-10 w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors"
+                  placeholder="Enter your full name"
+                />
+              </div>
+            </div>
 
-          <div className="mb-6">
-            <label htmlFor="school" className="block text-sm font-medium text-gray-700">
-              School (optional)
-            </label>
-            <input
-              type="text"
-              id="school"
-              value={school}
-              onChange={(e) => setSchool(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Enter your school"
-            />
-          </div>
+            <div>
+              <label htmlFor="school" className="block text-sm font-medium text-gray-700 mb-1">
+                School (optional)
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <HiOutlineAcademicCap className="h-4 w-4 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="school"
+                  value={school}
+                  onChange={(e) => setSchool(e.target.value)}
+                  className="pl-10 w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors"
+                  placeholder="Enter your school"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full h-12 rounded-md text-sm font-medium transition-colors duration-200 ${
+                loading
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-900 text-white hover:bg-gray-800'
+              }`}
+            >
+              {loading ? 'Saving...' : 'Save Profile'}
+            </button>
+          </form>
 
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={handleLogout}
+            className="w-full mt-4 h-12 flex items-center justify-center gap-2 rounded-md border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
           >
-            {loading ? 'Saving...' : 'Save'}
+            <HiOutlineLogout className="w-4 h-4" />
+            <span>Log out</span>
           </button>
-        </form>
+        </div>
       </div>
-      <button
-        onClick={handleLogout}
-        className="mt-4 px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-      >
-        Logout
-      </button>
     </div>
   );
 };
