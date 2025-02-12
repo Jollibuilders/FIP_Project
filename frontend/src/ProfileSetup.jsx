@@ -1,6 +1,7 @@
 // Filename: ProfileSetup.jsx
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -11,6 +12,7 @@ const ProfileSetup = () => {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentUserUID, setCurrentUserUID] = useState(null);
+  const navigate = useNavigate();
 
   const auth = getAuth(); // Initialize Firebase Auth
 
@@ -60,6 +62,7 @@ const ProfileSetup = () => {
       });
 
       setSuccess(true);
+      navigate('/home')
     } catch (err) {
       console.error('Error updating profile:', err);
       setError('Failed to update profile. Please try again.');
