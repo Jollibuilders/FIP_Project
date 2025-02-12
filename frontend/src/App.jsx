@@ -24,7 +24,16 @@ function App() {
       {/* Public Routes: Login and Signup will render without NavigationBar */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/select-role" element={<SelectRole />} />
+
+
+      <Route
+        path="/select-role"
+        element={
+          <ProtectedRoute>
+            <SelectRole />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Routes wrapped with AppLayout will have the NavigationBar */}
       <Route element={<AppLayout />}>
