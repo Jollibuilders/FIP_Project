@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -16,12 +17,25 @@ const Login = () => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             console.log('User logged in:', userCredential.user);
-            // Clear the form and error
-            setEmail('');
-            setPassword('');
-            setError('');
-            // Navigate to the home page after successful login
-            navigate('/home');
+            
+            // Checks ot make sure that a user has a role, if not directs them
+            // to the select role page, otherwise directs them to the home page
+            const userRef = doc(db, 'users', userCredential.user.uid);
+            const userDoc = await getDoc(userRef);
+
+            if (!userDoc.exists()) {
+                await setDoc(userRef, { role: null }, { merge: true});
+                navigate('/select-role');
+                return;
+            }
+
+            const userData = userDoc.data();
+
+            if (userData.role) {
+                navigate('/home');
+            } else {
+                navigate('/select-role');
+            }
         } catch (err) {
             setError(err.message);
             console.error('Error logging in:', err);
