@@ -32,7 +32,7 @@ const SelectRole = () => {
             await setDoc(userRef, { role: selectedRole }, { merge: true});
             
             // Redirect user to the home page after saving role
-            navigate('/home');
+            navigate('/profile-setup');
         } catch (err) {
             setError('Failed to save role. Please try again.');
             console.error('Error saving role:', err);
