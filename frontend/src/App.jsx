@@ -55,7 +55,7 @@ function App() {
       </Route>
 
       {/* Fallback route */}
-      <Route path="*" element={<Navigate to="/signup" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }
