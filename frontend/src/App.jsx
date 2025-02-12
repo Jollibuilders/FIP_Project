@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProfileSetup from './ProfileSetup';
 import NavigationBar from './components/NavigationBar';
 import Match from './pages/Match';
 import './App.css';
@@ -43,10 +44,18 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/profile-setup"
+          element={
+            <ProtectedRoute>
+              <ProfileSetup />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       {/* Fallback route */}
-      <Route path="*" element={<Navigate to="/signup" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }

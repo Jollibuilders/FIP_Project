@@ -30,7 +30,7 @@ const SignUp = () => {
             setPassword('');
             setError('');
 
-            navigate('/home');
+            navigate('/profile-setup');
         } catch (err) {
             console.error('Error signing up:', err);
             setError(err.message);
