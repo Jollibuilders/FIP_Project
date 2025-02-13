@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { db } from '../firebase.js';
 import { collection, getDocs } from 'firebase/firestore';
 import LikeButton from './LikeButton';
@@ -16,6 +17,10 @@ const ProfileCard = () => {
         "Full-time": 'bg-indigo-300',
         "Open to anything": 'bg-blue-300',
     };
+
+    const returnHome = () => {
+
+    }
 
     const handleSkip = () => {
         console.log("You skipped " + displayedProfiles[currentIdx].id);
@@ -113,8 +118,16 @@ const ProfileCard = () => {
                 </div>
             </div>
         ) : (
-            <div className="flex w-1/4 text-3xl font-bold bg-white shadow-md shadow-gray-300 p-20 rounded-lg m-10 justify-center">
-                <h1>No More Profiles!</h1>
+            <div className="flex flex-col w-full justify-center items-center">
+                <div className="flex w-1/4 text-3xl font-bold bg-white shadow-md shadow-gray-300 p-20 rounded-lg m-10 justify-center">
+                    <h1>No More Profiles!</h1>
+                </div>
+                <Link 
+                    className="hover:scale-110 transition-transform duration-200 ease-in-out active:scale-95 bg-gray-300 shadow-md shadow-gray-300 px-4 py-2 rounded-lg font-semibold text-sm" 
+                    to="/home"
+                >
+                    Return Home
+                </Link>
             </div>
         )
     );
