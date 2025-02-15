@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
 import { db } from '../firebase.js';
 import { collection, getDocs } from 'firebase/firestore';
 import LikeButton from './LikeButton';
@@ -18,10 +19,6 @@ const ProfileCard = () => {
         "Open to anything": 'bg-blue-300',
     };
 
-    const returnHome = () => {
-
-    }
-
     const handleSkip = () => {
         console.log("You skipped " + displayedProfiles[currentIdx].id);
         setCurrentIdx((prevIdx) => {
@@ -33,7 +30,7 @@ const ProfileCard = () => {
         });
     }
     
-    const handleLike = () => {
+    const handleLike = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
 
