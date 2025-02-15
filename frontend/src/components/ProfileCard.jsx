@@ -34,14 +34,41 @@ const ProfileCard = () => {
     }
     
     const handleLike = () => {
-        console.log("You liked " + displayedProfiles[currentIdx].id);
-        setCurrentIdx((prevIdx) => {
-            if (prevIdx + 1 < displayedProfiles.length) {
-                return prevIdx + 1;
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (!user) {
+            console.error("User not authenticated.");
+            return;
+        }
+
+        try {
+            const token = await user.getIdToken(); // Get Firebase authentication token
+            const response = await fetch("http://localhost:3000/api/like", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`, // Attach token for authentication
+                },
+                body: JSON.stringify({ toUserId: displayedProfiles[currentIdx].id }), // Send the liked user's ID
+            });
+
+            const data = await response.json();
+            if (response.statusCode === 200) {
+                console.log("Like successful:", data);
+                setCurrentIdx((prevIdx) => {
+                    if (prevIdx + 1 < displayedProfiles.length) {
+                        return prevIdx + 1;
+                    }
+                    setNoMoreProfiles(true);
+                    return 0;
+                });
+            } else {
+                console.error("Like failed:", data.message);
             }
-            setNoMoreProfiles(true);
-            return 0;
-        });
+        } catch (error) {
+            console.error("Error liking user:", error);
+        }
     }
     
     const getUsersToDisplay = async () => {
