@@ -89,11 +89,16 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
         });
 
         const toLikes = toDoc.data().likes || [];
+        const fromUserName = doc.data().fullName;
+        const toUserName = toDoc.data().name;
+        console.log(toUserName);
         if (toLikes.includes(fromUserId)) {
             const matchRef = db.collection('matches').doc();
             await matchRef.set({
                 user1: fromUserId,
+                user1name: fromUserName,
                 user2: toUserId,
+                user2name: toUserName,
                 timestamp: admin.firestore.FieldValue.serverTimestamp(), // Store timestamp from the server
             });
             return reply.status(200).send({ message: 'Match detected' });
