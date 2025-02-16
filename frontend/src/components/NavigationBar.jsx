@@ -17,7 +17,10 @@ const NavigationBar = () => {
           </h1>
         </Link>
         <div className="flex items-center space-x-8">
-          <img src={notificationBell} className="w-8 h-8"></img>
+          {/*
+            <img src={notificationBell} className="w-8 h-8"></img>
+            commented out for now as we don't use it
+          */}
           <Link to="/profile-setup">
             <img
               src={profile}
