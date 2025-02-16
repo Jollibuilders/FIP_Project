@@ -49,9 +49,10 @@ const ProfileCard = () => {
                 },
                 body: JSON.stringify({ toUserId: displayedProfiles[currentIdx].id }), // Send the liked user's ID
             });
+            console.log(response);
 
             const data = await response.json();
-            if (response.statusCode === 200) {
+            if (response.ok) {
                 console.log("Like successful:", data);
                 setCurrentIdx((prevIdx) => {
                     if (prevIdx + 1 < displayedProfiles.length) {

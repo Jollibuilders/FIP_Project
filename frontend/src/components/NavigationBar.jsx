@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import profile from '../assets/user_logo.png';
+import notificationBell from '../assets/notification.svg';
 
 const NavigationBar = () => {
   return (
@@ -15,13 +16,16 @@ const NavigationBar = () => {
             Job Connector
           </h1>
         </Link>
-        <Link to="/profile-setup">
-          <img
-            src={profile}
-            alt="Profile logo"
-            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
-          />
-        </Link>
+        <div className="flex items-center space-x-8">
+          <img src={notificationBell} className="w-8 h-8"></img>
+          <Link to="/profile-setup">
+            <img
+              src={profile}
+              alt="Profile logo"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+            />
+          </Link>
+        </div>
       </div>
     </nav>
   );

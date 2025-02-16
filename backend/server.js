@@ -58,38 +58,46 @@ fastify.get('/profiles', async (request, reply) => {
 // like endpoint
 fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     try {
-        // get toUserId and authenticated user's id (from request.user)
         const { toUserId } = request.body;
-        const fromUserId = request.user.uid; // Using the authenticated user's uid
+        const fromUserId = request.user.uid;
 
-        // if toUserId is null, throw invalid payload
-        if(!toUserId) { throw { message: 'Invalid payload.' }; }
-        
-        // create a new document in Firestore likes with fromUserId, toUserId
+        if (!toUserId) {
+            return reply.status(400).send({ message: 'Invalid payload.' });
+        }
+
         const userReference = db.collection('users').doc(fromUserId);
         const doc = await userReference.get();
 
-        // check if user exists
-        if(!doc.exists) { throw { message: 'User does not exist.' }; }
+        const toUserReference = db.collection('test-users').doc(toUserId);
+        const toDoc = await toUserReference.get();
 
-        // checks if user data for likes exists; if not return empty array
-        const likes = doc.data().likes || [];
-        if(likes.includes(toUserId)) { throw { message: 'A like for this user already exists.' }; }
-
-        // otherwise, update userArray
-        else {
-            await userReference.update({
-                likes: admin.firestore.FieldValue.arrayUnion(toUserId),
-            });
+        if (!doc.exists) {
+            return reply.status(404).send({ message: 'User does not exist.' });
         }
-        
-        // if everything has been achieved, return json success
-        return { message : 'Success', statusCode : 200, };
-        
+
+        if (!toDoc.exists) {
+            return reply.status(404).send({ message: 'Liked user does not exist.' });
+        }
+
+        const likes = doc.data().likes || [];
+        if (likes.includes(toUserId)) {
+            return reply.status(400).send({ message: 'A like for this user already exists.' });
+        }
+
+        await userReference.update({
+            likes: admin.firestore.FieldValue.arrayUnion(toUserId),
+        });
+
+        const toLikes = toDoc.data().likes || [];
+        if (toLikes.includes(fromUserId)) {
+            return reply.status(200).send({ message: 'Match detected' });
+        }
+
+        return reply.status(200).send({ message: 'Like recorded' });
+
     } catch (err) {
-        // catch error and report
         fastify.log.error(err);
-        return { message : err['message'], statusCode : 400};
+        return reply.status(400).send({ message: err.message });
     }
 });
     
