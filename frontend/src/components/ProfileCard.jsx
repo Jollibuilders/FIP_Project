@@ -42,14 +42,14 @@ const ProfileCard = () => {
         }
 
         try {
-            const token = await user.getIdToken(); // Get Firebase authentication token
+            const token = await user.getIdToken();
             const response = await fetch("http://localhost:3000/api/like", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`, // Attach token for authentication
+                    "Authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify({ toUserId: displayedProfiles[currentIdx].id }), // Send the liked user's ID
+                body: JSON.stringify({ toUserId: displayedProfiles[currentIdx].id }), 
             });
             console.log(response);
 
