@@ -68,7 +68,7 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
         const userReference = db.collection('users').doc(fromUserId);
         const doc = await userReference.get();
 
-        const toUserReference = db.collection('test-users').doc(toUserId);
+        const toUserReference = db.collection('test-users').doc(toUserId); //currently from test-users
         const toDoc = await toUserReference.get();
 
         if (!doc.exists) {
@@ -90,6 +90,12 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
 
         const toLikes = toDoc.data().likes || [];
         if (toLikes.includes(fromUserId)) {
+            const matchRef = db.collection('matches').doc();
+            await matchRef.set({
+                user1: fromUserId,
+                user2: toUserId,
+                timestamp: admin.firestore.FieldValue.serverTimestamp(), // Store timestamp from the server
+            });
             return reply.status(200).send({ message: 'Match detected' });
         }
 
