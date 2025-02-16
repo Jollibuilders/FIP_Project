@@ -58,7 +58,7 @@ const ProfileCard = () => {
                 if(data.message === "Match detected") {
                     setShowMatchToast(true);
                     setToastProgress(100);
-                    setTimeout(() => setShowMatchToast(false), 2000);
+                    setTimeout(() => setShowMatchToast(false), 3000);
                 }
                 console.log("Like successful:", data);
                 
