@@ -4,16 +4,34 @@ import { useNavigate } from 'react-router-dom';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import { HiOutlineAcademicCap, HiOutlineUser, HiOutlineLogout } from 'react-icons/hi';
+import BasicInfo from "./components/profile_setup/BasicInfo.jsx";
+import ProfessionalDetails from "./components/profile_setup/ProfessionalDetails.jsx";
+import JobPreferences from "./components/profile_setup/JobPreferences.jsx";
+import AboutMe from "./components/profile_setup/AboutMe.jsx";
 
 const ProfileSetup = () => {
-  const [fullName, setFullName] = useState('');
-  const [school, setSchool] = useState('');
+  const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentUserUID, setCurrentUserUID] = useState(null);
   const navigate = useNavigate();
   const auth = getAuth();
+
+  const [formData, setFormData] = useState({
+    fullName: '',
+    emailAddress: '',
+    location: '',
+    school: '',
+    currentJobTitle: '',
+    yearsOfExperience: 0,
+    keySkills: [],
+    desiredJobTitle: '',
+    employmentType: '',
+    desiredLocation: '',
+    resume: null,
+    aboutMe: ''
+  })
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -32,10 +50,18 @@ const ProfileSetup = () => {
     }
   };
 
+  const nextStep = () => {
+    setCurrentStep((prev) => prev + 1);
+  }
+
+  const previousStep = () => {
+    setCurrentStep((prev) => prev - 1);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!fullName.trim()) {
+    if (!formData.fullName.trim()) {
       setError('Full Name is required.');
       return;
     }
@@ -49,10 +75,7 @@ const ProfileSetup = () => {
       setLoading(true);
       setError('');
 
-      await updateDoc(doc(db, 'users', currentUserUID), {
-        fullName,
-        school: school || null,
-      });
+      await updateDoc(doc(db, 'users', currentUserUID), formData);
 
       setSuccess(true);
       navigate('/home')
@@ -63,6 +86,13 @@ const ProfileSetup = () => {
       setLoading(false);
     }
   };
+
+  const steps = [
+    <BasicInfo formData={formData} setFormData={setFormData} />,
+    <ProfessionalDetails formData={formData} setFormData={setFormData} />,
+    <JobPreferences formData={formData} setFormData={setFormData} />,
+    <AboutMe formData={formData} setFormData={setFormData} />
+  ]
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
@@ -84,55 +114,41 @@ const ProfileSetup = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <HiOutlineUser className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  id="fullName"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="pl-10 w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors"
-                  placeholder="Enter your full name"
-                />
-              </div>
-            </div>
+            {/* Render the current step */}
+            {steps[currentStep]}
 
-            <div>
-              <label htmlFor="school" className="block text-sm font-medium text-gray-700 mb-1">
-                School (optional)
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <HiOutlineAcademicCap className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  id="school"
-                  value={school}
-                  onChange={(e) => setSchool(e.target.value)}
-                  className="pl-10 w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors"
-                  placeholder="Enter your school"
-                />
-              </div>
+            <div className="flex justify-between mt-4">
+              {currentStep > 0 && (
+                <button
+                  type="button"
+                  onClick={previousStep}
+                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                >
+                  Previous
+                </button>
+              )}
+              {currentStep < steps.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={nextStep}
+                  className="ml-auto px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800"
+                >
+                  Next
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`ml-auto px-4 py-2 rounded transition-colors duration-200 ${
+                    loading 
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                      : 'bg-gray-900 text-white hover:bg-gray-800'
+                  }`}
+                >
+                  {loading ? 'Saving...' : 'Save Profile'}
+                </button>
+              )}
             </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full h-12 rounded-md text-sm font-medium transition-colors duration-200 ${
-                loading
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-gray-900 text-white hover:bg-gray-800'
-              }`}
-            >
-              {loading ? 'Saving...' : 'Save Profile'}
-            </button>
           </form>
 
           <button
