@@ -1,10 +1,17 @@
 import { Link } from 'react-router-dom';
 import profile from '../assets/user_logo.png';
 import { useState, useEffect, useRef } from "react";
+import { auth } from "../firebase";
 
 const NavigationBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null)
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(setUser);
+    return () => unsubscribe();
+  }, [])
   useEffect(() => {
     const handleclickout = (event) => {
       if(dropdownRef.current && !dropdownRef.current.contains(event.target)){
@@ -44,8 +51,8 @@ const NavigationBar = () => {
         {dropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
             <div className='px-4 py-2 text-sm text-gray-700 border-b border-gray-200'>
-            <p className='font-semibold'> Test user</p>
-            <p className='text-xs text-gray-500'> test@gmail.com</p>
+            <p className='font-semibold'> {user.displayName|| "can't find name"}</p>
+            <p className='text-xs text-gray-500'> {user.email}</p>
             </div>
             <Link to="/profile-setup" onClick={() => setDropdownOpen(false)}>
             <button className="w-full px-4 py-2 hover:bg-gray-100">
