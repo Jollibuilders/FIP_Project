@@ -1,4 +1,5 @@
 import React from 'react';
+import SkillTags from "../SkillTags.jsx";
 
 const ProfessionalDetails = ({ formData, setFormData }) => {
   const handleChange = (e) => {
@@ -46,26 +47,19 @@ const ProfessionalDetails = ({ formData, setFormData }) => {
           name="yearsOfExperience"
           id="yearsOfExperience"
           value={formData.yearsOfExperience}
-          onChange={handleChange}
+          onChange={(e) => {
+            const newValue = Math.max(0, parseInt(e.target.value, 10) || 0);
+            setFormData({ ...formData, yearsOfExperience: newValue });
+          }}
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder="Enter your amount of experience"
         />
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="keySkills" className="block text-sm font-medium text-gray-700 mb-1">
-          Key Skills
-        </label>
-        <input
-          type="text"
-          name="keySkills"
-          id="keySkills"
-          value={formData.keySkills}
-          onChange={handleChange}
-          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
-          placeholder="Skills (Up to five)"
-        />
-      </div>
+      <SkillTags
+        skills={formData.keySkills}
+        setSkills={(updatedSkills) => setFormData({ ...formData, keySkills: updatedSkills })}
+      />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { doc, updateDoc } from 'firebase/firestore';
+import {doc, getDoc, updateDoc} from 'firebase/firestore';
 import { db } from './firebase';
 import { HiOutlineAcademicCap, HiOutlineUser, HiOutlineLogout } from 'react-icons/hi';
 import BasicInfo from "./components/profile_setup/BasicInfo.jsx";
@@ -50,7 +50,8 @@ const ProfileSetup = () => {
     }
   };
 
-  const nextStep = () => {
+  const nextStep = (e) => {
+    e.preventDefault();
     setCurrentStep((prev) => prev + 1);
   }
 
@@ -75,7 +76,29 @@ const ProfileSetup = () => {
       setLoading(true);
       setError('');
 
-      await updateDoc(doc(db, 'users', currentUserUID), formData);
+      await updateDoc(doc(db, 'users', currentUserUID), {
+        fullName: formData.fullName,
+        emailAddress: formData.emailAddress,
+        location: formData.location,
+        school: formData.school,
+        currentJobTitle: formData.currentJobTitle,
+        yearsOfExperience: formData.yearsOfExperience,
+        keySkills: formData.keySkills,
+        desiredJobTitle: formData.desiredJobTitle,
+        employmentType: formData.employmentType,
+        desiredLocation: formData.desiredLocation,
+        resume: formData.resume,
+        aboutMe: formData.aboutMe
+      });
+
+      const docRef = doc(db, 'users', currentUserUID);
+      const userDoc = await getDoc(docRef);
+
+      if (userDoc.exists()) {
+        console.log('Retrieved data:', userDoc.data());
+      } else {
+        console.log('No such document!');
+      }
 
       setSuccess(true);
       navigate('/home')
@@ -130,7 +153,7 @@ const ProfileSetup = () => {
               {currentStep < steps.length - 1 ? (
                 <button
                   type="button"
-                  onClick={nextStep}
+                  onClick={(e) => (nextStep(e))}
                   className="ml-auto px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800"
                 >
                   Next
