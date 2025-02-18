@@ -32,12 +32,16 @@ const NavigationBar = () => {
             <p className='font-semibold'> Test user</p>
             <p className='text-xs text-gray-500'> test@gmail.com</p>
             </div>
+            <Link to="/profile-setup" onClick={() => setDropdownOpen(false)}>
             <button className="w-full px-4 py-2 hover:bg-gray-100">
               Edit Profile
             </button>
+            </Link>
+            <Link to="/logout" onClick={() => setDropdownOpen(false)}>
             <button className="w-full px-4 py-2 hover:bg-gray-100">
               Log Out
             </button>
+            </Link>
             </div>
         )}
         </div>
