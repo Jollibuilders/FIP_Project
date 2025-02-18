@@ -71,12 +71,12 @@ const NavigationBar = () => {
             <button
               onClick={() => {
                 setDropdownOpen(false);
-                auth.signOut().then(() => {
-                  navigate("/logout"); 
-                });
+                auth.signOut()
+                  .then(() => navigate("/logout"))
+                  .catch((error) => console.error("Logout failed:", error));
               }}
               className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-              >
+            >
             <IoLogOutOutline className="w-5 h-5 text-gray-600" />
             <span>Log Out</span>
             </button>
