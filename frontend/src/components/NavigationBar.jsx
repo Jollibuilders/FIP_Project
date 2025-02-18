@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import profile from '../assets/user_logo.png';
 import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
@@ -10,6 +10,7 @@ const NavigationBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null)
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user)=> {
@@ -66,12 +67,19 @@ const NavigationBar = () => {
             <span>Edit Profile</span>
             </button>
             </Link>
-            <Link to="/logout" onClick={() => setDropdownOpen(false)}>
-            <button className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+
+            <button
+              onClick={() => {
+                setDropdownOpen(false);
+                auth.signOut().then(() => {
+                  navigate("/logout"); 
+                });
+              }}
+              className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+              >
             <IoLogOutOutline className="w-5 h-5 text-gray-600" />
             <span>Log Out</span>
             </button>
-            </Link>
             </div>
         )}
         </div>
