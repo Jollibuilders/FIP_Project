@@ -32,7 +32,7 @@ const NavigationBar = () => {
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-        <button onClick={() => setDropdownOpen(!dropdownOpen)}>
+        <Link to="/home" className="flex items-center space-x-2">
           <img
             src="../../public/jollibuilders.png"
             alt="Jollibuilders FIP logo"
@@ -58,13 +58,13 @@ const NavigationBar = () => {
             <p className="text-sm text-gray-500">{user?.email || 'user@example.com'}</p>
             </div>
             <Link to="/profile-setup" onClick={() => setDropdownOpen(false)}>
-            <button className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+            <button className="w-full px-4 py-2 hover:bg-gray-100">
             <LuPencil className="w-5 h-5 text-gray-600" />
             <span>Edit Profile</span>
             </button>
             </Link>
             <Link to="/logout" onClick={() => setDropdownOpen(false)}>
-            <button className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+            <button className="w-full px-4 py-2 hover:bg-gray-100">
             <IoLogOutOutline className="w-5 h-5 text-gray-600" />
             <span>Log Out</span>
             </button>
