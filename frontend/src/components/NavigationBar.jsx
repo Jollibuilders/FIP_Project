@@ -54,7 +54,7 @@ const NavigationBar = () => {
         {dropdownOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
             <div className='px-4 py-2 text-sm text-gray-700 border-b border-gray-200'>
-            <p className="font-semibold">{user?.displayname || 'User Name'}</p>
+            <p className="font-semibold">{user?.displayName || 'User Name'}</p>
             <p className="text-sm text-gray-500">{user?.email || 'user@example.com'}</p>
             </div>
             <Link to="/profile-setup" onClick={() => setDropdownOpen(false)}>
