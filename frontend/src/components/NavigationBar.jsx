@@ -45,7 +45,7 @@ const NavigationBar = () => {
         {/* profile to click on to cause drop down */}
         <div className="relative" ref={dropdownRef}>
           <img
-            src={profile}
+            src={user?.photoURL || profile}
             alt="Profile logo"
             className="w-8 h-8 sm:w-10 sm:h-10 rounded-full cursor-pointer"
             onClick={() => setDropdownOpen(!dropdownOpen)}
