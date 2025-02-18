@@ -1,9 +1,24 @@
 import { Link } from 'react-router-dom';
 import profile from '../assets/user_logo.png';
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const NavigationBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null)
+  useEffect(() => {
+    const handleclickout = (event) => {
+      if(dropdownRef.current && !dropdownRef.current.contains(event.target)){
+        setDropdownOpen(false)
+      }
+    };
+    document.addEventListener("mousedown", handleclickout)
+    document.addEventListener("touchstart", handleclickout)
+    return () => {
+      document.removeEventListener("mousedown", handleclickout)
+      document.removeEventListener("touchstart", handleclickout)
+  };
+},[]);
+
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -18,7 +33,7 @@ const NavigationBar = () => {
           </h1>
         </Link>
         {/* profile to click on to cause drop down */}
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
           <img
             src={profile}
             alt="Profile logo"
