@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import profile from '../assets/user_logo.png';
+import { useState } from "react";
 
 const NavigationBar = () => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -15,13 +17,30 @@ const NavigationBar = () => {
             Job Connector
           </h1>
         </Link>
-        <Link to="/profile-setup">
+        {/* profile to click on to cause drop down */}
+        <div className="relative">
           <img
             src={profile}
             alt="Profile logo"
-            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full cursor-pointer"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
           />
-        </Link>
+        {/* drop down */}
+        {dropdownOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg">
+            <div className='px-4 py-2 text-sm text-gray-700 border-b border-gray-200'>
+            <p className='font-semibold'> Test user</p>
+            <p className='text-xs text-gray-500'> test@gmail.com</p>
+            </div>
+            <button className="w-full px-4 py-2 hover:bg-gray-100">
+              Edit Profile
+            </button>
+            <button className="w-full px-4 py-2 hover:bg-gray-100">
+              Log Out
+            </button>
+            </div>
+        )}
+        </div>
       </div>
     </nav>
   );
