@@ -12,9 +12,12 @@ const NavigationBar = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(setUser);
+    const unsubscribe = auth.onAuthStateChanged((user)=> {
+    setUser(user);
+    });
     return () => unsubscribe();
   }, [])
+  
   useEffect(() => {
     const handleclickout = (event) => {
       if(dropdownRef.current && !dropdownRef.current.contains(event.target)){
