@@ -18,7 +18,7 @@ const NavigationBar = () => {
     });
     return () => unsubscribe();
   }, [])
-  
+  {/* effect to cause dropsown to close when click off it*/}
   useEffect(() => {
     const handleclickout = (event) => {
       if(dropdownRef.current && !dropdownRef.current.contains(event.target)){
@@ -35,6 +35,7 @@ const NavigationBar = () => {
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow-sm">
+      {/* other logos on nav bar */}
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
         <Link to="/home" className="flex items-center space-x-2">
           <img
@@ -61,13 +62,14 @@ const NavigationBar = () => {
             <p className="font-semibold">{user?.displayName || 'User Name'}</p>
             <p className="text-sm text-gray-500">{user?.email || 'user@example.com'}</p>
             </div>
+            {/* edit profile button */}
             <Link to="/profile-setup" onClick={() => setDropdownOpen(false)}>
             <button className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
             <LuPencil className="w-5 h-5 text-gray-600" />
             <span>Edit Profile</span>
             </button>
             </Link>
-
+            {/* log out button*/}
             <button
               onClick={() => {
                 setDropdownOpen(false);
