@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import {doc, getDoc, updateDoc} from 'firebase/firestore';
+import { doc, getDoc, updateDoc} from 'firebase/firestore';
 import { db } from './firebase';
 import { HiOutlineAcademicCap, HiOutlineUser, HiOutlineLogout } from 'react-icons/hi';
 import BasicInfo from "./components/profile_setup/BasicInfo.jsx";

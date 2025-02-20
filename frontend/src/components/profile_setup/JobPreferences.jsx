@@ -2,7 +2,11 @@ import React from 'react';
 
 const JobPreferences = ({ formData, setFormData }) => {
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.type === "file") {
+      setFormData({ ...formData, [e.target.name]: e.target.files[0]?.name || "" });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
   };
 
   return (
@@ -61,14 +65,22 @@ const JobPreferences = ({ formData, setFormData }) => {
         <label htmlFor="resume" className="block text-sm font-medium text-gray-700 mb-1">
           Resume
         </label>
-        <input
-          type="file"
-          name="resume"
-          id="resume"
-          accept=".pdf"
-          onChange={handleChange}
-          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
-        />
+        <div className="relative h-12 border border-gray-200 rounded-md focus-within:border-gray-300 transition-colors">
+          <input
+            type="file"
+            name="resume"
+            id="resume"
+            accept=".pdf"
+            onChange={handleChange}
+            className="absolute w-full h-full opacity-0 cursor-pointer"
+          />
+          <div className="absolute inset-0 flex items-center px-3 text-sm text-black pointer-events-none">
+            <button className="border border-black bg-gray-300 px-2 py-1 font-medium">Choose file</button>
+            <span className="ml-auto">
+              {formData.resume ? formData.resume : "No file chosen"}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   )

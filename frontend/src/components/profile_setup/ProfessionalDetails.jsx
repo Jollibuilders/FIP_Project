@@ -48,8 +48,11 @@ const ProfessionalDetails = ({ formData, setFormData }) => {
           id="yearsOfExperience"
           value={formData.yearsOfExperience}
           onChange={(e) => {
-            const newValue = Math.max(0, parseInt(e.target.value, 10) || 0);
-            setFormData({ ...formData, yearsOfExperience: newValue });
+            const value = e.target.value;
+            setFormData({ 
+              ...formData, 
+              yearsOfExperience: value === "" ? "" : Math.max(0, parseInt(value, 10) || 0) 
+            });
           }}
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder="Enter your amount of experience"

@@ -16,7 +16,7 @@ const AboutMe = ({ formData, setFormData }) => {
           id="aboutMe"
           value={formData.aboutMe}
           onChange={handleChange}
-          className="w-full h-32 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
+          className="w-full h-32 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3 py-2"
           placeholder="Tell us about yourself"
         />
       </div>

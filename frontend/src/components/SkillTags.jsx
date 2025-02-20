@@ -53,7 +53,7 @@ const SkillTags = ({ skills, setSkills }) => {
           </div>
         ))}
 
-        <div className="flex flex-1 justify-between items-center w-full">
+        <div className="flex flex-1 flex-row justify-between items-center w-full px-1">
           {skills.length < 5 && (
             <input
               type="text"
@@ -61,10 +61,12 @@ const SkillTags = ({ skills, setSkills }) => {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={skills.length === 0 ? "Add a skill and press Enter" : ""}
-              className="flex-1 focus:outline-none"
+              className="flex-1 focus:outline-none text-sm py-1"
             />
           )}
-          <SkipButton onClick={removeAll} className="flex-shrink-0" />
+          <div className="flex items-center w-4 h-4">
+            <SkipButton onClick={removeAll} className="flex-shrink-0" />
+          </div>
         </div>
       </div>
     </div>
