@@ -29,14 +29,14 @@ const BasicInfo = ({ formData, setFormData }) => {
       </div>
 
       <div className="mb-4">
-        <label htmlFor="emailAddress" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
           Email Address
         </label>
         <input
           type="email"
-          name="emailAddress"
-          id="emailAddress"
-          value={formData.emailAddress}
+          name="email"
+          id="email"
+          value={formData.email}
           onChange={handleChange}
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder="Enter your email address"

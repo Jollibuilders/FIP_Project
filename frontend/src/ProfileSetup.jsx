@@ -20,7 +20,7 @@ const ProfileSetup = () => {
 
   const [formData, setFormData] = useState({
     fullName: '',
-    emailAddress: '',
+    email: '',
     location: '',
     school: '',
     currentJobTitle: '',
@@ -78,7 +78,7 @@ const ProfileSetup = () => {
 
       await updateDoc(doc(db, 'users', currentUserUID), {
         fullName: formData.fullName,
-        emailAddress: formData.emailAddress,
+        email: formData.email,
         location: formData.location,
         school: formData.school,
         currentJobTitle: formData.currentJobTitle,
