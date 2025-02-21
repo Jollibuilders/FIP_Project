@@ -79,7 +79,7 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
         // otherwise, update userArray
         else {
             await userReference.update({
-                likes: admin.firestore.FieldValue.arrayUnion(toUserId),
+                likes : admin.firestore.FieldValue.arrayUnion(toUserId),
             });
         }
         
@@ -93,6 +93,41 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
     }
 });
     
+
+// unlike endpoint
+fastify.post('/api/unlike',  { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const { toUserId } = request.body;
+        const fromUserId = request.user.id;
+
+        // if toUserId is null, throw invalid payload
+        if(!toUserId) { throw { message: 'Invalid payload.' }; }
+
+        const userReference = db.collection('users').doc(fromUserId);
+        const doc = await userReference.get();
+
+        // check if user exists
+        if(!doc.exists) { throw { message: 'User does not exist.'}; }
+
+        const likes = doc.data().likes || [];
+        if(!likes.includes(toUserId)) { throw { message: 'No like exists for this user.' }; }
+
+        // otherwise remove likes
+        else {
+            await userReference.update({
+                likes : admin.firestore.FieldValue.arrayRemove(toUserId),
+            })
+        }
+
+        return reply.status(200).send({ message: 'Success' });
+    }
+    catch (err) {
+        // catch error and report
+        fastify.log.error(err);
+        reply.status(400).send({ message: err.message })
+    }
+});
+
 const start = async () => {
     try {
         await fastify.listen({ port: 3000 });
