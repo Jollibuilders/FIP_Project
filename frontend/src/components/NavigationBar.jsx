@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { LuPencil, LuLogOut } from "react-icons/lu";
 
-
 const NavigationBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null)
