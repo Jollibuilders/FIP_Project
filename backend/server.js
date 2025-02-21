@@ -119,12 +119,12 @@ fastify.post('/api/unlike',  { preHandler: [fastify.authenticate] }, async (requ
             })
         }
 
-        return { message : 'Success', statusCode : 200 , };
+        return reply.status(200).send({ message: 'Success' });
     }
     catch (err) {
         // catch error and report
         fastify.log.error(err);
-        return { message : err['message'], statusCode : 400 };
+        reply.status(400).send({ message: err.message })
     }
 });
 
