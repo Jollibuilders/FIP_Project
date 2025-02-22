@@ -13,7 +13,7 @@ const ProfileCard = () => {
     const [currentIdx, setCurrentIdx] = useState(0);
     const [showMatchToast, setShowMatchToast] = useState(false);
     const [toastProgress, setToastProgress] = useState(100);
-    const [moreProfiles, setMoreProfiles] = useState(true);
+    const [moreProfiles, setMoreProfiles] = useState(false);
 
     const jobStatusColors = {
         "Internship": 'bg-green-300',
@@ -27,7 +27,7 @@ const ProfileCard = () => {
             if (prevIdx + 1 < displayedProfiles.length) {
                 return prevIdx + 1;
             }
-            setMoreProfiles(true);
+            setMoreProfiles(false);
             return 0;
         });
     }
@@ -60,6 +60,15 @@ const ProfileCard = () => {
                     setToastProgress(100);
                     setTimeout(() => setShowMatchToast(false), 3000);
                 }
+                else if(data.message === "Like recorded") {
+                    setCurrentIdx((prevIdx) => {
+                        if (prevIdx + 1 < displayedProfiles.length) {
+                            return prevIdx + 1;
+                        }
+                        setMoreProfiles(false);
+                        return 0;
+                    });
+                }
                 console.log("Like successful:", data);
                 
             } else {
@@ -78,6 +87,7 @@ const ProfileCard = () => {
                 ...doc.data()
             }));
             setDisplayedProfiles(usersList);
+            setMoreProfiles(true);
         } catch (error) {
             console.error("Error fetching profiles:", error);
         } finally {
@@ -85,9 +95,9 @@ const ProfileCard = () => {
         }
     }
     
+    //when page is first loaded or reloaded
     useEffect(() => {
         getUsersToDisplay();
-        setMoreProfiles(false);
         console.log(displayedProfiles);
     }, [])
 
@@ -110,7 +120,7 @@ const ProfileCard = () => {
                 if (prevIdx + 1 < displayedProfiles.length) {
                     return prevIdx + 1;
                 }
-                setMoreProfiles(true);
+                setMoreProfiles(false);
                 return 0;
             });
         }
