@@ -10,6 +10,7 @@ import SkillIcon from './SkillIcon.jsx';
 
 const ProfileCard = () => {
     const [displayedProfiles, setDisplayedProfiles] = useState([]);
+    const [alreadyLikedProfiles, setAlreadyLikedProfiles] = useState([]);
     const [currentIdx, setCurrentIdx] = useState(0);
     const [showMatchToast, setShowMatchToast] = useState(false);
     const [toastProgress, setToastProgress] = useState(100);
@@ -86,12 +87,42 @@ const ProfileCard = () => {
                 id: doc.id,
                 ...doc.data()
             }));
-            setDisplayedProfiles(usersList);
-            setMoreProfiles(true);
+            console.log(usersList);
+
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (!user) {
+                console.error("User not authenticated.");
+                return;
+            }
+
+            const token = await user.getIdToken();
+            const response = await fetch("http://localhost:3000/api/getLikes", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            console.log(data);
+
+            if(response.ok) {
+                const likedUserIds = data.likes;
+                console.log(likedUserIds);
+                const filteredUsers = usersList.filter(user => !likedUserIds.includes(user.id));
+                console.log(filteredUsers);
+
+                // Update states
+                setAlreadyLikedProfiles(likedUserIds);
+                setDisplayedProfiles(filteredUsers);
+                setMoreProfiles(filteredUsers.length > 0);
+            } else {
+                setMoreProfiles(false);
+            }
         } catch (error) {
             console.error("Error fetching profiles:", error);
-        } finally {
-            
         }
     }
     
@@ -99,6 +130,7 @@ const ProfileCard = () => {
     useEffect(() => {
         getUsersToDisplay();
         console.log(displayedProfiles);
+        console.log(alreadyLikedProfiles);
     }, [])
 
     useEffect(() => {
