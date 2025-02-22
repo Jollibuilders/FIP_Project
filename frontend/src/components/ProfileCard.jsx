@@ -10,10 +10,11 @@ import SkillIcon from './SkillIcon.jsx';
 
 const ProfileCard = () => {
     const [displayedProfiles, setDisplayedProfiles] = useState([]);
+    const [alreadyLikedProfiles, setAlreadyLikedProfiles] = useState([]);
     const [currentIdx, setCurrentIdx] = useState(0);
     const [showMatchToast, setShowMatchToast] = useState(false);
     const [toastProgress, setToastProgress] = useState(100);
-    const [moreProfiles, setMoreProfiles] = useState(true);
+    const [moreProfiles, setMoreProfiles] = useState(false);
 
     const jobStatusColors = {
         "Internship": 'bg-green-300',
@@ -27,7 +28,7 @@ const ProfileCard = () => {
             if (prevIdx + 1 < displayedProfiles.length) {
                 return prevIdx + 1;
             }
-            setMoreProfiles(true);
+            setMoreProfiles(false);
             return 0;
         });
     }
@@ -60,6 +61,15 @@ const ProfileCard = () => {
                     setToastProgress(100);
                     setTimeout(() => setShowMatchToast(false), 3000);
                 }
+                else if(data.message === "Like recorded") {
+                    setCurrentIdx((prevIdx) => {
+                        if (prevIdx + 1 < displayedProfiles.length) {
+                            return prevIdx + 1;
+                        }
+                        setMoreProfiles(false);
+                        return 0;
+                    });
+                }
                 console.log("Like successful:", data);
                 
             } else {
@@ -73,22 +83,55 @@ const ProfileCard = () => {
     const getUsersToDisplay = async () => {
         try {
             const querySnapshot = await getDocs(collection(db, "test-users"));
+            //currently gets users from test-users for testing
             const usersList = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
-            setDisplayedProfiles(usersList);
+            console.log(usersList);
+
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (!user) {
+                console.error("User not authenticated.");
+                return;
+            }
+
+            const token = await user.getIdToken();
+            const response = await fetch("http://localhost:3000/api/getLikes", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            console.log(data);
+
+            if(response.ok) {
+                const likedUserIds = data.likes;
+                const filteredUsers = usersList.filter(user => !likedUserIds.includes(user.id));
+                console.log(filteredUsers);
+
+                setAlreadyLikedProfiles(likedUserIds);
+                setDisplayedProfiles(filteredUsers);
+                setMoreProfiles(filteredUsers.length > 0);
+            } else {
+                setAlreadyLikedProfiles([]);
+                setDisplayedProfiles([]);
+                setMoreProfiles(false);
+            }
         } catch (error) {
             console.error("Error fetching profiles:", error);
-        } finally {
-            
         }
     }
     
+    //when page is first loaded or reloaded
     useEffect(() => {
         getUsersToDisplay();
-        setMoreProfiles(false);
         console.log(displayedProfiles);
+        console.log(alreadyLikedProfiles);
     }, [])
 
     useEffect(() => {
@@ -110,7 +153,7 @@ const ProfileCard = () => {
                 if (prevIdx + 1 < displayedProfiles.length) {
                     return prevIdx + 1;
                 }
-                setMoreProfiles(true);
+                setMoreProfiles(false);
                 return 0;
             });
         }
