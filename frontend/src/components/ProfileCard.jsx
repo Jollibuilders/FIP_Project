@@ -83,6 +83,7 @@ const ProfileCard = () => {
     const getUsersToDisplay = async () => {
         try {
             const querySnapshot = await getDocs(collection(db, "test-users"));
+            //currently gets users from test-users for testing
             const usersList = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
@@ -110,15 +111,15 @@ const ProfileCard = () => {
 
             if(response.ok) {
                 const likedUserIds = data.likes;
-                console.log(likedUserIds);
                 const filteredUsers = usersList.filter(user => !likedUserIds.includes(user.id));
                 console.log(filteredUsers);
 
-                // Update states
                 setAlreadyLikedProfiles(likedUserIds);
                 setDisplayedProfiles(filteredUsers);
                 setMoreProfiles(filteredUsers.length > 0);
             } else {
+                setAlreadyLikedProfiles([]);
+                setDisplayedProfiles([]);
                 setMoreProfiles(false);
             }
         } catch (error) {
