@@ -147,6 +147,30 @@ fastify.post('/api/unlike',  { preHandler: [fastify.authenticate] }, async (requ
     }
 });
 
+//get liked profiles
+fastify.get('/api/getLikes', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const fromUserId = request.user.uid;
+
+        const userReference = db.collection('users').doc(fromUserId);
+        const doc = await userReference.get();
+
+        if (!doc.exists) {
+            return reply.status(404).send({ message: 'User does not exist.' });
+        }
+
+        const likes = doc.data().likes || [];
+        return reply.status(200).send({
+            message: likes.length > 0 ? 'Success' : 'No likes',
+            likes: likes
+        });
+
+    } catch (err) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
 const start = async () => {
     try {
         await fastify.listen({ port: 3000 });
