@@ -53,7 +53,7 @@ const Matches = () => {
     }, [matches]);
     
     return (
-        <div>
+        <div className="flex flex-col items-center mt-20">
             {matches.length > 0 ? (
                 matches.map((match) => (
                     <MatchesCard key={match.id} matchName={match.likedUser} date={match.date} />
