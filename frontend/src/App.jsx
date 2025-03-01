@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ProfileSetup from './ProfileSetup';
 import NavigationBar from './components/NavigationBar';
 import Match from './pages/Match';
+import Matches from './pages/Matches';
 import './App.css';
 
 // Layout for pages that should include the NavigationBar.
@@ -43,7 +44,7 @@ function App() {
           path="/home"
           element={
             <ProtectedRoute>
-              <Home />
+              <Home/>
             </ProtectedRoute>
           }
         />
@@ -51,7 +52,7 @@ function App() {
           path="/match"
           element={
             <ProtectedRoute>
-              <Match />
+              <Match/>
             </ProtectedRoute>
           }
         />
@@ -59,7 +60,7 @@ function App() {
           path="/matches"
           element={
             <ProtectedRoute>
-              <Match />
+              <Matches/>
             </ProtectedRoute>
           }
         />
@@ -67,7 +68,7 @@ function App() {
           path="/profile-setup"
           element={
             <ProtectedRoute>
-              <ProfileSetup />
+              <ProfileSetup/>
             </ProtectedRoute>
           }
         />

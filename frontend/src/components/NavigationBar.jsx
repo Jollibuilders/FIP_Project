@@ -46,7 +46,7 @@ const NavigationBar = () => {
           </h1>
         </Link>
         <div className="flex flex-row items-center space-x-10">
-          <Link to="/matches">
+          <Link to="/matches" className="text-base sm:text-lg font-bold text-gray-900">
             Matches
           </Link>
           {/* profile to click on to cause drop down */}
