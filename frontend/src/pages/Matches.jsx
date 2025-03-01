@@ -5,8 +5,10 @@ import MatchesCard from '../components/MatchesCard.jsx';
 
 const Matches = () => {
     const [matches, setMatches] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
         
     const getMatchesToDisplay = async () => {
+        setIsLoading(true);
         try {
             const auth = getAuth();
             const user = auth.currentUser;
@@ -40,6 +42,8 @@ const Matches = () => {
             }
         } catch (error) {
             console.error("Error fetching matches:", error);
+        } finally {
+            setIsLoading(false);
         }
     }
     
@@ -50,7 +54,9 @@ const Matches = () => {
     
     return (
         <div className="flex flex-col items-center mt-20">
-            {matches.length > 0 ? (
+            {isLoading ? (
+                <h1 className="font-semibold text-2xl">Loading Matches...</h1>
+            ) : matches.length > 0 ? (
                 matches.map((match) => (
                     <MatchesCard key={match.id} matchName={match.likedUser} date={match.date} />
                 ))

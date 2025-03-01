@@ -158,7 +158,7 @@ const ProfileCard = () => {
 
     return (
         isLoading ? (
-            <h1 className="font-semibold">Loading Profiles...</h1>
+            <h1 className="font-semibold text-2xl">Loading Matches...</h1>
         ) : moreProfiles ? (
             <div className="flex flex-col w-full items-center justify-center">
                 {showMatchToast && (
