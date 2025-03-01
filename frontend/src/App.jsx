@@ -56,6 +56,14 @@ function App() {
           }
         />
         <Route
+          path="/matches"
+          element={
+            <ProtectedRoute>
+              <Match />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/profile-setup"
           element={
             <ProtectedRoute>
