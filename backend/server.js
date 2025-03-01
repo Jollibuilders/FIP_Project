@@ -189,17 +189,17 @@ fastify.get('/api/getMatches', { preHandler: [fastify.authenticate] }, async (re
         //could do one get and just check later if user 1 or 2 is person
         
         matchesSnapshot.forEach(doc => {
-            matches.push({ id: doc.id, likedUser: doc.data().user2, date: doc.data().timestamp });
+            matches.push({ id: doc.id, likedUser: doc.data().user2name, date: doc.data().timestamp });
         });
 
         matchesSnapshot2.forEach(doc => {
-            matches.push({ id: doc.id, likedUser: doc.data().user1, date: doc.data().timestamp });
+            matches.push({ id: doc.id, likedUser: doc.data().user1name, date: doc.data().timestamp });
         });
 
         console.log(matches);
 
         return reply.status(200).send({
-            message: matches.length > 0 ? 'Success' : 'No matches found',
+            message: matches.length > 0 ? 'Matches found' : 'No matches found',
             matches
         });
     } catch (err) {

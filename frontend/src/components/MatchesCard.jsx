@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { getAuth } from 'firebase/auth';
-import { db } from '../firebase.js';
-import { collection, getDocs } from 'firebase/firestore';
+import React from 'react';
 
-const MatchesCard = () => {
-    
+const MatchesCard = ({ matchName, date }) => {
+    const formattedDate = date? 
+        new Date(date._seconds * 1000).toLocaleDateString() : "No date available";
     return (
-        <div>
-
+        <div className="flex flex-col w-full items-center justify-center mt-20">
+            <h3>{matchName}</h3>
+            <p>{formattedDate}</p>
         </div>
     );
 };

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
-import { db } from '../firebase.js';
-import { collection, getDocs } from 'firebase/firestore';
+import MatchesCard from '../components/MatchesCard.jsx';
 
 const Matches = () => {
     const [matches, setMatches] = useState([]);
@@ -29,9 +28,15 @@ const Matches = () => {
             console.log(data);
 
             if(response.ok) {
-                
+                if(data.message === "Matches found") {
+                    setMatches(data.matches);
+                }
+                else {
+                    //no matches found
+                    setMatches([]);
+                }
             } else {
-                
+                console.error("Error retrieving matches:", error);
             }
         } catch (error) {
             console.error("Error fetching matches:", error);
@@ -41,12 +46,21 @@ const Matches = () => {
     //when page is first loaded or reloaded
     useEffect(() => {
         getMatchesToDisplay();
+    }, []);
+
+    useEffect(() => {
         console.log(matches);
-    }, [])
+    }, [matches]);
     
     return (
         <div>
-            <span>hei</span>
+            {matches.length > 0 ? (
+                matches.map((match) => (
+                    <MatchesCard key={match.id} matchName={match.likedUser} date={match.date} />
+                ))
+            ) : (
+                <p>No matches found.</p>
+            )}
         </div>
     );
 };
