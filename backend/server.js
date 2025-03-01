@@ -171,6 +171,43 @@ fastify.get('/api/getLikes', { preHandler: [fastify.authenticate] }, async (requ
     }
 });
 
+//get matches
+fastify.get('/api/getMatches', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const fromUserId = request.user.uid;
+
+        const matchesRef = db.collection('matches');
+        const matches = [];
+
+        const matchesSnapshot = await matchesRef
+            .where('user1', '==', fromUserId)
+            .get();
+
+        const matchesSnapshot2 = await matchesRef
+            .where('user2', '==', fromUserId)
+            .get();
+        //could do one get and just check later if user 1 or 2 is person
+        
+        matchesSnapshot.forEach(doc => {
+            matches.push({ id: doc.id, likedUser: doc.data().user2, date: doc.data().timestamp });
+        });
+
+        matchesSnapshot2.forEach(doc => {
+            matches.push({ id: doc.id, likedUser: doc.data().user1, date: doc.data().timestamp });
+        });
+
+        console.log(matches);
+
+        return reply.status(200).send({
+            message: matches.length > 0 ? 'Success' : 'No matches found',
+            matches
+        });
+    } catch (err) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
 const start = async () => {
     try {
         await fastify.listen({ port: 3000 });
