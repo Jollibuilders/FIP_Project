@@ -47,10 +47,6 @@ const Matches = () => {
     useEffect(() => {
         getMatchesToDisplay();
     }, []);
-
-    useEffect(() => {
-        console.log(matches);
-    }, [matches]);
     
     return (
         <div className="flex flex-col items-center mt-20">
@@ -59,7 +55,25 @@ const Matches = () => {
                     <MatchesCard key={match.id} matchName={match.likedUser} date={match.date} />
                 ))
             ) : (
-                <p>No matches found.</p>
+                <div className="flex flex-col w-full justify-center items-center">
+                    <div className="text-3xl w-1/8 font-semibold mt-10 mb-6 border-b border-gray-300 py-2">
+                        <h1 className="text-center py-2">No Matches Found!</h1>
+                    </div>
+                    <div className="flex flex-row space-x-10">
+                        <Link 
+                            className="hover:scale-110 hover:bg-[#0A0F24]/90 transition-transform duration-200 ease-in-out active:scale-95 bg-[#0A0F24] text-white shadow-md shadow-gray-300 px-4 py-2 rounded-lg font-semibold text-sm" 
+                            to="/home"
+                        >
+                            Return Home
+                        </Link>
+                        <Link 
+                            className="hover:scale-110 hover:bg-[#0A0F24]/90 transition-transform duration-200 ease-in-out active:scale-95 bg-[#0A0F24] text-white shadow-md shadow-gray-300 px-4 py-2 rounded-lg font-semibold text-sm" 
+                            to="/match"
+                        >
+                            Get New Matches
+                        </Link>
+                    </div>
+                </div>
             )}
         </div>
     );

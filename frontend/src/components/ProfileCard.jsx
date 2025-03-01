@@ -231,7 +231,7 @@ const ProfileCard = () => {
                     <h1>No More Profiles!</h1>
                 </div>
                 <Link 
-                    className="hover:scale-110 transition-transform duration-200 ease-in-out active:scale-95 bg-gray-300 shadow-md shadow-gray-300 px-4 py-2 rounded-lg font-semibold text-sm" 
+                    className="hover:scale-110 hover:bg-[#0A0F24]/90 transition-transform duration-200 ease-in-out active:scale-95 bg-[#0A0F24] text-white shadow-md shadow-gray-300 px-4 py-2 rounded-lg font-semibold text-sm" 
                     to="/home"
                 >
                     Return Home
