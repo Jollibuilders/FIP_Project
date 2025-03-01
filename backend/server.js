@@ -66,13 +66,15 @@ fastify.get('/profiles/:id', async (request, reply) => {
             if(doc.id === id) { user = ({ id: doc.id, ...doc.data() }); }
         })
         if(!user) {
-            throw { message: "User not found." };
+            throw { status_code: 404, message: "User not found." };
         }
         else {
             return ({ user });
         }
     } catch (error) {
-        reply.status(404).send({ error: error.message });
+        const status_code = error.status_code || 500;
+        const message = error.message || "An error occurred.";
+        reply.status(status_code).send({ message });
     }
 });
 
