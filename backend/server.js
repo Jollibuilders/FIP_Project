@@ -55,6 +55,27 @@ fastify.get('/profiles', async (request, reply) => {
     }
 });
 
+// profiles endpoint for retrieving
+fastify.get('/profiles', async (request, reply) => {
+    try {
+        const { id } = request.params;
+        const snapshot = await db.collection('users').get();
+        let user = null;
+        snapshot.forEach(doc => {
+            if(doc.id === id) { user = ({ id: doc.id, ...doc.data() }); }
+        })
+        if(!user) {
+            throw { message: "User not found." };
+        }
+        else {
+            return ({ user });
+        }
+    } catch (error) {
+        reply.status(404).send({ error: error.message });
+    }
+});
+
+
 // like endpoint
 fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     try {
