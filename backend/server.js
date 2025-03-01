@@ -56,8 +56,9 @@ fastify.get('/profiles', async (request, reply) => {
 });
 
 // profiles endpoint for retrieving
-fastify.get('/profiles', async (request, reply) => {
+fastify.get('/profiles/:id', async (request, reply) => {
     try {
+        // retreive
         const { id } = request.params;
         const snapshot = await db.collection('users').get();
         let user = null;
