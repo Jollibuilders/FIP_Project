@@ -65,14 +65,13 @@ function App() {
           }
         />
         <Route
-          path="/FAQPage"
+          path="/faq"
           element={
             <ProtectedRoute>
               <FAQPage/>
             </ProtectedRoute>
           }
         />
-        
       </Route>
 
       {/* Fallback route */}
