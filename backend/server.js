@@ -55,6 +55,25 @@ fastify.get('/profiles', async (request, reply) => {
     }
 });
 
+fastify.get('/me', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const userId = request.user.uid
+        
+        const userReference = db.collection('users').doc(userId);
+        const doc = await userReference.get();
+
+        if (!doc.exists) {
+            return reply.status(404).send({ message: 'User does not exist.' });
+        }
+
+        return reply.status(200).send(doc.data());
+
+    } catch (error) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
 // like endpoint
 fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     try {
