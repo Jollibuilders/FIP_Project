@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ProfileSetup from './ProfileSetup';
 import NavigationBar from './components/NavigationBar';
 import Match from './pages/Match';
+import FAQPage from './pages/FAQPage';
 import './App.css';
 
 // Layout for pages that should include the NavigationBar.
@@ -63,6 +64,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/FAQPage"
+          element={
+            <ProtectedRoute>
+              <FAQPage/>
+            </ProtectedRoute>
+          }
+        />
+        
       </Route>
 
       {/* Fallback route */}
