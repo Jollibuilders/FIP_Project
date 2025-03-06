@@ -59,7 +59,7 @@ fastify.get('/profiles', async (request, reply) => {
 fastify.get('/profiles/:id', async (request, reply) => {
     try {
         // retreive id from params
-        const { id } = request.params;
+        const { id } = request.user.uid;
         // get snapshot of users
         const snapshot = await db.collection('users').get();
 
@@ -73,7 +73,7 @@ fastify.get('/profiles/:id', async (request, reply) => {
         if(!user) { throw { status_code: 404, message: "User not found." }; }
         
         // otherwise, return the user
-        else { return { user }; }
+        else { return reply.status(200).send({ user }); }
     } catch (error) {
         // if no status code found, send 500
         const status_code = error.status_code || 500;
