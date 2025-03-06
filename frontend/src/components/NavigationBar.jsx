@@ -45,6 +45,10 @@ const NavigationBar = () => {
             Job Connector
           </h1>
         </Link>
+        <div className='flex flex-row items-center space-x-10'>
+        <Link to="/faq" className="text-base sm:text-md font-bold text-gray-900">
+        FAQ
+        </Link>
         {/* profile to click on to cause drop down */}
         <div className="relative" ref={dropdownRef}>
           <img
@@ -83,6 +87,7 @@ const NavigationBar = () => {
             </div>
         )}
         </div>
+      </div>
       </div>
     </nav>
   );
