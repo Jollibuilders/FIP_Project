@@ -8,8 +8,10 @@ import BasicInfo from "./components/profile_setup/BasicInfo.jsx";
 import ProfessionalDetails from "./components/profile_setup/ProfessionalDetails.jsx";
 import JobPreferences from "./components/profile_setup/JobPreferences.jsx";
 import AboutMe from "./components/profile_setup/AboutMe.jsx";
+import RecruiterDetails from "./components/profile_setup/RecruiterDetails.jsx";
 
 const ProfileSetup = () => {
+  const [selectedRole, setSelectedRole] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -19,6 +21,7 @@ const ProfileSetup = () => {
   const auth = getAuth();
 
   const [formData, setFormData] = useState({
+    // shared fields
     fullName: '',
     email: '',
     location: '',
@@ -26,21 +29,56 @@ const ProfileSetup = () => {
     currentJobTitle: '',
     yearsOfExperience: 0,
     keySkills: [],
+    aboutMe: '',
+
+    // job seeker fields
     desiredJobTitle: '',
     employmentType: '',
     desiredLocation: '',
     resume: null,
-    aboutMe: ''
+
+    // recruiter fields
+    companyName: '',
+    companySize: '',
+    companyLocation: [],
+    companyEmploymentType: [],
+    rolesHiringFor: [],
+    contactEmail: '',
   })
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setCurrentUserUID(user.uid);
+        fetchUserRole();
       }
     });
     return () => unsubscribe();
   }, [auth]);
+
+  const fetchUserRole = async() => {
+    const user = auth.currentUser;
+    if (!user) {
+      setError('No authenticated user found.');
+      return;
+    }
+
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setSelectedRole(userData.role);
+      } else {
+        setError('No user data found.');
+        return null;
+      }
+    } catch (err) {
+      setError('Failed to fetch user role. Please try again.');
+      console.error('Error fetching user role:', err);
+    }
+  }
 
   const handleLogout = async () => {
     try {
@@ -76,7 +114,7 @@ const ProfileSetup = () => {
       setLoading(true);
       setError('');
 
-      await updateDoc(doc(db, 'users', currentUserUID), {
+      const dataToSubmit = {
         fullName: formData.fullName,
         email: formData.email,
         location: formData.location,
@@ -84,12 +122,24 @@ const ProfileSetup = () => {
         currentJobTitle: formData.currentJobTitle,
         yearsOfExperience: formData.yearsOfExperience,
         keySkills: formData.keySkills,
-        desiredJobTitle: formData.desiredJobTitle,
-        employmentType: formData.employmentType,
-        desiredLocation: formData.desiredLocation,
-        resume: formData.resume,
         aboutMe: formData.aboutMe
-      });
+      };
+
+      if (selectedRole === 'Job Seeker') {
+        dataToSubmit.desiredJobTitle = formData.desiredJobTitle;
+        dataToSubmit.employmentType = formData.employmentType;
+        dataToSubmit.desiredLocation = formData.desiredLocation;
+        dataToSubmit.resume = formData.resume;
+      } else if (selectedRole === 'Recruiter') {
+        dataToSubmit.companyName = formData.companyName;
+        dataToSubmit.companySize = formData.companySize;
+        dataToSubmit.companyLocation = formData.companyLocation;
+        dataToSubmit.companyEmploymentType = formData.companyEmploymentType;
+        dataToSubmit.rolesHiringFor = formData.rolesHiringFor;
+        dataToSubmit.contactEmail = formData.contactEmail;
+      }
+
+      await updateDoc(doc(db, 'users', currentUserUID), dataToSubmit);
 
       const docRef = doc(db, 'users', currentUserUID);
       const userDoc = await getDoc(docRef);
@@ -110,11 +160,18 @@ const ProfileSetup = () => {
     }
   };
 
-  const steps = [
-    <BasicInfo formData={formData} setFormData={setFormData} />,
+  const jobSeekerSteps = [
+    <BasicInfo formData={formData} setFormData={setFormData} role={selectedRole} />,
     <ProfessionalDetails formData={formData} setFormData={setFormData} />,
     <JobPreferences formData={formData} setFormData={setFormData} />,
-    <AboutMe formData={formData} setFormData={setFormData} />
+    <AboutMe formData={formData} setFormData={setFormData} role={selectedRole} />
+  ]
+
+  const recruiterSteps = [
+    <BasicInfo formData={formData} setFormData={setFormData} role={selectedRole} />,
+    <ProfessionalDetails formData={formData} setFormData={setFormData} />,
+    <RecruiterDetails formData={formData} setFormData={setFormData} />,
+    <AboutMe formData={formData} setFormData={setFormData} role={selectedRole} />
   ]
 
   return (
@@ -138,7 +195,7 @@ const ProfileSetup = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Render the current step */}
-            {steps[currentStep]}
+            {selectedRole === "Job Seeker" ? jobSeekerSteps[currentStep] : recruiterSteps[currentStep]}
 
             <div className="flex justify-between mt-4">
               {currentStep > 0 && (
@@ -150,7 +207,7 @@ const ProfileSetup = () => {
                   Previous
                 </button>
               )}
-              {currentStep < steps.length - 1 ? (
+              {currentStep < (selectedRole === "Job Seeker" ? jobSeekerSteps.length : recruiterSteps.length) - 1 ? (
                 <button
                   type="button"
                   onClick={(e) => (nextStep(e))}
