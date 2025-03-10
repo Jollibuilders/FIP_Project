@@ -58,7 +58,7 @@ fastify.get('/profiles', async (request, reply) => {
 fastify.get('/me', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     try {
         const userId = request.user.uid
-        
+
         const userReference = db.collection('users').doc(userId);
         const doc = await userReference.get();
 
@@ -87,10 +87,10 @@ fastify.get('/profiles/:id', async (request, reply) => {
         snapshot.forEach(doc => {
             if(doc.id === id) { user = ({ id: doc.id, ...doc.data() }); }
         })
-        
+
         // if no user found, throw error
         if(!user) { throw { status_code: 404, message: "User not found." }; }
-        
+
         // otherwise, return the user
         else { return reply.status(200).send({ user }); }
     } catch (error) {
@@ -214,6 +214,43 @@ fastify.get('/api/getLikes', { preHandler: [fastify.authenticate] }, async (requ
             likes: likes
         });
 
+    } catch (err) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
+//get matches
+fastify.get('/api/getMatches', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const fromUserId = request.user.uid;
+
+        const matchesRef = db.collection('matches');
+        const matches = [];
+
+        const matchesSnapshot = await matchesRef
+            .where('user1', '==', fromUserId)
+            .get();
+
+        const matchesSnapshot2 = await matchesRef
+            .where('user2', '==', fromUserId)
+            .get();
+        //could do one get and just check later if user 1 or 2 is person
+        
+        matchesSnapshot.forEach(doc => {
+            matches.push({ id: doc.id, likedUser: doc.data().user2name, date: doc.data().timestamp });
+        });
+
+        matchesSnapshot2.forEach(doc => {
+            matches.push({ id: doc.id, likedUser: doc.data().user1name, date: doc.data().timestamp });
+        });
+
+        console.log(matches);
+
+        return reply.status(200).send({
+            message: matches.length > 0 ? 'Matches found' : 'No matches found',
+            matches
+        });
     } catch (err) {
         fastify.log.error(err);
         return reply.status(400).send({ message: err.message });
