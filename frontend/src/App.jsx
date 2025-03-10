@@ -9,6 +9,7 @@ import ProfileSetup from './ProfileSetup';
 import NavigationBar from './components/NavigationBar';
 import Match from './pages/Match';
 import Matches from './pages/Matches';
+import FAQPage from './pages/FAQPage';
 import './App.css';
 
 // Layout for pages that should include the NavigationBar.
@@ -69,6 +70,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ProfileSetup/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/faq"
+          element={
+            <ProtectedRoute>
+              <FAQPage/>
             </ProtectedRoute>
           }
         />
