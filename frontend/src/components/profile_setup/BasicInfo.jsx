@@ -1,7 +1,7 @@
 import React from 'react';
 import { HiOutlineUser } from 'react-icons/hi';
 
-const BasicInfo = ({ formData, setFormData }) => {
+const BasicInfo = ({ formData, setFormData, role }) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -45,7 +45,7 @@ const BasicInfo = ({ formData, setFormData }) => {
 
       <div className="mb-4">
         <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
-          Location (City, Country)
+          {role === "Job Seeker" ? "Location (City, Country)" : "Company Location"}
         </label>
         <input
           type="text"
@@ -54,7 +54,7 @@ const BasicInfo = ({ formData, setFormData }) => {
           value={formData.location}
           onChange={handleChange}
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
-          placeholder="Enter your city and country"
+          placeholder={role === "Job Seeker" ? "Enter your city and country" : "Enter your company's city and country"}
         />
       </div>
     </div>
