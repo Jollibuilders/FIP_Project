@@ -55,6 +55,55 @@ fastify.get('/profiles', async (request, reply) => {
     }
 });
 
+fastify.get('/me', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const userId = request.user.uid
+
+        const userReference = db.collection('users').doc(userId);
+        const doc = await userReference.get();
+
+        if (!doc.exists) {
+            return reply.status(404).send({ message: 'User does not exist.' });
+        }
+
+        return reply.status(200).send(doc.data());
+
+    } catch (error) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
+// profiles endpoint for retrieving
+fastify.get('/profiles/:id', async (request, reply) => {
+    try {
+        // retreive id from params
+        const { id } = request.user.uid;
+        // get snapshot of users
+        const snapshot = await db.collection('users').get();
+
+        // find user with given id
+        let user = null;
+        snapshot.forEach(doc => {
+            if(doc.id === id) { user = ({ id: doc.id, ...doc.data() }); }
+        })
+
+        // if no user found, throw error
+        if(!user) { throw { status_code: 404, message: "User not found." }; }
+
+        // otherwise, return the user
+        else { return reply.status(200).send({ user }); }
+    } catch (error) {
+        // if no status code found, send 500
+        const status_code = error.status_code || 500;
+
+        // if no message, send error occurred
+        const message = error.message || "An error occurred.";
+        reply.status(status_code).send({ message });
+
+    }
+});
+
 // like endpoint
 fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     try {
