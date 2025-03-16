@@ -6,16 +6,12 @@
 <b>Authentication:</b> Not required
 <br><br>
 <b>Request Example (Axios)</b>
-```
+```javascript
 import axios from 'axios';
 
 const getProfiles = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/profiles`,{
-      headers: {
-        Authorization: `Bearer ${token}`,
-        
-      },});
+    const response = await axios.get(`http://localhost:3000/profiles`);
     console.log(response.data);
   } catch (error) {
     console.error(error.response ? error.response.data : error.message);
@@ -32,12 +28,15 @@ getProfiles();
 <b>Authentication:</b> Required
 <br><br>
 <b>Request Example (Axios)</b>
-```
+```javascript
 import axios from 'axios';
 
 const getCurrentUser = async (userId, token) => {
   try {
-    const response = await axios.get(`http://localhost:3000/me`, );
+    const response = await axios.get(`http://localhost:3000/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },});
     console.log(response.data);
   } catch (error) {
     console.error(error.response ? error.response.data : error.message);
@@ -45,5 +44,5 @@ const getCurrentUser = async (userId, token) => {
 };
 
 // Example usage
-getProfiles();
+getCurrentUser(userId, token);
 ```
