@@ -47,6 +47,32 @@ const ProfileSetup = () => {
   })
 
   useEffect(() => {
+    const fetchProfileData = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const userRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(userRef);
+          if (docSnap.exists()) {
+            setFormData(prevState => ({
+              ...prevState,
+              ...docSnap.data()
+            }));
+            if (docSnap.data().role) {
+              setSelectedRole(docSnap.data().role);
+            }
+          }
+        } catch (err) {
+          setError('Failed to fetch profile data.');
+          console.error('Error fetching profile data:', err);
+        }
+      }
+    };
+
+    fetchProfileData();
+  }, [])
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setCurrentUserUID(user.uid);
@@ -97,11 +123,46 @@ const ProfileSetup = () => {
     setCurrentStep((prev) => prev - 1);
   }
 
+  const validateBasicPersonalInfo = (data) => {
+    if (!data.fullName.trim()) return "Full Name is required.";
+    if (!data.email.trim()) return "Email is required.";
+    if (!data.location.trim()) return "Location is required.";
+    if (!data.currentJobTitle.trim()) return "Current Job Title is required.";
+    if (data.yearsOfExperience === null || data.yearsOfExperience === "") return "Years Of Experience is required.";
+    if (!data.keySkills || data.keySkills.length === 0) return "Key Skills are required.";
+    if (!data.aboutMe.trim()) return "About Me is required.";
+    return "";
+  };
+
+  const validateRoleSpecificFields = (data, role) => {
+    if (role === "Job Seeker") {
+      if (!data.desiredJobTitle.trim()) return "Desired Job Title is required.";
+      if (!data.employmentType.trim()) return "Employment Type is required.";
+      if (!data.desiredLocation.trim()) return "Desired Location is required.";
+    //   if (!data.resume) return "Resume is required."; wasn't sure if i should leave this since the functionality isn't there yet
+    } else if (role === "Recruiter") {
+      if (!data.companyName.trim()) return "Company Name is required.";
+      if (!data.companySize) return "Company Size is required.";
+      if (!data.companyLocation || data.companyLocation.length === 0) return "At least one Company Location Type is required.";
+      if (!data.companyEmploymentType || data.companyEmploymentType.length === 0) return "At least one Company Employment Type is required.";
+      if (!data.rolesHiringFor || data.rolesHiringFor.length === 0) return "At least one Role Hiring For is required.";
+      if (!data.contactEmail.trim()) return "Contact Email is required.";
+    }
+    return "";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.fullName.trim()) {
-      setError('Full Name is required.');
+    const basicInfoError = validateBasicPersonalInfo(formData);
+    if (basicInfoError) {
+      setError(basicInfoError);
+      return;
+    }
+
+    const roleError = validateRoleSpecificFields(formData, selectedRole);
+    if (roleError) {
+      setError(roleError);
       return;
     }
 
