@@ -55,6 +55,55 @@ fastify.get('/profiles', async (request, reply) => {
     }
 });
 
+fastify.get('/me', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const userId = request.user.uid
+
+        const userReference = db.collection('users').doc(userId);
+        const doc = await userReference.get();
+
+        if (!doc.exists) {
+            return reply.status(404).send({ message: 'User does not exist.' });
+        }
+
+        return reply.status(200).send(doc.data());
+
+    } catch (error) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
+// profiles endpoint for retrieving
+fastify.get('/profiles/:id', async (request, reply) => {
+    try {
+        // retreive id from params
+        const { id } = request.user.uid;
+        // get snapshot of users
+        const snapshot = await db.collection('users').get();
+
+        // find user with given id
+        let user = null;
+        snapshot.forEach(doc => {
+            if(doc.id === id) { user = ({ id: doc.id, ...doc.data() }); }
+        })
+
+        // if no user found, throw error
+        if(!user) { throw { status_code: 404, message: "User not found." }; }
+
+        // otherwise, return the user
+        else { return reply.status(200).send({ user }); }
+    } catch (error) {
+        // if no status code found, send 500
+        const status_code = error.status_code || 500;
+
+        // if no message, send error occurred
+        const message = error.message || "An error occurred.";
+        reply.status(status_code).send({ message });
+
+    }
+});
+
 // profiles endpoint for retrieving
 fastify.get('/profiles/:id', async (request, reply) => {
     try {
@@ -166,6 +215,67 @@ fastify.post('/api/unlike',  { preHandler: [fastify.authenticate] }, async (requ
         // catch error and report
         fastify.log.error(err);
         reply.status(400).send({ message: err.message })
+    }
+});
+
+//get liked profiles
+fastify.get('/api/getLikes', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const fromUserId = request.user.uid;
+
+        const userReference = db.collection('users').doc(fromUserId);
+        const doc = await userReference.get();
+
+        if (!doc.exists) {
+            return reply.status(404).send({ message: 'User does not exist.' });
+        }
+
+        const likes = doc.data().likes || [];
+        return reply.status(200).send({
+            message: likes.length > 0 ? 'Success' : 'No likes',
+            likes: likes
+        });
+
+    } catch (err) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
+//get matches
+fastify.get('/api/getMatches', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const fromUserId = request.user.uid;
+
+        const matchesRef = db.collection('matches');
+        const matches = [];
+
+        const matchesSnapshot = await matchesRef
+            .where('user1', '==', fromUserId)
+            .get();
+
+        const matchesSnapshot2 = await matchesRef
+            .where('user2', '==', fromUserId)
+            .get();
+        //could do one get and just check later if user 1 or 2 is person
+        
+        matchesSnapshot.forEach(doc => {
+            matches.push({ id: doc.id, likedUser: doc.data().user2name, date: doc.data().timestamp });
+        });
+
+        matchesSnapshot2.forEach(doc => {
+            matches.push({ id: doc.id, likedUser: doc.data().user1name, date: doc.data().timestamp });
+        });
+
+        console.log(matches);
+
+        return reply.status(200).send({
+            message: matches.length > 0 ? 'Matches found' : 'No matches found',
+            matches
+        });
+    } catch (err) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
     }
 });
 

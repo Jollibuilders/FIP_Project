@@ -13,7 +13,12 @@ const ProfileCard = () => {
     const [currentIdx, setCurrentIdx] = useState(0);
     const [showMatchToast, setShowMatchToast] = useState(false);
     const [toastProgress, setToastProgress] = useState(100);
+<<<<<<< HEAD
     const [moreProfiles, setMoreProfiles] = useState(true);
+=======
+    const [moreProfiles, setMoreProfiles] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+>>>>>>> 8d752d43d2946f19978b4411d009ff2a4f240105
 
     const jobStatusColors = {
         "Internship": 'bg-green-300',
@@ -30,7 +35,7 @@ const ProfileCard = () => {
             setMoreProfiles(true);
             return 0;
         });
-    }
+    };
     
     const handleLike = async () => {
         const auth = getAuth();
@@ -51,45 +56,101 @@ const ProfileCard = () => {
                 },
                 body: JSON.stringify({ toUserId: displayedProfiles[currentIdx].id }), 
             });
-            console.log(response);
-
             const data = await response.json();
             if (response.ok) {
-                if(data.message === "Match detected") {
+                if (data.message === "Match detected") {
                     setShowMatchToast(true);
                     setToastProgress(100);
                     setTimeout(() => setShowMatchToast(false), 3000);
+<<<<<<< HEAD
+=======
+                } else if (data.message === "Like recorded") {
+                    setCurrentIdx((prevIdx) => {
+                        if (prevIdx + 1 < displayedProfiles.length) {
+                            return prevIdx + 1;
+                        }
+                        setMoreProfiles(false);
+                        return 0;
+                    });
+>>>>>>> 8d752d43d2946f19978b4411d009ff2a4f240105
                 }
                 console.log("Like successful:", data);
-                
             } else {
                 console.error("Like failed:", data.message);
             }
         } catch (error) {
             console.error("Error liking user:", error);
         }
-    }
+    };
     
     const getUsersToDisplay = async () => {
+        setIsLoading(true);
         try {
             const querySnapshot = await getDocs(collection(db, "test-users"));
             const usersList = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
+<<<<<<< HEAD
             setDisplayedProfiles(usersList);
         } catch (error) {
             console.error("Error fetching profiles:", error);
         } finally {
             
+=======
+            console.log(usersList);
+
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (!user) {
+                console.error("User not authenticated.");
+                setIsLoading(false);
+                return;
+            }
+
+            const token = await user.getIdToken();
+            const response = await fetch("http://localhost:3000/api/getLikes", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            console.log(data);
+
+            if (response.ok) {
+                const likedUserIds = data.likes;
+                const filteredUsers = usersList.filter(user => !likedUserIds.includes(user.id));
+                console.log(filteredUsers);
+
+                setAlreadyLikedProfiles(likedUserIds);
+                setDisplayedProfiles(filteredUsers);
+                setMoreProfiles(filteredUsers.length > 0);
+            } else {
+                setAlreadyLikedProfiles([]);
+                setDisplayedProfiles([]);
+                setMoreProfiles(false);
+            }
+        } catch (error) {
+            console.error("Error fetching profiles:", error);
+            setMoreProfiles(false);
+        } finally {
+            setIsLoading(false);
+>>>>>>> 8d752d43d2946f19978b4411d009ff2a4f240105
         }
-    }
+    };
     
     useEffect(() => {
         getUsersToDisplay();
+<<<<<<< HEAD
         setMoreProfiles(false);
         console.log(displayedProfiles);
     }, [])
+=======
+    }, []);
+>>>>>>> 8d752d43d2946f19978b4411d009ff2a4f240105
 
     useEffect(() => {
         if (showMatchToast) {
@@ -102,7 +163,6 @@ const ProfileCard = () => {
                     return prev - 1;
                 });
             }, 30); 
-
             return () => clearInterval(interval);
         }
         if (!showMatchToast) {
@@ -116,9 +176,10 @@ const ProfileCard = () => {
         }
     }, [showMatchToast]);
 
-    //add grad year
     return (
-        moreProfiles ? (
+        isLoading ? (
+            <h1 className="font-semibold text-2xl">Loading Profiles...</h1>
+        ) : moreProfiles ? (
             <div className="flex flex-col w-full items-center justify-center">
                 {showMatchToast && (
                     <div className="fixed top-10 bg-green-500 text-white w-auto px-4 py-2 rounded shadow-lg shadow-gray-300 z-20">
@@ -139,7 +200,7 @@ const ProfileCard = () => {
                     </div>
                 )}
                 <div className="bg-white shadow-md shadow-gray-300 p-10 rounded-lg m-10 sm:w-full sm:h-auto md:w-1/4 md:h-auto">
-                    <div className="flex flex-col text-left justify-star items-start w-full space-x-2">
+                    <div className="flex flex-col text-left justify-start items-start w-full space-x-2">
                         <div className="flex flex-row justify-center items-center">
                             <img src={image} className="h-50 rounded-full mr-8"/>
                             <div className="">
@@ -175,7 +236,6 @@ const ProfileCard = () => {
                             </span>
                         </div>
                     </div>
-                    
                     <div className="flex flex-row justify-between w-full items-center mt-6">
                         <SkipButton onClick={handleSkip} />
                         <LikeButton onClick={handleLike} />
@@ -188,7 +248,7 @@ const ProfileCard = () => {
                     <h1>No More Profiles!</h1>
                 </div>
                 <Link 
-                    className="hover:scale-110 transition-transform duration-200 ease-in-out active:scale-95 bg-gray-300 shadow-md shadow-gray-300 px-4 py-2 rounded-lg font-semibold text-sm" 
+                    className="hover:scale-110 hover:bg-[#0A0F24]/90 transition-transform duration-200 ease-in-out active:scale-95 bg-[#0A0F24] text-white shadow-md shadow-gray-300 px-4 py-2 rounded-lg font-semibold text-sm" 
                     to="/home"
                 >
                     Return Home
