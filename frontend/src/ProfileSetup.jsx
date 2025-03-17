@@ -25,7 +25,6 @@ const ProfileSetup = () => {
     fullName: '',
     email: '',
     location: '',
-    school: '',
     currentJobTitle: '',
     yearsOfExperience: 0,
     keySkills: [],
@@ -36,6 +35,7 @@ const ProfileSetup = () => {
     employmentType: '',
     desiredLocation: '',
     resume: null,
+    school: '',
 
     // recruiter fields
     companyName: '',
@@ -118,7 +118,6 @@ const ProfileSetup = () => {
         fullName: formData.fullName,
         email: formData.email,
         location: formData.location,
-        school: formData.school,
         currentJobTitle: formData.currentJobTitle,
         yearsOfExperience: formData.yearsOfExperience,
         keySkills: formData.keySkills,
@@ -130,6 +129,7 @@ const ProfileSetup = () => {
         dataToSubmit.employmentType = formData.employmentType;
         dataToSubmit.desiredLocation = formData.desiredLocation;
         dataToSubmit.resume = formData.resume;
+        dataToSubmit.school = formData.school;
       } else if (selectedRole === 'Recruiter') {
         dataToSubmit.companyName = formData.companyName;
         dataToSubmit.companySize = formData.companySize;
@@ -162,14 +162,14 @@ const ProfileSetup = () => {
 
   const jobSeekerSteps = [
     <BasicInfo formData={formData} setFormData={setFormData} role={selectedRole} />,
-    <ProfessionalDetails formData={formData} setFormData={setFormData} />,
+    <ProfessionalDetails formData={formData} setFormData={setFormData} role={selectedRole} />,
     <JobPreferences formData={formData} setFormData={setFormData} />,
     <AboutMe formData={formData} setFormData={setFormData} role={selectedRole} />
   ]
 
   const recruiterSteps = [
     <BasicInfo formData={formData} setFormData={setFormData} role={selectedRole} />,
-    <ProfessionalDetails formData={formData} setFormData={setFormData} />,
+    <ProfessionalDetails formData={formData} setFormData={setFormData} role={selectedRole} />,
     <RecruiterDetails formData={formData} setFormData={setFormData} />,
     <AboutMe formData={formData} setFormData={setFormData} role={selectedRole} />
   ]
