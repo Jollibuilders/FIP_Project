@@ -1,13 +1,14 @@
 import React from 'react';
 import SkillTags from "../SkillTags.jsx";
 
-const ProfessionalDetails = ({ formData, setFormData }) => {
+const ProfessionalDetails = ({ formData, setFormData, role }) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
     <div>
+      {role === "Job Seeker" && (
       <div className="mb-4">
         <label htmlFor="school" className="block text-sm font-medium text-gray-700 mb-1">
           School
@@ -22,6 +23,7 @@ const ProfessionalDetails = ({ formData, setFormData }) => {
           placeholder="Enter your school"
         />
       </div>
+      )}
 
       <div className="mb-4">
         <label htmlFor="currentJobTitle" className="block text-sm font-medium text-gray-700 mb-1">
