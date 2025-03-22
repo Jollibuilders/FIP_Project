@@ -80,7 +80,9 @@ const ProfileCard = () => {
     const getUsersToDisplay = async () => {
         setIsLoading(true);
         try {
-            const querySnapshot = await getDocs(collection(db, "test-users"));
+            const querySnapshot = await getDocs(collection(db, "users"));
+            //switched to users from test-users
+
             const usersList = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
@@ -185,7 +187,7 @@ const ProfileCard = () => {
                             <img src={image} className="h-50 rounded-full mr-8"/>
                             <div className="">
                                 <h1 className="font-bold text-2xl">
-                                    {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].name : "Loading..."}
+                                    {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].fullName : "Loading..."}
                                 </h1>
                                 <div className="flex space-x-2 mt-1 text-gray-400">
                                     <span className="font-semibold text-sm">
@@ -203,9 +205,9 @@ const ProfileCard = () => {
                             </div>
                         </div>
                         <div className="flex flex-wrap flex-1 items-start">
-                            {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].skills.map((item, index) => (
+                            {displayedProfiles[currentIdx] && displayedProfiles[currentIdx].skills ? displayedProfiles[currentIdx].skills.map((item, index) => (
                                 <SkillIcon key={index} text={item}/>
-                            )) : "Loading..."}
+                            )) : <></> }
                         </div>
                         <div className="mt-10">
                             <h1 className="font-semibold text-lg mb-2">

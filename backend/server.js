@@ -117,7 +117,7 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
         const userReference = db.collection('users').doc(fromUserId);
         const doc = await userReference.get();
 
-        const toUserReference = db.collection('test-users').doc(toUserId); //currently from test-users
+        const toUserReference = db.collection('users').doc(toUserId); //switched to users
         const toDoc = await toUserReference.get();
 
         if (!doc.exists) {
