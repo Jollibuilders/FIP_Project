@@ -139,7 +139,7 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
 
         const toLikes = toDoc.data().likes || [];
         const fromUserName = doc.data().fullName;
-        const toUserName = toDoc.data().name;
+        const toUserName = toDoc.data().fullName; //switched from name to fullName
         console.log(toUserName);
         if (toLikes.includes(fromUserId)) {
             const matchRef = db.collection('matches').doc();
