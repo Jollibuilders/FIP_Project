@@ -12,6 +12,7 @@ const ProfileCard = () => {
     const [displayedProfiles, setDisplayedProfiles] = useState([]);
     const [alreadyLikedProfiles, setAlreadyLikedProfiles] = useState([]);
     const [personsRole, setPersonsRole] = useState("");
+    const [personsId, setPersonsId] = useState("");
     const [currentIdx, setCurrentIdx] = useState(0);
     const [showMatchToast, setShowMatchToast] = useState(false);
     const [toastProgress, setToastProgress] = useState(100);
@@ -78,9 +79,10 @@ const ProfileCard = () => {
         }
     };
 
-    const getCurrentPerson = async() => {
+    const getCurrentPerson = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
+        setPersonsId(user.uid);
 
         if (!user) {
             console.error("User not authenticated.");
@@ -112,14 +114,16 @@ const ProfileCard = () => {
     
     const getUsersToDisplay = async () => {
         setIsLoading(true);
+        await getCurrentPerson();
         try {
             const querySnapshot = await getDocs(collection(db, "users"));
             //switched to users from test-users
-
-            const usersList = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
+            const usersList = querySnapshot.docs.filter(doc => doc.id !== personsId && doc.data().role !== personsRole)
+                .map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })
+            );
             console.log(usersList);
 
             const auth = getAuth();
@@ -165,8 +169,13 @@ const ProfileCard = () => {
     
     useEffect(() => {
         getCurrentPerson();
-        getUsersToDisplay();
     }, []);
+
+    useEffect(() => {
+        if (personsId && personsRole) {
+            getUsersToDisplay();
+        }
+    }, [personsId, personsRole])
 
     useEffect(() => {
         if (showMatchToast) {
