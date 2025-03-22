@@ -11,6 +11,7 @@ import SkillIcon from './SkillIcon.jsx';
 const ProfileCard = () => {
     const [displayedProfiles, setDisplayedProfiles] = useState([]);
     const [alreadyLikedProfiles, setAlreadyLikedProfiles] = useState([]);
+    const [personsRole, setPersonsRole] = useState("");
     const [currentIdx, setCurrentIdx] = useState(0);
     const [showMatchToast, setShowMatchToast] = useState(false);
     const [toastProgress, setToastProgress] = useState(100);
@@ -76,6 +77,38 @@ const ProfileCard = () => {
             console.error("Error liking user:", error);
         }
     };
+
+    const getCurrentPerson = async() => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (!user) {
+            console.error("User not authenticated.");
+            return;
+        }
+
+        try {
+            const token = await user.getIdToken();
+            const response = await fetch("http://localhost:3000/me", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            if (response.ok) {
+                if (data.message !== "User does not exist") {
+                    setPersonsRole(data.role);
+                } 
+                console.log("Getting user successful:", data);
+            } else {
+                console.error("Getting user failed:", data.message);
+            }
+        } catch (error) {
+            console.error("Getting user failed:", error);
+        }
+    }
     
     const getUsersToDisplay = async () => {
         setIsLoading(true);
@@ -131,6 +164,7 @@ const ProfileCard = () => {
     };
     
     useEffect(() => {
+        getCurrentPerson();
         getUsersToDisplay();
     }, []);
 
