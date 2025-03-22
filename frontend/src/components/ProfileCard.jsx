@@ -192,20 +192,22 @@ const ProfileCard = () => {
                                 <div className="flex space-x-2 mt-1 text-gray-400">
                                     <span className="font-semibold text-sm">
                                         {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].grad : "Loading..."}
+                                        {/* Missing from user table */}
                                     </span>
                                     <span className="font-semibold text-sm">
                                         {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].age : "Loading..."}
+                                        {/* Missing from user table */}
                                     </span>
                                 </div>
-                                <div className={`inline-block rounded-md px-3 py-1 text-sm font-semibold mt-6 ${jobStatusColors[displayedProfiles[currentIdx]?.job_status]}`}>
+                                <div className={`inline-block rounded-md px-3 py-1 text-sm font-semibold mt-6 ${jobStatusColors[displayedProfiles[currentIdx]?.employmentType]}`}>
                                     <span className="text-gray-700">
-                                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].job_status : "Loading..."}
+                                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].employmentType : "Loading..."}
                                     </span>
                                 </div>
                             </div>
                         </div>
                         <div className="flex flex-wrap flex-1 items-start">
-                            {displayedProfiles[currentIdx] && displayedProfiles[currentIdx].skills ? displayedProfiles[currentIdx].skills.map((item, index) => (
+                            {displayedProfiles[currentIdx] && displayedProfiles[currentIdx].keySkills ? displayedProfiles[currentIdx].keySkills.map((item, index) => (
                                 <SkillIcon key={index} text={item}/>
                             )) : <></> }
                         </div>
@@ -214,7 +216,7 @@ const ProfileCard = () => {
                                 About Me
                             </h1>
                             <span className="font-[500] text-gray-600">
-                                {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].description : "Loading..."}
+                                {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].aboutMe : "Loading..."}
                             </span>
                         </div>
                     </div>
