@@ -208,7 +208,7 @@ const ProfileCard = () => {
             <div className="flex flex-col w-full items-center justify-center">
                 {showMatchToast && (
                     <div className="fixed top-10 bg-green-500 text-white w-auto px-4 py-2 rounded shadow-lg shadow-gray-300 z-20">
-                        Match with {displayedProfiles[currentIdx].name}!
+                        Match with {displayedProfiles[currentIdx].fullName}!
                         <button
                             className="ml-2 text-sm text-white font-bold"
                             onClick={() => setShowMatchToast(false)}
