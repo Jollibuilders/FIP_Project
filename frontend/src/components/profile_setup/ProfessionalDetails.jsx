@@ -10,6 +10,7 @@ const ProfessionalDetails = ({ formData, setFormData }) => {
     <div>
       <div className="mb-4">
         <label htmlFor="school" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           School
         </label>
         <input
@@ -18,6 +19,7 @@ const ProfessionalDetails = ({ formData, setFormData }) => {
           id="school"
           value={formData.school}
           onChange={handleChange}
+          required
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder="Enter your school"
         />
@@ -25,6 +27,7 @@ const ProfessionalDetails = ({ formData, setFormData }) => {
 
       <div className="mb-4">
         <label htmlFor="currentJobTitle" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Current Job Title
         </label>
         <input
@@ -33,6 +36,7 @@ const ProfessionalDetails = ({ formData, setFormData }) => {
           id="currentJobTitle"
           value={formData.currentJobTitle}
           onChange={handleChange}
+          required
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder="Enter your current job title"
         />
@@ -40,6 +44,7 @@ const ProfessionalDetails = ({ formData, setFormData }) => {
 
       <div className="mb-4">
         <label htmlFor="yearsOfExperience" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Years of Experience
         </label>
         <input
@@ -54,6 +59,7 @@ const ProfessionalDetails = ({ formData, setFormData }) => {
               yearsOfExperience: value === "" ? "" : Math.max(0, parseInt(value, 10) || 0) 
             });
           }}
+          required
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder="Enter your amount of experience"
         />

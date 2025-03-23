@@ -10,6 +10,7 @@ const BasicInfo = ({ formData, setFormData, role }) => {
     <div>
       <div className="mb-4">
         <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Full Name
         </label>
         <div className="relative">
@@ -24,12 +25,14 @@ const BasicInfo = ({ formData, setFormData, role }) => {
             onChange={handleChange}
             className="pl-10 w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors"
             placeholder="Enter your full name"
+            required
           />
         </div>
       </div>
 
       <div className="mb-4">
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Email Address
         </label>
         <input
@@ -40,11 +43,13 @@ const BasicInfo = ({ formData, setFormData, role }) => {
           onChange={handleChange}
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder="Enter your email address"
+          required
         />
       </div>
 
       <div className="mb-4">
         <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           {role === "Job Seeker" ? "Location (City, Country)" : "Company Location"}
         </label>
         <input
@@ -55,6 +60,7 @@ const BasicInfo = ({ formData, setFormData, role }) => {
           onChange={handleChange}
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder={role === "Job Seeker" ? "Enter your city and country" : "Enter your company's city and country"}
+          required
         />
       </div>
     </div>

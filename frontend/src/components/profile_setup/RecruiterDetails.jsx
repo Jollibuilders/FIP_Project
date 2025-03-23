@@ -43,6 +43,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
     <div>
       <div className="mb-4">
         <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Company Name
         </label>
         <input
@@ -51,6 +52,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
           id="companyName"
           value={formData.companyName}
           onChange={handleChange}
+          required
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder="Enter your company's name"
         />
@@ -58,6 +60,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
 
       <div className="mb-4">
         <label htmlFor="companySize" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Company Size
         </label>
         <select
@@ -65,6 +68,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
           id="companySize"
           value={formData.companySize}
           onChange={handleChange}
+          required
           className="w-full h-12 border border-gray-200 rounded-md text-sm px-3 focus:border-gray-900 focus:ring-0 transition-colors"
         >
           <option value="">Select size</option>
@@ -76,6 +80,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Company Employment Types
         </label>
         <div className="grid grid-cols-2 mt-2 gap-2">
@@ -87,6 +92,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
                 value={option}
                 checked={formData.companyEmploymentType?.includes(option) || false}
                 onChange={() => handleEmploymentTypeChange(option)}
+                required
                 className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
               />
               <span className="text-sm">{option}</span>
@@ -97,6 +103,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
 
       <div className="mb-4">
         <label htmlFor="companyLocation" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Location Types
         </label>
         <div className="grid grid-cols-2 mt-2 gap-2">
@@ -108,6 +115,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
                 value={option}
                 checked={formData.companyLocation?.includes(option) || false}
                 onChange={() => handleLocationTypeChange(option)}
+                required
                 className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
               />
               <span className="text-sm">{option}</span>
@@ -123,6 +131,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
 
       <div className="mt-4 mb-4">
         <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Contact Email
         </label>
         <input
@@ -131,6 +140,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
           id="contactEmail"
           value={formData.contactEmail}
           onChange={handleChange}
+          required
           className="w-full h-12 border border-gray-200 rounded-md text-sm px-3 focus:border-gray-900 focus:ring-0 transition-colors"
           placeholder="Enter your contact email"
         />

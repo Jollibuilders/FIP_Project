@@ -13,6 +13,7 @@ const JobPreferences = ({ formData, setFormData }) => {
     <div>
       <div className="mb-4">
         <label htmlFor="desiredJobTitle" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Desired Job Title
         </label>
         <input
@@ -23,11 +24,13 @@ const JobPreferences = ({ formData, setFormData }) => {
           onChange={handleChange}
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder="Enter your desired job title"
+          required
         />
       </div>
 
       <div className="mb-4">
         <label htmlFor="employmentType" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Employment Type
         </label>
         <select
@@ -35,6 +38,7 @@ const JobPreferences = ({ formData, setFormData }) => {
           id="employmentType"
           value={formData.employmentType}
           onChange={handleChange}
+          required
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3">
           <option value="">Select an option</option>
           <option value="Full-time">Full-time</option>
@@ -46,6 +50,7 @@ const JobPreferences = ({ formData, setFormData }) => {
 
       <div className="mb-4">
         <label htmlFor="desiredLocation" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
           Desired Location
         </label>
         <select
@@ -53,6 +58,7 @@ const JobPreferences = ({ formData, setFormData }) => {
           id="desiredLocation"
           value={formData.desiredLocation}
           onChange={handleChange}
+          required
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3">
           <option value="">Select an option</option>
           <option value="Remote">Remote</option>
