@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { HiOutlineUser } from 'react-icons/hi';
 
-const BasicInfo = ({ formData, setFormData, role }) => {
+const BasicInfo = ({ formData, setFormData, role, errors }) => {
+  const [localErrors, setLocalErrors] = useState(errors || {});
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setLocalErrors({ ...localErrors, [e.target.name]: "" }); // Clear error on change
   };
 
   return (
@@ -23,10 +26,11 @@ const BasicInfo = ({ formData, setFormData, role }) => {
             id="fullName"
             value={formData.fullName}
             onChange={handleChange}
-            className="pl-10 w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors"
+            className={`pl-10 w-full h-12 border ${errors.fullName ? "border-red-500" : "border-gray-200"} rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors`}
             placeholder="Enter your full name"
             required
           />
+          {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>}
         </div>
       </div>
 
@@ -41,10 +45,11 @@ const BasicInfo = ({ formData, setFormData, role }) => {
           id="email"
           value={formData.email}
           onChange={handleChange}
-          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
+          className={`w-full h-12 border ${errors.email ? "border-red-500" : "border-gray-200"} rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3`}
           placeholder="Enter your email address"
           required
         />
+        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
       </div>
 
       <div className="mb-4">
@@ -58,10 +63,11 @@ const BasicInfo = ({ formData, setFormData, role }) => {
           id="location"
           value={formData.location}
           onChange={handleChange}
-          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
+          className={`w-full h-12 border ${errors.location ? "border-red-500" : "border-gray-200"} rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3`}
           placeholder={role === "Job Seeker" ? "Enter your city and country" : "Enter your company's city and country"}
           required
         />
+        {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
       </div>
     </div>
   );
