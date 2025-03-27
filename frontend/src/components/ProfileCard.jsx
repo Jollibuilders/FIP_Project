@@ -10,6 +10,9 @@ import SkillIcon from './SkillIcon.jsx';
 
 const ProfileCard = () => {
     const [displayedProfiles, setDisplayedProfiles] = useState([]);
+    const [alreadyLikedProfiles, setAlreadyLikedProfiles] = useState([]);
+    const [personsRole, setPersonsRole] = useState("");
+    const [personsId, setPersonsId] = useState("");
     const [currentIdx, setCurrentIdx] = useState(0);
     const [showMatchToast, setShowMatchToast] = useState(false);
     const [toastProgress, setToastProgress] = useState(100);
@@ -75,15 +78,52 @@ const ProfileCard = () => {
             console.error("Error liking user:", error);
         }
     };
+
+    const getCurrentPerson = async () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        setPersonsId(user.uid);
+
+        if (!user) {
+            console.error("User not authenticated.");
+            return;
+        }
+
+        try {
+            const token = await user.getIdToken();
+            const response = await fetch("http://localhost:3000/me", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            if (response.ok) {
+                if (data.message !== "User does not exist") {
+                    setPersonsRole(data.role);
+                } 
+                console.log("Getting user successful:", data);
+            } else {
+                console.error("Getting user failed:", data.message);
+            }
+        } catch (error) {
+            console.error("Getting user failed:", error);
+        }
+    }
     
     const getUsersToDisplay = async () => {
         setIsLoading(true);
+        await getCurrentPerson();
         try {
-            const querySnapshot = await getDocs(collection(db, "test-users"));
-            const usersList = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
+            const querySnapshot = await getDocs(collection(db, "users"));
+            //switched to users from test-users
+            const usersList = querySnapshot.docs.filter(doc => doc.id !== personsId && doc.data().role !== personsRole)
+                .map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })
+            );
             console.log(usersList);
 
             const auth = getAuth();
@@ -128,10 +168,14 @@ const ProfileCard = () => {
     };
     
     useEffect(() => {
-        getUsersToDisplay();
-        setMoreProfiles(false);
-        console.log(displayedProfiles);
-    }, [])
+        getCurrentPerson();
+    }, []);
+
+    useEffect(() => {
+        if (personsId && personsRole) {
+            getUsersToDisplay();
+        }
+    }, [personsId, personsRole])
 
     useEffect(() => {
         if (showMatchToast) {
@@ -164,7 +208,7 @@ const ProfileCard = () => {
             <div className="flex flex-col w-full items-center justify-center">
                 {showMatchToast && (
                     <div className="fixed top-10 bg-green-500 text-white w-auto px-4 py-2 rounded shadow-lg shadow-gray-300 z-20">
-                        Match with {displayedProfiles[currentIdx].name}!
+                        Match with {displayedProfiles[currentIdx].fullName}!
                         <button
                             className="ml-2 text-sm text-white font-bold"
                             onClick={() => setShowMatchToast(false)}
@@ -186,34 +230,36 @@ const ProfileCard = () => {
                             <img src={image} className="h-50 rounded-full mr-8"/>
                             <div className="">
                                 <h1 className="font-bold text-2xl">
-                                    {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].name : "Loading..."}
+                                    {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].fullName : "Loading..."}
                                 </h1>
                                 <div className="flex space-x-2 mt-1 text-gray-400">
                                     <span className="font-semibold text-sm">
                                         {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].grad : "Loading..."}
+                                        {/* Missing from user table */}
                                     </span>
                                     <span className="font-semibold text-sm">
                                         {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].age : "Loading..."}
+                                        {/* Missing from user table */}
                                     </span>
                                 </div>
-                                <div className={`inline-block rounded-md px-3 py-1 text-sm font-semibold mt-6 ${jobStatusColors[displayedProfiles[currentIdx]?.job_status]}`}>
+                                <div className={`inline-block rounded-md px-3 py-1 text-sm font-semibold mt-6 ${jobStatusColors[displayedProfiles[currentIdx]?.employmentType]}`}>
                                     <span className="text-gray-700">
-                                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].job_status : "Loading..."}
+                                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].employmentType : "Loading..."}
                                     </span>
                                 </div>
                             </div>
                         </div>
                         <div className="flex flex-wrap flex-1 items-start">
-                            {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].skills.map((item, index) => (
+                            {displayedProfiles[currentIdx] && displayedProfiles[currentIdx].keySkills ? displayedProfiles[currentIdx].keySkills.map((item, index) => (
                                 <SkillIcon key={index} text={item}/>
-                            )) : "Loading..."}
+                            )) : <></> }
                         </div>
                         <div className="mt-10">
                             <h1 className="font-semibold text-lg mb-2">
                                 About Me
                             </h1>
                             <span className="font-[500] text-gray-600">
-                                {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].description : "Loading..."}
+                                {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].aboutMe : "Loading..."}
                             </span>
                         </div>
                     </div>
