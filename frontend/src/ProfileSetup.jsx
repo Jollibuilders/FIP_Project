@@ -40,7 +40,8 @@ const ProfileSetup = () => {
     // recruiter fields
     companyName: '',
     companySize: '',
-    companyLocation: [],
+    companyLocation: '',
+    companyLocationType: [],
     companyEmploymentType: [],
     rolesHiringFor: [],
     contactEmail: '',
@@ -76,6 +77,7 @@ const ProfileSetup = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setCurrentUserUID(user.uid);
+        setFormData(prev => ({ ...prev, email: user.email})); // This will autofill the email.
         fetchUserRole();
       }
     });
@@ -195,6 +197,7 @@ const ProfileSetup = () => {
         dataToSubmit.companyName = formData.companyName;
         dataToSubmit.companySize = formData.companySize;
         dataToSubmit.companyLocation = formData.companyLocation;
+        dataToSubmit.companyLocationType = formData.companyLocationType;
         dataToSubmit.companyEmploymentType = formData.companyEmploymentType;
         dataToSubmit.rolesHiringFor = formData.rolesHiringFor;
         dataToSubmit.contactEmail = formData.contactEmail;

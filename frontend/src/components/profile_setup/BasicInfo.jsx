@@ -3,11 +3,15 @@ import { HiOutlineUser } from 'react-icons/hi';
 
 const BasicInfo = ({ formData, setFormData, role }) => {
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Excludes email from being updated (since it's autofilled)
+    if (e.target.name !== 'email'){
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
   };
 
   return (
     <div>
+      {/* Full Name Field */}
       <div className="mb-4">
         <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
           <span className="text-red-600">* </span>
@@ -23,13 +27,14 @@ const BasicInfo = ({ formData, setFormData, role }) => {
             id="fullName"
             value={formData.fullName}
             onChange={handleChange}
-            className={`pl-10 w-full h-12 border "border-gray-200" rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors`}
+            className="pl-10 w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors"
             placeholder="Enter your full name"
             required
           />
         </div>
       </div>
 
+      {/* Email Field (Autofilled) */}
       <div className="mb-4">
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
           <span className="text-red-600">* </span>
@@ -40,29 +45,31 @@ const BasicInfo = ({ formData, setFormData, role }) => {
           name="email"
           id="email"
           value={formData.email}
-          onChange={handleChange}
-          className={`w-full h-12 border "border-gray-200" rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3`}
-          placeholder="Enter your email address"
-          required
+          readOnly // non-editable to avoid unnecessary user input
+          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
+          placeholder="Autofilled from registration"
         />
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
-          <span className="text-red-600">* </span>
-          {role === "Job Seeker" ? "Location (City, Country)" : "Company Location"}
-        </label>
-        <input
-          type="text"
-          name="location"
-          id="location"
-          value={formData.location}
-          onChange={handleChange}
-          className={`w-full h-12 border "border-gray-200" rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3`}
-          placeholder={role === "Job Seeker" ? "Enter your city and country" : "Enter your company's city and country"}
-          required
-        />
-      </div>
+      {/* Location Field (Job Seekers only) */}
+      {role === "Job Seeker" && (
+        <div className="mb-4">
+          <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+            <span className="text-red-600">* </span>
+            Location (City, Country)
+          </label>
+          <input
+            type="text"
+            name="location"
+            id="location"
+            value={formData.location}
+            onChange={handleChange}
+            className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
+            placeholder="Enter your city and country"
+            required
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -30,12 +30,12 @@ const RecruiterDetails = ({ formData, setFormData }) => {
   };
 
   const handleLocationTypeChange = (option) => {
-    const currentLocations = formData.companyLocation || [];
+    const currentLocations = formData.companyLocationType || [];
 
     if (currentLocations.includes(option)) {
-      setFormData({ ...formData, companyLocation: currentLocations.filter(item => item !== option) });
+      setFormData({ ...formData, companyLocationType: currentLocations.filter(item => item !== option) });
     } else {
-      setFormData({ ...formData, companyLocation: [...currentLocations, option] });
+      setFormData({ ...formData, companyLocationType: [...currentLocations, option] });
     }
   };
 
@@ -55,6 +55,24 @@ const RecruiterDetails = ({ formData, setFormData }) => {
           required
           className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
           placeholder="Enter your company's name"
+        />
+      </div>
+
+      {/* Company Location (City, Country) */}
+      <div className="mb-4">
+        <label htmlFor="companyLocation" className="block text-sm font-medium text-gray-700 mb-1">
+          <span className="text-red-600">* </span>
+          Company Location (City, Country)
+        </label>
+        <input
+          type="text"
+          name="companyLocation"
+          id="companyLocation"
+          value={formData.companyLocation}
+          onChange={handleChange}
+          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
+          placeholder="Enter your company's city and country"
+          required
         />
       </div>
 
@@ -102,7 +120,7 @@ const RecruiterDetails = ({ formData, setFormData }) => {
       </div>
 
       <div className="mb-4">
-        <label htmlFor="companyLocation" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="companyLocationType" className="block text-sm font-medium text-gray-700 mb-1">
           <span className="text-red-600">* </span>
           Location Types
         </label>
@@ -111,9 +129,9 @@ const RecruiterDetails = ({ formData, setFormData }) => {
             <label key={option} className="flex items-center gap-2">
               <input
                 type="checkbox"
-                name="companyLocation"
+                name="companyLocationType"
                 value={option}
-                checked={formData.companyLocation?.includes(option) || false}
+                checked={formData.companyLocationType?.includes(option) || false}
                 onChange={() => handleLocationTypeChange(option)}
                 required
                 className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
