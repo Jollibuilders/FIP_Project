@@ -31,7 +31,7 @@ const ProfileCard = () => {
             if (prevIdx + 1 < displayedProfiles.length) {
                 return prevIdx + 1;
             }
-            setMoreProfiles(true);
+            setMoreProfiles(false);
             return 0;
         });
     };
