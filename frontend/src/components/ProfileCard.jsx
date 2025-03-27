@@ -13,12 +13,8 @@ const ProfileCard = () => {
     const [currentIdx, setCurrentIdx] = useState(0);
     const [showMatchToast, setShowMatchToast] = useState(false);
     const [toastProgress, setToastProgress] = useState(100);
-<<<<<<< HEAD
-    const [moreProfiles, setMoreProfiles] = useState(true);
-=======
     const [moreProfiles, setMoreProfiles] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
->>>>>>> 8d752d43d2946f19978b4411d009ff2a4f240105
 
     const jobStatusColors = {
         "Internship": 'bg-green-300',
@@ -62,8 +58,6 @@ const ProfileCard = () => {
                     setShowMatchToast(true);
                     setToastProgress(100);
                     setTimeout(() => setShowMatchToast(false), 3000);
-<<<<<<< HEAD
-=======
                 } else if (data.message === "Like recorded") {
                     setCurrentIdx((prevIdx) => {
                         if (prevIdx + 1 < displayedProfiles.length) {
@@ -72,7 +66,6 @@ const ProfileCard = () => {
                         setMoreProfiles(false);
                         return 0;
                     });
->>>>>>> 8d752d43d2946f19978b4411d009ff2a4f240105
                 }
                 console.log("Like successful:", data);
             } else {
@@ -91,13 +84,6 @@ const ProfileCard = () => {
                 id: doc.id,
                 ...doc.data()
             }));
-<<<<<<< HEAD
-            setDisplayedProfiles(usersList);
-        } catch (error) {
-            console.error("Error fetching profiles:", error);
-        } finally {
-            
-=======
             console.log(usersList);
 
             const auth = getAuth();
@@ -138,19 +124,14 @@ const ProfileCard = () => {
             setMoreProfiles(false);
         } finally {
             setIsLoading(false);
->>>>>>> 8d752d43d2946f19978b4411d009ff2a4f240105
         }
     };
     
     useEffect(() => {
         getUsersToDisplay();
-<<<<<<< HEAD
         setMoreProfiles(false);
         console.log(displayedProfiles);
     }, [])
-=======
-    }, []);
->>>>>>> 8d752d43d2946f19978b4411d009ff2a4f240105
 
     useEffect(() => {
         if (showMatchToast) {
