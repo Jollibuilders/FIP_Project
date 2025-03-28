@@ -17,6 +17,7 @@ const ProfileSetup = () => {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentUserUID, setCurrentUserUID] = useState(null);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -47,6 +48,7 @@ const ProfileSetup = () => {
     contactEmail: '',
   })
 
+  //autofills fields
   useEffect(() => {
     const fetchProfileData = async () => {
       const user = auth.currentUser;
@@ -116,57 +118,48 @@ const ProfileSetup = () => {
     }
   };
 
+  const validateStep = () => {
+    let newErrors = {};
+    if (currentStep === 0) {
+      if (!formData.fullName.trim()) newErrors.fullName = "Full Name is required";
+      if (!formData.email.trim()) newErrors.email = "Email is required";
+      if (!formData.location.trim()) newErrors.location = "Location is required";
+    }
+    if (currentStep === 1) {
+      if (!formData.currentJobTitle.trim()) newErrors.currentJobTitle = "Current Job Title is required";
+      if (!formData.yearsOfExperience) newErrors.yearsOfExperience = "Years of Experience is required";
+      if (formData.keySkills.length === 0) newErrors.keySkills = "At least one skill is required";
+    }
+    if (selectedRole === "Job Seeker" && currentStep === 2) {
+      if (!formData.desiredJobTitle.trim()) newErrors.desiredJobTitle = "Desired Job Title is required";
+      if (!formData.employmentType.trim()) newErrors.employmentType = "Employment Type is required";
+      if (!formData.desiredLocation.trim()) newErrors.desiredLocation = "Desired Location is required";
+    }
+    if (selectedRole === "Recruiter" && currentStep === 2) {
+      if (!formData.companyName.trim()) newErrors.companyName = "Company Name is required";
+      if (!formData.companySize.trim()) newErrors.companySize = "Company Size is required";
+      if (formData.rolesHiringFor.length === 0) newErrors.rolesHiringFor = "At least one role is required";
+    }
+    if (currentStep === 3 && !formData.aboutMe.trim()) {
+      newErrors.aboutMe = "About Me is required";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const nextStep = (e) => {
     e.preventDefault();
-    setCurrentStep((prev) => prev + 1);
+    if (validateStep()) setCurrentStep((prev) => prev + 1);
   }
 
   const previousStep = () => {
     setCurrentStep((prev) => prev - 1);
   }
 
-  const validateBasicPersonalInfo = (data) => {
-    if (!data.fullName.trim()) return "Full Name is required.";
-    if (!data.email.trim()) return "Email is required.";
-    if (!data.location.trim()) return "Location is required.";
-    if (!data.currentJobTitle.trim()) return "Current Job Title is required.";
-    if (data.yearsOfExperience === null || data.yearsOfExperience === "") return "Years Of Experience is required.";
-    if (!data.keySkills || data.keySkills.length === 0) return "Key Skills are required.";
-    if (!data.aboutMe.trim()) return "About Me is required.";
-    return "";
-  };
-
-  const validateRoleSpecificFields = (data, role) => {
-    if (role === "Job Seeker") {
-      if (!data.desiredJobTitle.trim()) return "Desired Job Title is required.";
-      if (!data.employmentType.trim()) return "Employment Type is required.";
-      if (!data.desiredLocation.trim()) return "Desired Location is required.";
-    //   if (!data.resume) return "Resume is required."; wasn't sure if i should leave this since the functionality isn't there yet
-    } else if (role === "Recruiter") {
-      if (!data.companyName.trim()) return "Company Name is required.";
-      if (!data.companySize) return "Company Size is required.";
-      if (!data.companyLocation || data.companyLocation.length === 0) return "At least one Company Location Type is required.";
-      if (!data.companyEmploymentType || data.companyEmploymentType.length === 0) return "At least one Company Employment Type is required.";
-      if (!data.rolesHiringFor || data.rolesHiringFor.length === 0) return "At least one Role Hiring For is required.";
-      if (!data.contactEmail.trim()) return "Contact Email is required.";
-    }
-    return "";
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const basicInfoError = validateBasicPersonalInfo(formData);
-    if (basicInfoError) {
-      setError(basicInfoError);
-      return;
-    }
-
-    const roleError = validateRoleSpecificFields(formData, selectedRole);
-    if (roleError) {
-      setError(roleError);
-      return;
-    }
+    if (!validateStep()) return;
 
     if (!currentUserUID) {
       setError('User not authenticated.');
@@ -225,7 +218,7 @@ const ProfileSetup = () => {
   };
 
   const jobSeekerSteps = [
-    <BasicInfo formData={formData} setFormData={setFormData} role={selectedRole} />,
+    <BasicInfo formData={formData} setFormData={setFormData} role={selectedRole} errors={errors}/>,
     <ProfessionalDetails formData={formData} setFormData={setFormData} role={selectedRole} />,
     <JobPreferences formData={formData} setFormData={setFormData} />,
     <AboutMe formData={formData} setFormData={setFormData} role={selectedRole} />
@@ -245,12 +238,12 @@ const ProfileSetup = () => {
           <h2 className="text-xl font-semibold text-gray-900 mb-1">Complete your profile</h2>
           <p className="text-sm text-gray-500 mb-6">Tell us a bit about yourself</p>
 
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-100 text-red-600 text-xs rounded-md">
-              {error}
+          {errors && Object.keys(errors).length > 0 && (
+            <div className="p-3 mb-2 bg-red-50 border border-red-100 text-red-600 text-xs rounded-md text-center">
+              Please enter all highlighted fields
             </div>
-          )}
-          
+          )}  
+  
           {success && (
             <div className="mb-4 p-3 bg-green-50 border border-green-100 text-green-600 text-xs rounded-md">
               Profile updated successfully!

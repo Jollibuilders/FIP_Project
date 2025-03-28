@@ -16,7 +16,9 @@ import './App.css';
 const AppLayout = () => (
   <>
     <NavigationBar />
-    <Outlet />
+    <div className="">  {/* Could add padding here so components aren't overlapped by navbar */}
+      <Outlet />
+    </div>
   </>
 );
 

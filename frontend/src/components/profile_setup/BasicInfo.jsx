@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { HiOutlineUser } from 'react-icons/hi';
 
-const BasicInfo = ({ formData, setFormData, role }) => {
+const BasicInfo = ({ formData, setFormData, role, errors }) => {
+  const [localErrors, setLocalErrors] = useState(errors || {});
+
   const handleChange = (e) => {
     // Excludes email from being updated (since it's autofilled)
     if (e.target.name !== 'email'){
       setFormData({ ...formData, [e.target.name]: e.target.value });
+      setLocalErrors({ ...localErrors, [e.target.name]: "" });
     }
   };
 
@@ -27,7 +30,9 @@ const BasicInfo = ({ formData, setFormData, role }) => {
             id="fullName"
             value={formData.fullName}
             onChange={handleChange}
-            className="pl-10 w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors"
+            className={`pl-10 w-full h-12 border rounded-md text-sm focus:ring-0 transition-colors ${
+              errors?.fullName ? "border-red-500 bg-red-50 focus:border-red-600" : "border-gray-200 focus:border-gray-900"
+            }`}
             placeholder="Enter your full name"
             required
           />
@@ -64,7 +69,9 @@ const BasicInfo = ({ formData, setFormData, role }) => {
             id="location"
             value={formData.location}
             onChange={handleChange}
-            className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
+            className={`w-full h-12 border rounded-md text-sm focus:ring-0 transition-colors px-3 ${
+              errors?.location ? "border-red-500 bg-red-50 focus:border-red-600" : "border-gray-200 focus:border-gray-900"
+            }`}
             placeholder="Enter your city and country"
             required
           />
