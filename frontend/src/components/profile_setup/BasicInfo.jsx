@@ -33,7 +33,7 @@ const BasicInfo = ({ formData, setFormData, role, errors }) => {
             className={`pl-10 w-full h-12 border rounded-md text-sm focus:ring-0 transition-colors ${
               errors?.fullName ? "border-red-500 bg-red-50 focus:border-red-600" : "border-gray-200 focus:border-gray-900"
             }`}
-            placeholder="Enter your full name"
+            placeholder={formData.fullName}
             required
           />
         </div>

@@ -15,10 +15,10 @@ import './App.css';
 // Layout for pages that should include the NavigationBar.
 const AppLayout = () => (
   <>
-    <NavigationBar />
     <div className="">  {/* Could add padding here so components aren't overlapped by navbar */}
-      <Outlet />
+      <NavigationBar />
     </div>
+    <Outlet />
   </>
 );
 
