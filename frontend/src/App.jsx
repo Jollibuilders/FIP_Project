@@ -11,6 +11,7 @@ import Match from './pages/Match';
 import Matches from './pages/Matches';
 import FAQPage from './pages/FAQPage';
 import './App.css';
+import Onboarding from "./pages/Onboarding.jsx";
 
 // Layout for pages that should include the NavigationBar.
 const AppLayout = () => (
@@ -33,6 +34,15 @@ function App() {
         element={
           <ProtectedRoute>
             <SelectRole />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/onboarding"
+        element={
+          <ProtectedRoute>
+            <Onboarding />
           </ProtectedRoute>
         }
       />
