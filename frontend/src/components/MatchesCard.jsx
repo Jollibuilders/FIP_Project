@@ -1,5 +1,6 @@
 import React from 'react';
 import image from '../assets/test_image.jpg';
+import { Link } from 'react-router-dom';
 
 const MatchesCard = ({ matchName, date }) => {
     const formattedDate = date? 
@@ -13,7 +14,12 @@ const MatchesCard = ({ matchName, date }) => {
             <img src={image} className="h-20 rounded-full mr-4"/>
             <div className="flex flex-col items-start w-full border-b border-gray-300 py-4">
                 <div className="flex flex-row justify-between items-center w-full">
-                    <h1 className="font-semibold">{matchName}</h1>
+                <Link 
+                        to="/profile" 
+                        className="font-semibold text-black-600 hover:underline"
+                    >
+                        {matchName}
+                    </Link>
                     <span className="font-medium text-right">{formattedDate}</span>
                     {/* matched date */}
                 </div> 
