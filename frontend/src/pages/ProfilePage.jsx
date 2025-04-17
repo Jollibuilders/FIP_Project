@@ -1,7 +1,44 @@
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
+import image from '../assets/test_image.jpg';
 
 const ProfilePage = () => {
     const { id } = useParams()
+    const [profileData, setProfileData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        const token = await user.getIdToken();
+
+        const res = await fetch(`http://localhost:3000/profiles/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        if (res.ok && data.user) {
+          setProfileData(data.user);
+        } else {
+          console.error("Error loading profile data.");
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [id]);
+
+  if (isLoading) return <div className="mt-16 text-center">Loading profile...</div>;
+  if (!profileData) return <div className="mt-16 text-center">Profile not found.</div>;
     return (
 <div className="max-w-5xl mx-auto mt-16">
         {/* Gray banner with name and info */}
@@ -9,10 +46,13 @@ const ProfilePage = () => {
           <div className="absolute inset-0 flex items-end pb-0 max-w-5xl mx-auto px-4">
             <div className="ml-46">
               <h1 className="text-2xl font-bold text-black">
-                Test User <span className="text-sm text-gray-500">(they/them)</span>
-              </h1>
-              <p className="text-md font-medium text-black">Role Title @ Test University</p>
-              <p className="text-sm text-gray-700">Test City, USA</p>
+              {profileData.fullName || "No Name"}{" "}
+                </h1>
+                <p className="text-md font-medium text-black">
+                {profileData.currentJobTitle || "Role Title"} @{" "}
+                {profileData.school || profileData.companyName || "N/A"}
+                </p>
+              <p className="text-sm text-gray-700">{profileData.location || "N/A"}</p>
             </div>
           </div>
         </div>
@@ -24,30 +64,34 @@ const ProfilePage = () => {
             <div className="md:w-1/4 flex flex-col items-center md:items-center">
               {/* Profile Picture centered between banner and box */}
               <div className="relative z-10 mb-[-68px]">
-                <div className="w-28 h-28 rounded-full bg-[#3b2b1b] border-4 border-white" />
+              <div className="w-28 h-28 rounded-full bg-black border-4 border-white overflow-hidden">
+                <img
+                    src={image}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                />
+                </div>
               </div>
   
               {/* Mentoring Topics Box */}
               <div className="bg-[#f4ede5] p-4 pt-6 mt-10 w-full rounded-md text-center">
                 <h2 className="font-bold text-lg mb-3">Mentoring Topics</h2>
                 <div className="flex flex-wrap justify-center gap-2">
-                  {[
-                    "Product Management",
-                    "UI Design",
-                    "Leadership",
-                    "UX Engineering",
-                    "Career Growth",
-                  ].map((topic, idx) => (
-                    <span
-                      key={idx}
-                      className="bg-[#cbb799] px-3 py-1 rounded-full text-sm"
-                    >
-                      {topic}
-                    </span>
-                  ))}
-                </div>
+                    {profileData.keySkills && profileData.keySkills.length > 0 ? (
+                        profileData.keySkills.map((topic, idx) => (
+                        <span
+                            key={idx}
+                            className="bg-[#cbb799] px-3 py-1 rounded-full text-sm"
+                        >
+                            {topic}
+                        </span>
+                        ))
+                    ) : (
+                        <p className="text-sm text-gray-500">No mentoring topics listed.</p>
+                    )}
+                    </div>
   
-                {/* Optional filler box */}
+                {/* uknown box */}
                 <div className="bg-[#cbb799] w-full h-24 mt-4 rounded-md" />
               </div>
             </div>
@@ -58,8 +102,7 @@ const ProfilePage = () => {
               <div className="bg-[#f4ede5] p-4 rounded-md mt-6">
                 <h2 className="font-bold mb-2">Currently looking for...</h2>
                 <p className="text-sm">
-                  This is a test bio. Here is where the user's summary or “About Me” would go.
-                  It includes things like current goals, passions, and what they’re looking for.
+                  {profileData.AboutMe || ' '}
                 </p>
               </div>
   
