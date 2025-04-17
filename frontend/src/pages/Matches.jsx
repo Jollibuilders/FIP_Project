@@ -57,9 +57,18 @@ const Matches = () => {
             {isLoading ? (
                 <h1 className="font-semibold text-2xl">Loading Matches...</h1>
             ) : matches.length > 0 ? (
-                matches.map((match) => (
-                    <MatchesCard key={match.id} matchName={match.likedUser} date={match.date} />
-                ))
+                matches.map((match) => {
+                    console.log("match:", match); 
+                  
+                    return (
+                      <MatchesCard 
+                        key={match.id} 
+                        matchName={match.likedUser} 
+                        likedUserId={match.likedUserId} 
+                        date={match.date} 
+                      />
+                    );
+                  })
             ) : (
                 <div className="flex flex-col w-full justify-center items-center">
                     <div className="text-3xl w-1/8 font-semibold mt-10 mb-6 border-b border-gray-300 py-2">

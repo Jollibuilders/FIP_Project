@@ -1,4 +1,7 @@
+import { useParams } from 'react-router-dom';
+
 const ProfilePage = () => {
+    const { id } = useParams()
     return (
 <div className="max-w-5xl mx-auto mt-16">
         {/* Gray banner with name and info */}
