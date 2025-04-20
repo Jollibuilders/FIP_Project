@@ -251,7 +251,7 @@ fastify.get('/api/getMatches', { preHandler: [fastify.authenticate] }, async (re
 });
 
 
-fastify.get('/api/block', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+fastify.post('/api/block', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     try {
         const { toUserId } = request.body;
         const fromUserId = request.user.id;
@@ -284,7 +284,7 @@ fastify.get('/api/block', { preHandler: [fastify.authenticate] }, async (request
     }
 });
 
-fastify.get('/api/unblock', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+fastify.post('/api/unblock', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     try {
         const { toUserId } = request.body;
         const fromUserId = request.user.uid;
@@ -334,7 +334,7 @@ fastify.get('/api/blocks', { preHandler: [fastify.authenticate] }, async (reques
             message: blocks.length > 0 ? 'Success' : 'No likes',
             blocks
         });
-        
+
     } catch (err) {
         fastify.log.error(err);
         return reply.status(400).send({ message: err.message });
