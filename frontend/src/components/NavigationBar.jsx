@@ -49,6 +49,9 @@ const NavigationBar = () => {
           <Link to="/matches" className="text-base sm:text-md font-bold text-gray-900">
             Matches
           </Link>
+          <Link to="/chat" className="text-base sm:text-md font-bold text-gray-900">
+            Messages
+          </Link>
           <Link to="/faq" className="text-base sm:text-md font-bold text-gray-900">
             FAQ
           </Link>

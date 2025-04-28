@@ -7,6 +7,7 @@ import SelectRole from './pages/SelectRole';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfileSetup from './ProfileSetup';
 import NavigationBar from './components/NavigationBar';
+import ChatPage from './pages/Chat';
 import Match from './pages/Match';
 import Matches from './pages/Matches';
 import FAQPage from './pages/FAQPage';
@@ -46,6 +47,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Home/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <ProtectedRoute>
+              <ChatPage/>
             </ProtectedRoute>
           }
         />
