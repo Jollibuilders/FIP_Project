@@ -6,10 +6,11 @@ import Details from '../components/chat/Details';
 const ChatPage = () => {
     
     return (
-        <div className="flex flex-row justify-center items-center mt-20 space-x-2">
-            <Messages className="border-r-black"/>
-            <List/>
-            <Details/>
+        <div className="flex h-screen justify-center items-center" style={{ backgroundColor: '#F6F3EE' }}>
+            <div className="flex flex-row w-[95%] h-[90%]">
+                <List/>
+                <Messages/>
+            </div>
         </div>
     );
 };

@@ -16,7 +16,9 @@ import './App.css';
 // Layout for pages that should include the NavigationBar.
 const AppLayout = () => (
   <>
-    <NavigationBar />
+    <div className='mb-8'>
+      <NavigationBar />
+    </div>
     <Outlet />
   </>
 );
