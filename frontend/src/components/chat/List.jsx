@@ -12,9 +12,9 @@ const List = () => {
         const user = auth.currentUser;
     
         if (user) {
-          const conversationsRef = collection(db, 'conversations');
+          const userchats = collection(db, 'userchats');
     
-          const q = query(conversationsRef, where('participants', 'array-contains', user.uid));
+          const q = query(userchats, where('participants', 'array-contains', user.uid));
     
           const unsubscribe = onSnapshot(q, (snapshot) => {
             const conversations = snapshot.docs.map(docSnap => {

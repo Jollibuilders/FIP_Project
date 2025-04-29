@@ -133,23 +133,53 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
         const toLikes = toDoc.data().likes || [];
         const fromUserName = doc.data().fullName;
         const toUserName = toDoc.data().fullName; //switched from name to fullName
+        const timestamp = admin.firestore.Timestamp.now();
         console.log(toUserName);
         if (toLikes.includes(fromUserId)) {
-            const matchRef = db.collection('matches').doc();
-            await matchRef.set({
-                user1: fromUserId,
-                user1name: fromUserName,
-                user2: toUserId,
-                user2name: toUserName,
-                timestamp: admin.firestore.FieldValue.serverTimestamp(), // Store timestamp from the server
-            });
-            const conversationRef = db.collection('conversations').doc();
-            await conversationRef.set({
-                participants: [fromUserId, toUserId],
-                createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                lastMessage: '',
-            });
+            await db.collection('matches').doc(fromUserId).set({
+                matches: admin.firestore.FieldValue.arrayUnion({
+                    userId: toUserId,
+                    name: toUserName,
+                    timestamp: timestamp,
+                }),
+            }, { merge: true });
             
+            await db.collection('matches').doc(toUserId).set({
+                matches: admin.firestore.FieldValue.arrayUnion({
+                    userId: fromUserId,
+                    name: fromUserName,
+                    timestamp: timestamp,
+                }),
+            }, { merge: true });
+            
+            const chatRef = db.collection('conversations').doc();
+            await chatRef.set({
+                messages: [],
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+            const chatId = chatRef.id;
+            const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
+
+            const fromUserChatData = {
+                [chatId]: {
+                    receiverId: toUserId,
+                    lastMessage: '',
+                    updatedAt: serverTimestamp,
+                }
+            };
+
+            const toUserChatData = {
+                [chatId]: {
+                    receiverId: fromUserId,
+                    lastMessage: '',
+                    updatedAt: serverTimestamp,
+                }
+            };
+
+            await db.collection('userchats').doc(fromUserId).set(fromUserChatData, { merge: true });
+            await db.collection('userchats').doc(toUserId).set(toUserChatData, { merge: true });
+
             return reply.status(200).send({ message: 'Match detected' });
         }
 

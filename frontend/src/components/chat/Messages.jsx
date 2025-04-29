@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import TopUserCard from './TopUserCard';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -17,13 +17,24 @@ const messages = [
 
 const Messages = () => {
     const [message, setMessage] = useState("");
+    const scrollContainerRef = useRef(null);
+
+    useEffect(() => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+        }
+    }, []);
     
     return (
         <div className='flex justify-center items-center w-full h-full rounded-r-xl p-10' style={{ backgroundColor: '#CBB497'}}>
             <div className='flex flex-col w-full h-full rounded-md py-6 px-8' style={{ backgroundColor: '#F6F3EE' }}>
                 <TopUserCard user={"Test user"}/>
 
-                <PerfectScrollbar className="flex flex-1 flex-col w-full border-b-black mb-2" options={{ wheelSpeed: 0.5, wheelPropagation: false, suppressScrollX: true }}>
+                <PerfectScrollbar 
+                    containerRef={ref => { scrollContainerRef.current = ref; }} 
+                    className="flex flex-1 flex-col w-full border-b-black mb-2" 
+                    options={{ wheelSpeed: 0.5, wheelPropagation: false, suppressScrollX: true }}
+                >
                     {messages.map((message) => (
                         <div
                             key={message.id}
