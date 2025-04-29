@@ -7,7 +7,7 @@ const ChatPage = () => {
     
     return (
         <div className="flex h-screen justify-center items-center" style={{ backgroundColor: '#F6F3EE' }}>
-            <div className="flex flex-row w-[95%] h-[90%]">
+            <div className="flex flex-row w-[95%] h-[80%]">
                 <List/>
                 <Messages/>
             </div>
