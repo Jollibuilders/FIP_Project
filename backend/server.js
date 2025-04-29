@@ -143,6 +143,13 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
                 user2name: toUserName,
                 timestamp: admin.firestore.FieldValue.serverTimestamp(), // Store timestamp from the server
             });
+            const conversationRef = db.collection('conversations').doc();
+            await conversationRef.set({
+                participants: [fromUserId, toUserId],
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                lastMessage: '',
+            });
+            
             return reply.status(200).send({ message: 'Match detected' });
         }
 
