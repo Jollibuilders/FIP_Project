@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import MessageCards from '../MessageCards';
 import { db } from '../../firebase';
 import { getAuth } from 'firebase/auth';
-import { doc, collection, query, where, getDocs, getDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 
 const List = () => {
     const [isScrolling, setIsScrolling] = useState(false);

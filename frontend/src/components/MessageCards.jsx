@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import { db, auth } from '../firebase';
 import { getAuth } from 'firebase/auth';
-import { collection, query, where } from 'firebase/firestore';
+import { collection, query, where, getDoc, doc, getDocs } from 'firebase/firestore';
 import profile from "../assets/user_logo.png";
 
 import { FaCirclePlus } from "react-icons/fa6";
@@ -32,6 +32,17 @@ const MessageCards = ({ listOfUsers }) => {
         setJustOpened(false);
 
         try {
+            const auth = getAuth();
+            const currentUser = auth.currentUser;
+
+            const userChatsDoc = await getDoc(doc(db, 'userchats', currentUser.uid));
+            if (!userChatsDoc.exists()) {
+                console.log("No userchats found for user.");
+                return;
+            }
+
+            const userChatsData = userChatsDoc.data();
+            const existingUserIds = Object.values(userChatsData).map(chat => chat.receiverId);
             const matchDocRef = collection(db, 'matches');
             const userMatchDoc = await getDocs(query(matchDocRef, where('__name__', '==', auth.currentUser.uid)));
     
@@ -45,9 +56,8 @@ const MessageCards = ({ listOfUsers }) => {
     
             // Filter matches by name
             const filteredMatches = allMatches.filter(match =>
-                match.name?.toLowerCase().includes(searchInput.toLowerCase())
+                match.name?.toLowerCase().includes(searchInput.toLowerCase()) && !existingUserIds.includes(match.userId)
             );
-            console.log(filteredMatches);
             setMatchedUsers(filteredMatches);
         } catch (error) {
             console.error("Error fetching matches:", error);
