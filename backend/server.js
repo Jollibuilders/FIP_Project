@@ -151,34 +151,6 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
                     timestamp: timestamp,
                 }),
             }, { merge: true });
-            
-            const chatRef = db.collection('conversations').doc();
-            await chatRef.set({
-                messages: [],
-                createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            });
-
-            const chatId = chatRef.id;
-            const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
-
-            const fromUserChatData = {
-                [chatId]: {
-                    receiverId: toUserId,
-                    lastMessage: '',
-                    updatedAt: serverTimestamp,
-                }
-            };
-
-            const toUserChatData = {
-                [chatId]: {
-                    receiverId: fromUserId,
-                    lastMessage: '',
-                    updatedAt: serverTimestamp,
-                }
-            };
-
-            await db.collection('userchats').doc(fromUserId).set(fromUserChatData, { merge: true });
-            await db.collection('userchats').doc(toUserId).set(toUserChatData, { merge: true });
 
             return reply.status(200).send({ message: 'Match detected' });
         }
@@ -284,6 +256,52 @@ fastify.get('/api/getMatches', { preHandler: [fastify.authenticate] }, async (re
     } catch (err) {
         fastify.log.error(err);
         return reply.status(400).send({ message: err.message });
+    }
+});
+
+fastify.post('/api/addchat', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const { toUserId } = request.body;
+        console.log(toUserId)
+        const fromUserId = request.user.uid;
+        console.log(fromUserId)
+
+        if (!toUserId) {
+            throw { message: 'Invalid payload.' };
+        }
+
+        const chatRef = db.collection('conversations').doc();
+        await chatRef.set({
+            messages: [],
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+        const chatId = chatRef.id;
+        const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
+
+        const fromUserChatData = {
+            [chatId]: {
+                receiverId: toUserId,
+                lastMessage: '',
+                updatedAt: serverTimestamp,
+            }
+        };
+
+        const toUserChatData = {
+            [chatId]: {
+                receiverId: fromUserId,
+                lastMessage: '',
+                updatedAt: serverTimestamp,
+            }
+        };
+
+        await db.collection('userchats').doc(fromUserId).set(fromUserChatData, { merge: true });
+        await db.collection('userchats').doc(toUserId).set(toUserChatData, { merge: true });
+
+        return reply.status(200).send({ message: 'Chat successfully created.' });
+    } catch (err) {
+        fastify.log.error(err);
+        reply.status(400).send({ message: err.message });
     }
 });
 
