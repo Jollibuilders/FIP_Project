@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import MessageCards from '../MessageCards';
 import { db } from '../../firebase';
 import { getAuth } from 'firebase/auth';
-import { doc, collection, query, where, getDocs, getDoc } from 'firebase/firestore';
+import { doc, collection, query, where, getDocs, getDoc, onSnapshot } from 'firebase/firestore';
 
 const List = () => {
     const [isScrolling, setIsScrolling] = useState(false);
@@ -10,51 +10,48 @@ const List = () => {
     const scrollRef = useRef(null);
 
     useEffect(() => {
-      const fetchUsersFromUserChats = async () => {
-          const auth = getAuth();
-          const currentUser = auth.currentUser;
-  
-          if (!currentUser) {
-              console.error("User not authenticated.");
-              return;
-          }
-  
-          try {
-              // Get userchats document for current user
-              const userChatsDoc = await getDoc(doc(db, 'userchats', currentUser.uid));
-              if (!userChatsDoc.exists()) {
-                  console.log("No userchats found for user.");
-                  return;
-              }
-  
-              const chatData = userChatsDoc.data();
-              const receiverIds = Object.values(chatData).map(chat => chat.receiverId);
-              const uniqueReceiverIds = [...new Set(receiverIds)];
-  
-              // Chunk queries if more than 10 users
-              const userChunks = [];
-              for (let i = 0; i < uniqueReceiverIds.length; i += 10) {
-                  userChunks.push(uniqueReceiverIds.slice(i, i + 10));
-              }
-  
-              const userMap = {};
-              for (const chunk of userChunks) {
-                  const q = query(collection(db, 'users'), where('uid', 'in', chunk));
-                  const snapshot = await getDocs(q);
-                  snapshot.forEach(doc => {
-                      userMap[doc.data().uid] = doc.data();
-                  });
-              }
-  
-              setChatLists(userMap);
-              console.log(userChatsDoc.data())
-              // left off
-          } catch (error) {
-              console.error("Failed to fetch userchats:", error);
-          }
-      };
-  
-      fetchUsersFromUserChats();
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+
+        if (!currentUser) {
+            console.error("User not authenticated.");
+            return;
+        }
+
+        const userChatsRef = doc(db, 'userchats', currentUser.uid);
+
+        const unsubscribe = onSnapshot(userChatsRef, async (userChatsDoc) => {
+            if (!userChatsDoc.exists()) {
+                console.log("No userchats found for user.");
+                return;
+            }
+
+            const chatData = userChatsDoc.data();
+            const chatListWithNames = [];
+
+            for (const [chatId, chatInfo] of Object.entries(chatData)) {
+                const receiverId = chatInfo.receiverId;
+                const userDocRef = doc(db, 'users', receiverId);
+                const userDocSnap = await getDoc(userDocRef);
+                const lastMessage = chatInfo.lastMessage;
+
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    chatListWithNames.push({
+                        lastMessage: lastMessage,
+                        name: userData.fullName || "Unknown",
+                        uid: receiverId,
+                        chatId: chatId
+                    });
+                } else {
+                    console.warn(`User not found for UID: ${receiverId}`);
+                }
+            }
+
+            setChatLists(chatListWithNames);
+        });
+
+        return () => unsubscribe();
     }, []);
 
     return (

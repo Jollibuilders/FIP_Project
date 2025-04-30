@@ -12,7 +12,7 @@ const messages = [
     { id: 2, own: false, message: fillerMessage, time: "1 min ago"},
     { id: 3, own: true, message: fillerMessage, time: "1 min ago"},
     { id: 4, own: false, message: fillerMessage, time: "1 min ago"},
-    { id: 4, own: true, message: fillerMessage, time: "1 min ago"},
+    { id: 5, own: true, message: fillerMessage, time: "1 min ago"},
 ]
 
 const Messages = () => {

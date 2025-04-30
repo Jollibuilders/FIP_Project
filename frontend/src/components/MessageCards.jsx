@@ -1,7 +1,8 @@
 import { React, useState, useEffect } from "react";
 import { db, auth } from '../firebase';
 import { getAuth } from 'firebase/auth';
-import { collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
+import profile from "../assets/user_logo.png";
 
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
@@ -9,7 +10,6 @@ import { FaSearch } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 
 const MessageCards = ({ listOfUsers }) => {
-    const [users, setUsers] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [justOpened, setJustOpened] = useState(false);
     const [searchInput, setSearchInput] = useState("");
@@ -47,7 +47,7 @@ const MessageCards = ({ listOfUsers }) => {
             const filteredMatches = allMatches.filter(match =>
                 match.name?.toLowerCase().includes(searchInput.toLowerCase())
             );
-    
+            console.log(filteredMatches);
             setMatchedUsers(filteredMatches);
         } catch (error) {
             console.error("Error fetching matches:", error);
@@ -88,56 +88,6 @@ const MessageCards = ({ listOfUsers }) => {
         
         }
     };
-
-    //gets users they have convo with
-    useEffect(() => {
-        const fetchUsersFromUserChats = async () => {
-            const auth = getAuth();
-            const currentUser = auth.currentUser;
-    
-            if (!currentUser) {
-                console.error("User not authenticated.");
-                return;
-            }
-    
-            try {
-                // Get userchats document for current user
-                const userChatsDoc = await getDoc(doc(db, 'userchats', currentUser.uid));
-                if (!userChatsDoc.exists()) {
-                    console.log("No userchats found for user.");
-                    return;
-                }
-    
-                const chatData = userChatsDoc.data();
-                const receiverIds = Object.values(chatData).map(chat => chat.receiverId);
-                const uniqueReceiverIds = [...new Set(receiverIds)];
-    
-                // Chunk queries if more than 10 users
-                const userChunks = [];
-                for (let i = 0; i < uniqueReceiverIds.length; i += 10) {
-                    userChunks.push(uniqueReceiverIds.slice(i, i + 10));
-                }
-    
-                const userMap = {};
-                for (const chunk of userChunks) {
-                    const q = query(collection(db, 'users'), where('uid', 'in', chunk));
-                    const snapshot = await getDocs(q);
-                    snapshot.forEach(doc => {
-                        userMap[doc.data().uid] = doc.data();
-                    });
-                }
-    
-                // Convert userMap to an array to allow for mapping
-                const userArray = Object.values(userMap);
-                setUsers(userArray);  // Set the state as an array
-            } catch (error) {
-                console.error("Failed to fetch userchats:", error);
-            }
-        };
-    
-        //fetchUsersFromUserChats();
-        console.log(listOfUsers);
-    }, []);
 
     return (
         <div>
@@ -188,20 +138,21 @@ const MessageCards = ({ listOfUsers }) => {
             )}
             {/* Already created chats */}
             {listOfUsers && listOfUsers.length > 0 && (
-                listOfUsers.map((convo, user) => {
-                    const { id, participants, lastMessage, timestamp } = convo;
-                    const name = userNames[otherParticipants[0]] || 'Loading...';
+                listOfUsers.map((convo) => {
+                    const { chatId, name, lastMessage } = convo;
 
                     return (
                         <div
-                            key={user.id}
-                            className='flex flex-col justify-center items-center w-full h-20 rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] mt-6 bg-white'
+                            key={chatId}
+                            className='flex flex-row items-center w-full h-20 rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] mt-6 bg-white px-6'
                         >
-                            <span className='font-bold text-[#3D270A]'>{name}</span>
-                            <span className='text-[#3D270A]'>{lastMessage || 'No messages yet'}</span>
-                            <span className='text-[#3D270A]'>
-                                {timestamp?.seconds ? new Date(timestamp.seconds * 1000).toLocaleDateString() : 'No timestamp'}
-                            </span>
+                            <img src={profile} alt="User Profile" className="w-10 h-10 rounded-full mr-4" />
+                            <div className="flex flex-col w-full overflow-hidden whitespace-nowrap">
+                                <span className='font-semibold text-[#3D270A] text-xl truncate'>{name}</span>
+                                <span className='text-[#3D270A] text-sm truncate'>{lastMessage || 'No messages yet'}</span>
+                            </div>
+                            
+                            {/* Optional: Add timestamp back when available */}
                         </div>
                     );
                 })
