@@ -3,25 +3,32 @@ import { db, auth } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 import { FaCirclePlus } from "react-icons/fa6";
-
+import { FaTimes } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 
 const MessageCards = ({ listOfUsers }) => {
     const [users, setUsers] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [justOpened, setJustOpened] = useState(false);
     const [searchInput, setSearchInput] = useState("");
     const [matchedUsers, setMatchedUsers] = useState([]);
 
     const handleOpenSearch = () => {
         setIsModalOpen(true);
+        setJustOpened(true);
     }
 
     const handleCloseSearch = () => {
         setIsModalOpen(false);
+        setJustOpened(false);
         setSearchInput("");
+        setMatchedUsers([]);
     }
 
     const handleSearch = async () => {
         if (!searchInput.trim()) return;
+        setJustOpened(false);
 
         try {
             const matchDocRef = collection(db, 'matches');
@@ -45,6 +52,11 @@ const MessageCards = ({ listOfUsers }) => {
             console.error("Error fetching matches:", error);
         }
     };
+
+    const handleAddChat = () => {
+        
+        console.log("hey")
+    }
 
     //gets users they have convo with
     useEffect(() => {
@@ -90,40 +102,44 @@ const MessageCards = ({ listOfUsers }) => {
             </button>
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+                    <div className="bg-[#F6F3EE] rounded-lg p-6 w-full max-w-md shadow-lg">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-bold text-[#3D270A]">Start a chat</h2>
-                            <button onClick={handleCloseSearch} className="text-gray-500 hover:text-red-500 font-bold text-xl">&times;</button>
+                            <FaTimes onClick={handleCloseSearch} className="text-[#3D270A] hover:text-red-500 font-bold text-xl"/>
                         </div>
-                        <input
-                            type="text"
-                            value={searchInput}
-                            onChange={e => setSearchInput(e.target.value)}
-                            placeholder="Search by name..."
-                            className="w-full p-2 border rounded mb-4"
-                        />
-                        <button
-                            onClick={handleSearch}
-                            className="bg-[#3D270A] text-white px-4 py-2 rounded w-full mb-4 hover:bg-[#2a1b06]"
-                        >
-                            Search
-                        </button>
+                        <div className="relative w-full mb-4">
+                            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                            <input
+                                type="text"
+                                placeholder="Search by name"
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') 
+                                        handleSearch();
+                                }}
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3D270A]"
+                            />
+                        </div>
                         <div className="space-y-2">
-                            {matchedUsers.length === 0 ? (
+                            {justOpened ? (
+                                null
+                            ) : matchedUsers.length === 0 ? (
                                 <p className="text-sm text-gray-500">No matches found</p>
                             ) : (
                                 matchedUsers.map(user => (
-                                    <div key={user.id} className="p-2 border rounded">
-                                        <p className="font-bold text-[#3D270A]">{user.name}</p>
-                                        <p className="text-sm text-[#3D270A]">{user.email}</p>
-                                    </div>
+                                <div key={user.userid} className="flex flex-row items-center justify-between p-2 px-4 bg-[#3D270A] rounded">
+                                    <p className="font-semibold text-[#F6F3EE]">{user.name}</p>
+                                    <FaPlus onClick={handleAddChat} className="text-[#F6F3EE] hover:text-red-500 font-bold text-lg"/>
+                                </div>
                                 ))
                             )}
                         </div>
                     </div>
                 </div>
             )}
-                        {users && users.length > 0 && (
+            {/* Already created chats */}
+            {users && users.length > 0 && (
                 users.map((convo, index) => {
                     const { id, participants, lastMessage, timestamp } = convo;
                     const name = userNames[otherParticipants[0]] || 'Loading...';
