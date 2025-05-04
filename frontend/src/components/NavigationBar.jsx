@@ -69,6 +69,7 @@ const NavigationBar = ({ navbarWidth, setNavbarWidth }) => {
     });
     return () => unsubscribe();
   }, [])
+
   {/* effect to cause dropsown to close when click off it*/}
   useEffect(() => {
     const handleclickout = (event) => {
@@ -81,14 +82,23 @@ const NavigationBar = ({ navbarWidth, setNavbarWidth }) => {
     return () => {
       document.removeEventListener("mousedown", handleclickout)
       document.removeEventListener("touchstart", handleclickout)
-  };
-},[]);
+    };
+  },[]);
+
+  const NavItem = ({ to, icon: Icon, label }) => (
+    <div className={`${!navbarOpen ? 'pointer-events-none' : ''}`}>
+      <Link to={to} className="flex flex-row items-center text-base font-bold text-[#3D270A]">
+        <Icon className="mr-4 h-8 w-8" />
+        {navbarOpen && <span className="text-base font-bold">{label}</span>}
+      </Link>
+    </div>
+  );
 
   return (
     <nav className={`fixed top-0 left-0 h-full bg-white shadow-sm flex flex-col py-6 transition-width duration-200 ${navbarOpen ? 'w-64' : 'w-20'}`}>
       {/* profile and notification */}
       <div className="flex flex-col">
-        <div className="flex flex-row items-center px-6 pb-6 space-x-4 flex-shrink-0" ref={dropdownRef}>
+        <div className="flex flex-row items-center px-5 pb-6 space-x-4 flex-shrink-0" ref={dropdownRef}>
         {user?.photoURL ? (
           <img
             src={user.photoURL}
@@ -146,22 +156,10 @@ const NavigationBar = ({ navbarWidth, setNavbarWidth }) => {
 
       {/* navigation links */}
       <div className="flex flex-col items-start space-y-6 px-6 mt-6">
-        <Link to="/home" className="flex flex-row items-center text-base font-bold text-[#3D270A]">
-          <IoMdHome className="mr-4 h-8 w-8"/>
-          {navbarOpen && <span className="text-base font-bold">Home</span>}
-        </Link>
-        <Link to="/matches" className="flex flex-row items-center text-base font-bold text-[#3D270A]">
-          <MdPeopleAlt className="mr-4 h-8 w-8"/>
-          {navbarOpen && <span className="text-base font-bold">Network</span>}
-        </Link>
-        <Link to="/chat" className="flex flex-row items-center text-base font-bold text-[#3D270A]">
-          <TbMessageCircleFilled className="mr-4 h-8 w-8"/>
-          {navbarOpen && <span className="text-base font-bold">Messages</span>}
-        </Link>
-        <Link to="/faq" className="flex flex-row items-center text-base font-bold text-[#3D270A]">
-          <FaQuestion className="mr-4 h-8 w-8"/>
-          {navbarOpen && <span className="text-base font-bold">FAQ</span>}
-        </Link>
+        <NavItem to="/home" icon={IoMdHome} label="Home" />
+        <NavItem to="/matches" icon={MdPeopleAlt} label="Network" />
+        <NavItem to="/chat" icon={TbMessageCircleFilled} label="Messages" />
+        <NavItem to="/faq" icon={FaQuestion} label="FAQ" />
       </div>
 
       <div className="flex-grow"></div>
