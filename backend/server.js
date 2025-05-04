@@ -228,25 +228,21 @@ fastify.get('/api/getMatches', { preHandler: [fastify.authenticate] }, async (re
         const fromUserId = request.user.uid;
 
         const matchesRef = db.collection('matches');
+        const matchesDoc = await matchesRef.doc(fromUserId).get();
         const matches = [];
 
-        const matchesSnapshot = await matchesRef
-            .where('user1', '==', fromUserId)
-            .get();
-
-        const matchesSnapshot2 = await matchesRef
-            .where('user2', '==', fromUserId)
-            .get();
-        //could do one get and just check later if user 1 or 2 is person
-        
-        matchesSnapshot.forEach(doc => {
-            matches.push({ id: doc.id, likedUser: doc.data().user2name, date: doc.data().timestamp });
-        });
-
-        matchesSnapshot2.forEach(doc => {
-            matches.push({ id: doc.id, likedUser: doc.data().user1name, date: doc.data().timestamp });
-        });
-
+        if (matchesDoc.exists) {
+            const matchesData = matchesDoc.data().matches;
+            if (matchesData) {
+                matchesData.forEach(match => {
+                    matches.push({
+                        id: match.userId,
+                        likedUser: match.name,
+                        date: match.timestamp
+                    });
+                });
+            }
+        }
         console.log(matches);
 
         return reply.status(200).send({
