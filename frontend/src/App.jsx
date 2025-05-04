@@ -15,12 +15,15 @@ import './App.css';
 
 // Layout for pages that should include the NavigationBar.
 const AppLayout = () => (
-  <>
-    <div className='mb-8'>
+  <div className="flex">
+    <div className="w-64">
       <NavigationBar />
     </div>
-    <Outlet />
-  </>
+
+    <div className="flex-grow">
+      <Outlet />
+    </div>
+  </div>
 );
 
 function App() {

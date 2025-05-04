@@ -18,7 +18,7 @@ const NavigationBar = () => {
   const [name, setName] = useState(null);
   const navigate = useNavigate();
 
-   const getCurrentPerson = async () => {
+  const getCurrentPerson = async () => {
     const auth = getAuth();
     const user = auth.currentUser;
 
@@ -52,9 +52,11 @@ const NavigationBar = () => {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user)=> {
-    setUser(user);
+      setUser(user);
+      if (user) {
+        getCurrentPerson(user);
+      }
     });
-    getCurrentPerson();
     return () => unsubscribe();
   }, [])
   {/* effect to cause dropsown to close when click off it*/}

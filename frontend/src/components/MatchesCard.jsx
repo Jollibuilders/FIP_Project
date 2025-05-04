@@ -9,7 +9,7 @@ const MatchesCard = ({ matchName, date }) => {
         }) 
         : "No date available";
     return (
-        <div className="flex flex-row items-center w-1/4 mb-2">
+        <div className="flex flex-row items-center w-[80%] mb-2">
             <img src={image} className="h-20 rounded-full mr-4"/>
             <div className="flex flex-col items-start w-full border-b border-gray-300 py-4">
                 <div className="flex flex-row justify-between items-center w-full">
