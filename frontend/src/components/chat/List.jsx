@@ -4,7 +4,7 @@ import { db } from '../../firebase';
 import { getAuth } from 'firebase/auth';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 
-const List = () => {
+const List = ({ setChatId }) => {
     const [isScrolling, setIsScrolling] = useState(false);
     const [chatLists, setChatLists] = useState([]);
     const scrollRef = useRef(null);
@@ -28,6 +28,7 @@ const List = () => {
 
             const chatData = userChatsDoc.data();
             const chatListWithNames = [];
+            console.log(chatData)
 
             for (const [chatId, chatInfo] of Object.entries(chatData)) {
                 const receiverId = chatInfo.receiverId;
@@ -55,10 +56,10 @@ const List = () => {
     }, []);
 
     return (
-        <div ref={scrollRef} className={`flex flex-col w-1/4 h-full rounded-l-xl p-10 max-h-full overflow-y-auto custom-scroll ${
+        <div ref={scrollRef} className={`flex flex-col flex-1 min-w-1/4 h-full rounded-l-xl p-10 max-h-full overflow-y-auto custom-scroll ${
                 isScrolling ? '' : 'hide-scrollbar'
             }`} style={{ backgroundColor: '#9E8059'}}>
-            <MessageCards listOfUsers={chatLists} />
+            <MessageCards listOfUsers={chatLists} setChatId={setChatId}/>
         </div>
     );
 };

@@ -5,6 +5,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import { FaPlus } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
+import { onSnapshot, doc } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 const fillerMessage = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 const messages = [
@@ -15,9 +17,22 @@ const messages = [
     { id: 5, own: true, message: fillerMessage, time: "1 min ago"},
 ]
 
-const Messages = () => {
+const Messages = ({ chatId }) => {
     const [message, setMessage] = useState("");
+    const [conversation, setConversation] = useState();
     const scrollContainerRef = useRef(null);
+
+    useEffect(() => {
+        const unSub = onSnapshot(doc(db, "conversations", chatId), (res) => {
+            setConversation(res.data())
+        })
+
+        return () => {
+            unSub();
+        }
+    }, [chatId]);
+
+    console.log(chatId);
 
     useEffect(() => {
         if (scrollContainerRef.current) {
@@ -55,7 +70,7 @@ const Messages = () => {
                     ))}
                 </PerfectScrollbar>
 
-                <div className='flex flex-row justify-between w-full items-center p-4 rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)]' style={{ backgroundColor: '#CBB497' }}>
+                <div className='flex flex-row justify-between w-full h-[8vh] items-center p-4 rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)]' style={{ backgroundColor: '#CBB497' }}>
                     <div className='flex flex-row w-full justify-center items-center'>
                         <button className='flex items-center justify-center p-2 mr-8 rounded-full' style={{ backgroundColor: '#F6F3EE' }}>
                             <FaPlus/>
