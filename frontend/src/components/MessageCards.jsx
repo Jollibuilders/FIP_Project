@@ -8,8 +8,9 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
+import { setUserId } from "firebase/analytics";
 
-const MessageCards = ({ listOfUsers, setChatId }) => {
+const MessageCards = ({ listOfUsers, setChatId, setOtherUserId }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [justOpened, setJustOpened] = useState(false);
     const [searchInput, setSearchInput] = useState("");
@@ -99,6 +100,11 @@ const MessageCards = ({ listOfUsers, setChatId }) => {
         }
     };
 
+    const handleOpenChat = (chatId, otherUserId) => {
+        setChatId(chatId)
+        setOtherUserId(otherUserId)
+    }
+
     return (
         <div>
             <button 
@@ -154,7 +160,7 @@ const MessageCards = ({ listOfUsers, setChatId }) => {
                     return (
                         <div
                             key={chatId}
-                            onClick={() => setChatId(chatId)}
+                            onClick={handleOpenChat(chatId, convo.uid)}
                             className='flex flex-row items-center w-full h-20 rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] mt-6 bg-white px-6 transform transition-transform duration-200 hover:scale-105 active:scale-95'
                         >
                             <img src={profile} alt="User Profile" className="w-10 h-10 rounded-full mr-4" />

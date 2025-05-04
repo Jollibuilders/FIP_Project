@@ -5,8 +5,9 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import { FaPlus } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
-import { onSnapshot, doc } from 'firebase/firestore';
+import { onSnapshot, doc, arrayUnion, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
+import { auth } from '../../firebase';
 
 const fillerMessage = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 const messages = [
@@ -17,14 +18,51 @@ const messages = [
     { id: 5, own: true, message: fillerMessage, time: "1 min ago"},
 ]
 
-const Messages = ({ chatId }) => {
+const Messages = ({ chatId, otherUserId }) => {
     const [message, setMessage] = useState("");
     const [conversation, setConversation] = useState();
     const scrollContainerRef = useRef(null);
 
+    const handleSend = async () => {
+        if (message === "") return;
+        try {
+            const conversationRef = doc(db, "conversations", chatId);
+            await updateDoc(conversationRef, { 
+                messages: arrayUnion({
+                    senderId: auth.currentUser.uid,
+                    message,
+                    sentAt: new Date(),
+                })
+            })
+            
+            const userIds = [auth.currentUser.uid, otherUserId];
+
+            userIds.forEach(async (id) => {
+                const userConvoRef = doc(db, "userchats", id);
+                const userConvoSnap = await getDoc(userConvoRef);
+            
+                if (userConvoSnap.exists()) {
+                    const existingData = userConvoSnap.data();
+                    const existingChatData = existingData[chatId] || {};
+            
+                    await updateDoc(userConvoRef, {
+                        [chatId]: {
+                            ...existingChatData,
+                            lastMessage: message,
+                            updatedAt: new Date(),
+                        }
+                    });
+                }
+            });
+            
+        } catch (error) {
+            console.error("Error sending message: ", error);
+        }
+    }
+
     useEffect(() => {
         const unSub = onSnapshot(doc(db, "conversations", chatId), (res) => {
-            setConversation(res.data())
+            setConversation(res.data().messages)
         })
 
         return () => {
@@ -32,7 +70,7 @@ const Messages = ({ chatId }) => {
         }
     }, [chatId]);
 
-    console.log(chatId);
+    console.log(conversation);
 
     useEffect(() => {
         if (scrollContainerRef.current) {
@@ -52,7 +90,7 @@ const Messages = ({ chatId }) => {
                 >
                     {messages.map((message) => (
                         <div
-                            key={message.id}
+                            key={message?.createdAt}
                             className={`w-full flex ${message.own ? 'justify-end' : 'justify-start'}`}
                         >
                             <div className={`flex flex-col ${message.own ? 'items-end' : 'items-start'}`}>
@@ -84,7 +122,11 @@ const Messages = ({ chatId }) => {
                             onChange={(e) => setMessage(e.target.value)}
                         />
                     </div>
-                    <button className='flex items-center justify-center p-2 w-16 rounded-full' style={{ backgroundColor: '#F6F3EE' }}>
+                    <button 
+                        className='flex items-center justify-center p-2 w-16 rounded-full'
+                        style={{ backgroundColor: '#F6F3EE' }}
+                        onClick={handleSend}
+                    >
                         <IoSend/>
                     </button>
                 </div>
