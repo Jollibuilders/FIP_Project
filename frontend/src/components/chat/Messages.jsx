@@ -6,22 +6,18 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import { FaPlus } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import { onSnapshot, doc, arrayUnion, updateDoc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
-import { auth } from '../../firebase';
-
-const fillerMessage = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-const messages = [
-    { id: 1, own: true, message: fillerMessage, time: "1 min ago"},
-    { id: 2, own: false, message: fillerMessage, time: "1 min ago"},
-    { id: 3, own: true, message: fillerMessage, time: "1 min ago"},
-    { id: 4, own: false, message: fillerMessage, time: "1 min ago"},
-    { id: 5, own: true, message: fillerMessage, time: "1 min ago"},
-]
+import { db, auth } from '../../firebase';
 
 const Messages = ({ chatId, otherUserId }) => {
     const [message, setMessage] = useState("");
-    const [conversation, setConversation] = useState();
+    const [conversation, setConversation] = useState([]);
     const scrollContainerRef = useRef(null);
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && message.trim() !== '') {
+            handleSend();
+        }
+    };
 
     const handleSend = async () => {
         if (message === "") return;
@@ -54,7 +50,7 @@ const Messages = ({ chatId, otherUserId }) => {
                     });
                 }
             });
-            
+            setMessage("");
         } catch (error) {
             console.error("Error sending message: ", error);
         }
@@ -70,13 +66,11 @@ const Messages = ({ chatId, otherUserId }) => {
         }
     }, [chatId]);
 
-    console.log(conversation);
-
     useEffect(() => {
         if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
         }
-    }, []);
+    }, [conversation]);
     
     return (
         <div className='flex justify-center items-center w-full h-full rounded-r-xl p-10' style={{ backgroundColor: '#CBB497'}}>
@@ -88,21 +82,27 @@ const Messages = ({ chatId, otherUserId }) => {
                     className="flex flex-1 flex-col w-full border-b-black mb-2" 
                     options={{ wheelSpeed: 0.5, wheelPropagation: false, suppressScrollX: true }}
                 >
-                    {messages.map((message) => (
+                {conversation.map((message) => (
                         <div
-                            key={message?.createdAt}
-                            className={`w-full flex ${message.own ? 'justify-end' : 'justify-start'}`}
+                            key={message?.sentAt?.toString()}
+                            className={`w-full flex ${message.senderId === auth.currentUser.uid ? 'justify-end' : 'justify-start'}`}
                         >
-                            <div className={`flex flex-col ${message.own ? 'items-end' : 'items-start'}`}>
+                            <div className={`flex flex-col ${message.senderId === auth.currentUser.uid ? 'items-end' : 'items-start'}`}>
                                 <div
-                                    className="max-w-[60%] h-auto rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] mt-6 p-4"
-                                    style={{ backgroundColor: message.own ? '#3D270A' : '#CBB497' }}
+                                    className="max-w-screen-sm h-auto rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] mt-6 p-4"
+                                    style={{ backgroundColor: message.senderId === auth.currentUser.uid ? '#3D270A' : '#CBB497' }}
                                 >
-                                    <span className={`font-semibold ${message.own ? 'text-white' : 'text-[#3D270A]'}`}>
+                                    <span className={`font-semibold ${message.senderId === auth.currentUser.uid ? 'text-white' : 'text-[#3D270A]'}`}>
                                         {message.message}
                                     </span>
                                 </div>
-                                <span className="text-xs text-black mt-1 ml-1">{message.time}</span>
+                                <span className="text-xs text-black mt-1 ml-1">
+                                    {new Date(message.sentAt.seconds * 1000).toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true
+                                    })}
+                                </span>
                             </div>
                         </div>
                     ))}
@@ -120,6 +120,7 @@ const Messages = ({ chatId, otherUserId }) => {
                             style={{ backgroundColor: 'transparent', border: 'none', outline: 'none' }}
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
+                            onKeyDown={handleKeyPress}
                         />
                     </div>
                     <button 

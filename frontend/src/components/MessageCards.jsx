@@ -160,7 +160,7 @@ const MessageCards = ({ listOfUsers, setChatId, setOtherUserId }) => {
                     return (
                         <div
                             key={chatId}
-                            onClick={handleOpenChat(chatId, convo.uid)}
+                            onClick={() => handleOpenChat(chatId, convo.uid)}
                             className='flex flex-row items-center w-full h-20 rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] mt-6 bg-white px-6 transform transition-transform duration-200 hover:scale-105 active:scale-95'
                         >
                             <img src={profile} alt="User Profile" className="w-10 h-10 rounded-full mr-4" />

@@ -32,7 +32,7 @@ const NavigationBar = () => {
 },[]);
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white shadow-sm">
+    <nav className="fixed top-0 left-0 w-full bg-white shadow-sm z-10">
       {/* other logos on nav bar */}
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
         <Link to="/home" className="flex items-center space-x-2">
