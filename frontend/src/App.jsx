@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, React } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -14,12 +14,13 @@ import FAQPage from './pages/FAQPage';
 import './App.css';
 
 // Layout for pages that should include the NavigationBar.
-const AppLayout = () => (
+const AppLayout = ({ navbarWidth, setNavbarWidth }) => (
   <div className="flex">
-    <div className="w-64">
-      <NavigationBar />
+    <div style={{ width: `${navbarWidth}px` }} className="z-10">
+      <NavigationBar navbarWidth={navbarWidth} setNavbarWidth={setNavbarWidth} />
     </div>
 
+    {/* Content area adjusts based on navbar width */}
     <div className="flex-grow">
       <Outlet />
     </div>
@@ -27,6 +28,7 @@ const AppLayout = () => (
 );
 
 function App() {
+  const [navbarWidth, setNavbarWidth] = useState(80);
   return (
     <Routes>
       {/* Public Routes: Login and Signup will render without NavigationBar */}
@@ -44,7 +46,7 @@ function App() {
       />
 
       {/* Routes wrapped with AppLayout will have the NavigationBar */}
-      <Route element={<AppLayout />}>
+      <Route element={<AppLayout navbarWidth={navbarWidth} setNavbarWidth={setNavbarWidth}/>}>
         {/* Redirect root to /home */}
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route
