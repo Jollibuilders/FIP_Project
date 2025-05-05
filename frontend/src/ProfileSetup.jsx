@@ -25,7 +25,6 @@ const ProfileSetup = () => {
     fullName: '',
     email: '',
     location: '',
-    school: '',
     currentJobTitle: '',
     yearsOfExperience: 0,
     keySkills: [],
@@ -36,11 +35,13 @@ const ProfileSetup = () => {
     employmentType: '',
     desiredLocation: '',
     resume: null,
+    school: '',
 
     // recruiter fields
     companyName: '',
     companySize: '',
-    companyLocation: [],
+    companyLocation: '',
+    companyLocationType: [],
     companyEmploymentType: [],
     rolesHiringFor: [],
     contactEmail: '',
@@ -76,6 +77,7 @@ const ProfileSetup = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setCurrentUserUID(user.uid);
+        setFormData(prev => ({ ...prev, email: user.email})); // This will autofill the email.
         fetchUserRole();
       }
     });
@@ -179,7 +181,6 @@ const ProfileSetup = () => {
         fullName: formData.fullName,
         email: formData.email,
         location: formData.location,
-        school: formData.school,
         currentJobTitle: formData.currentJobTitle,
         yearsOfExperience: formData.yearsOfExperience,
         keySkills: formData.keySkills,
@@ -191,10 +192,12 @@ const ProfileSetup = () => {
         dataToSubmit.employmentType = formData.employmentType;
         dataToSubmit.desiredLocation = formData.desiredLocation;
         dataToSubmit.resume = formData.resume;
+        dataToSubmit.school = formData.school;
       } else if (selectedRole === 'Recruiter') {
         dataToSubmit.companyName = formData.companyName;
         dataToSubmit.companySize = formData.companySize;
         dataToSubmit.companyLocation = formData.companyLocation;
+        dataToSubmit.companyLocationType = formData.companyLocationType;
         dataToSubmit.companyEmploymentType = formData.companyEmploymentType;
         dataToSubmit.rolesHiringFor = formData.rolesHiringFor;
         dataToSubmit.contactEmail = formData.contactEmail;
@@ -223,14 +226,14 @@ const ProfileSetup = () => {
 
   const jobSeekerSteps = [
     <BasicInfo formData={formData} setFormData={setFormData} role={selectedRole} />,
-    <ProfessionalDetails formData={formData} setFormData={setFormData} />,
+    <ProfessionalDetails formData={formData} setFormData={setFormData} role={selectedRole} />,
     <JobPreferences formData={formData} setFormData={setFormData} />,
     <AboutMe formData={formData} setFormData={setFormData} role={selectedRole} />
   ]
 
   const recruiterSteps = [
     <BasicInfo formData={formData} setFormData={setFormData} role={selectedRole} />,
-    <ProfessionalDetails formData={formData} setFormData={setFormData} />,
+    <ProfessionalDetails formData={formData} setFormData={setFormData} role={selectedRole} />,
     <RecruiterDetails formData={formData} setFormData={setFormData} />,
     <AboutMe formData={formData} setFormData={setFormData} role={selectedRole} />
   ]
