@@ -100,7 +100,7 @@ const ProfilePage = () => {
             <div className="flex-1 space-y-6 mt-15">
               {/* Bio Section */}
               <div className="bg-[#f4ede5] p-4 rounded-md mt-6">
-                <h2 className="font-bold mb-2">Currently looking for...</h2>
+                <h2 className="font-bold mb-2">About Me</h2>
                 <p className="text-sm">
                   {profileData.aboutMe || ' '}
                 </p>
