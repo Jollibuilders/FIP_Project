@@ -1,105 +1,110 @@
-export const commonQuestions = [
+export const getCommonQuestions = () => [
   {
-    key: "bringsYouHere",
-    question: "What brings you to Job Connector?",
-    description: "We'll personalize recommendations based on your goals.",
-    options: [
-      "Advance my career",
-      "Find a new job",
-      "Network with professionals",
-      "Hire top talent",
-      "Other"
-    ],
+    key: "fullName",
+    question: "What is your full name?",
+    type: "text",
+    placeholder: "Enter your full name"
   },
   {
-    key: "activityLevel",
-    question: "How actively do you plan to engage with our platform?",
-    options: [
-      "I want to be very active",
-      "I'll check in regularly",
-      "Use it when needed",
-      "I'm just exploring"
-    ],
+    key: "location",
+    question: "Where are you located?",
+    type: "text",
+    placeholder: "City, State, Country"
   },
   {
-    key: "biggestChallenge",
-    question: "What’s the biggest challenge right now?",
-    options: [
-      "Finding the right opportunities or candidates",
-      "Balancing work and personal life",
-      "Keeping up with industry changes",
-      "Managing workloads effectively",
-      "Family Responsibilities",
-      "Other"
-    ],
+    key: "school",
+    question: "What school did you attend?",
+    type: "text",
+    placeholder: "Enter your school name"
+  },
+  {
+    key: "currentJobTitle",
+    question: "What is your current job title?",
+    type: "text",
+    placeholder: "Enter your current job title"
+  },
+  {
+    key: "yearsOfExperience",
+    question: "How many years of experience do you have?",
+    type: "number",
+    placeholder: "Enter number of years"
+  },
+  {
+    key: "keySkills",
+    question: "What are your key skills?",
+    type: "tags",
+    placeholder: "Add skills (comma separated)"
   }
 ];
 
-export const jobSeekerQuestions = [
+export const getJobSeekerQuestions = () => [
   {
-    key: "jobType",
-    question: "What type of job opportunities are you most interested in?",
-    options: [
-      "Full-time",
-      "Part-time",
-      "Contract",
-      "Internship",
-    ],
+    key: "desiredJobTitle",
+    question: "What job title are you looking for?",
+    type: "text",
+    placeholder: "Enter desired job title"
   },
   {
-    key: "desiredIndustries",
-    question: "Which industry or role interests you the most?",
-    options: [
-      "Software Development",
-      "Design & Creative",
-      "Marketing & Sales",
-      "Finance & Operations",
-      "Healthcare & Life Sciences",
-      "Other"
-    ],
+    key: "employmentType",
+    question: "What type of employment are you looking for?",
+    type: "select",
+    options: ["Full-time", "Part-time", "Contract", "Internship"]
   },
   {
-    key: "locationPreference",
-    question: "What’s your preferred work location?",
-    options: [
-      "Remote",
-      "Hybrid",
-      "On-site",
-      "No preference"
-    ],
+    key: "desiredLocation",
+    question: "Where would you like to work?",
+    type: "text",
+    placeholder: "Enter desired location"
   },
+  {
+    key: "aboutMe",
+    question: "Tell us about yourself",
+    type: "textarea",
+    placeholder: "Share a bit about yourself, your experience, and what you're looking for"
+  }
 ];
 
-export const recruiterQuestions = [
+export const getRecruiterQuestions = () => [
   {
-    key: "hiringFocus",
-    question: "What type of positions are you currently hiring for?",
-    options: [
-      "Technical (e.g., Software Engineers, Data Scientists)",
-      "Creative (e.g., Designers, Marketers)",
-      "Administrative (e.g., HR, Operations)",
-      "Healthcare (e.g., Nurses, Technicians)",
-      "Other"
-    ],
+    key: "companyName",
+    question: "What company do you represent?",
+    type: "text",
+    placeholder: "Enter company name"
   },
   {
-    key: "urgency",
-    question: "How quickly do you need to fill these roles?",
-    options: [
-      "Immediately",
-      "Within a month",
-      "In a few months",
-      "Flexible timing"
-    ],
+    key: "companySize",
+    question: "What is the size of your company?",
+    type: "select",
+    options: ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"]
   },
   {
-    key: "companyCulture",
-    question: "What’s the culture like at your company?",
-    options: [
-      "Fast-paced and dynamic",
-      "Collaborative and team-oriented",
-      "Structured and process-driven",
-      "Flexible and adaptable"
-    ],
+    key: "companyLocation",
+    question: "What location types does your company offer?",
+    type: "multiselect",
+    options: ["Remote", "Hybrid", "On-site"]
+  },
+  {
+    key: "companyEmploymentType",
+    question: "What employment types does your company offer?",
+    type: "multiselect",
+    options: ["Full-time", "Part-time", "Contract", "Internship"]
+  },
+  {
+    key: "rolesHiringFor",
+    question: "What roles are you hiring for?",
+    type: "tags",
+    placeholder: "Add roles (comma separated)"
+  },
+  {
+    key: "contactEmail",
+    question: "What email should candidates use to contact you?",
+    type: "email",
+    placeholder: "Enter contact email"
+  },
+  {
+    key: "aboutMe",
+    question: "Tell us about yourself and your company",
+    type: "textarea",
+    placeholder: "Share a bit about yourself, your company, and what you're looking for"
   }
-]
+];
