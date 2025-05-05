@@ -250,6 +250,98 @@ fastify.get('/api/getMatches', { preHandler: [fastify.authenticate] }, async (re
     }
 });
 
+
+fastify.post('/api/block', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const { toUserId } = request.body;
+        const fromUserId = request.user.id;
+        
+        if (!toUserId) { return reply.status(400).send({ message: 'Invalid payload.' })};
+
+        const userReference = db.collection('users').doc(fromUserId);
+        const doc = await userReference.get();
+
+        const toUserReference = db.collection('users').doc(toUserId); //switched to users
+        const toDoc = await toUserReference.get();
+
+        if (!doc.exists) {
+            return reply.status(404).send({ message: 'User does not exist.' });
+        }
+
+        if (!toDoc.exists) {
+            return reply.status(404).send({ message: 'Target user does not exist.' });
+        }
+        
+        await userReference.update({
+            blocks: admin.firestore.FieldValue.arrayUnion(toUserId),
+        })
+
+        return reply.status(200).send({ message: 'Block recorded' });
+
+    } catch(err) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
+fastify.post('/api/unblock', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const { toUserId } = request.body;
+        const fromUserId = request.user.uid;
+
+        if (!toUserId) { return reply.status(400).send({ message: 'Invalid payload.' }); }
+
+        const userReference = db.collection('users').doc(fromUserId);
+        const doc = await userReference.get();
+
+        const toUserReference = db.collection('users').doc(toUserId); //switched to users
+        const toDoc = await toUserReference.get();
+
+        if (!doc.exists) {
+            return reply.status(404).send({ message: 'User does not exist.' });
+        }
+
+        if (!toDoc.exists) {
+            return reply.status(404).send({ message: 'Blocked user does not exist.' });
+        }
+
+        const blocks = doc.data().blocks || [];
+        if(!blocks.includes(toUserId)) { throw { message: 'No block exists for this user.' }; }
+
+        await userReference.update({
+            blocks: admin.firestore.FieldValue.arrayRemove(toUserId),
+        })
+
+        return reply.status(200).send({ message: 'Unblock recorded'});
+
+    } catch(err)  {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
+fastify.get('/api/blocks', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const { toUserId } = request.body;
+        const fromUserId = request.user.uid;
+
+        const userReference = db.collection('users').doc(fromUserId);
+        const doc = await userReference.get();
+
+        if(!doc.exists) { throw { message: 'User does not exist.'}; }
+        const blocks = doc.data().blocks || [];
+        return reply.status(200).send({
+            message: blocks.length > 0 ? 'Success' : 'No likes',
+            blocks
+        });
+
+    } catch (err) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
+
 const start = async () => {
     try {
         await fastify.listen({ port: 3000 });
