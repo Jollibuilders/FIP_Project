@@ -3,19 +3,33 @@ import profile from '../assets/user_logo.png';
 import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { LuPencil, LuLogOut } from "react-icons/lu";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const NavigationBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null)
+  const [fullName, setFullName] = useState('');
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user)=> {
-    setUser(user);
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setUser(user);
+      if (user) {
+        try {
+          const docRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setFullName(docSnap.data().fullName || '');
+          }
+        } catch (err) {
+          console.error("Error fetching full name:", err);
+        }
+      }
     });
     return () => unsubscribe();
-  }, [])
+  }, []);
+  
   {/* effect to cause dropsown to close when click off it*/}
   useEffect(() => {
     const handleclickout = (event) => {
@@ -64,7 +78,7 @@ const NavigationBar = () => {
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-300 rounded-lg shadow-lg">
                 <div className='px-4 py-2 text-sm text-gray-700 border-b border-gray-200'>
-                  <p className="font-semibold">{user?.displayName || 'User Name'}</p>
+                <p className="font-semibold">{fullName || 'User Name'}</p>
                   <p className="text-sm text-gray-500">{user?.email || 'user@example.com'}</p>
                 </div>
                 {/* edit profile button */}
