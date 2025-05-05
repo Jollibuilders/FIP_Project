@@ -102,7 +102,7 @@ const ProfilePage = () => {
               <div className="bg-[#f4ede5] p-4 rounded-md mt-6">
                 <h2 className="font-bold mb-2">Currently looking for...</h2>
                 <p className="text-sm">
-                  {profileData.AboutMe || ' '}
+                  {profileData.aboutMe || ' '}
                 </p>
               </div>
   
