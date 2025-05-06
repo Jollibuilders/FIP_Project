@@ -1,173 +1,186 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { getAuth } from 'firebase/auth';
 
-import { LuPencil, LuLogOut, LuArrowRightFromLine, LuArrowLeftFromLine } from "react-icons/lu";
-import { IoMdHome, IoMdNotifications } from "react-icons/io";
+import { LuPencil, LuLogOut } from "react-icons/lu";
+import { IoMdHome } from "react-icons/io";
 import { IoPersonCircle } from "react-icons/io5";
 import { MdPeopleAlt } from "react-icons/md";
 import { TbMessageCircleFilled } from "react-icons/tb";
 import { FaQuestion } from "react-icons/fa6";
+import { FaHandshake } from "react-icons/fa";
 
 const NavigationBar = ({ navbarWidth, setNavbarWidth }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [navbarOpen, setNavbarOpen] = useState(false);
-  const dropdownRef = useRef(null)
+  const dropdownRef = useRef(null);
   const [user, setUser] = useState(null);
   const [name, setName] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const getCurrentPerson = async () => {
     const auth = getAuth();
     const user = auth.currentUser;
 
     if (!user) {
-        console.error("User not authenticated.");
-        return;
+      console.error("User not authenticated.");
+      return;
     }
 
     try {
-        const token = await user.getIdToken();
-        const response = await fetch("http://localhost:3000/me", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
-        });
-        const data = await response.json();
-        if (response.ok) {
-            if (data.message !== "User does not exist") {
-              setName(data.fullName);
-            } 
-            console.log("Getting user successful:", data);
-        } else {
-          console.error("Getting user failed:", data.message);
+      const token = await user.getIdToken();
+      const response = await fetch("http://localhost:3000/me", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        if (data.message !== "User does not exist") {
+          setName(data.fullName);
         }
+      } else {
+        console.error("Getting user failed:", data.message);
+      }
     } catch (error) {
       console.error("Getting user failed:", error);
-    }
-  }
-
-  const handleOpenCloseNavBar = () => {
-    if(navbarOpen) {
-      setNavbarWidth(80)
-      setNavbarOpen(false);
-    } else {
-      setNavbarWidth(256)
-      setNavbarOpen(true);
     }
   };
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user)=> {
+    if (setNavbarWidth) {
+      setNavbarWidth(256);
+    }
+  }, [setNavbarWidth]);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
       if (user) {
         getCurrentPerson(user);
       }
     });
     return () => unsubscribe();
-  }, [])
+  }, []);
 
-  {/* effect to cause dropsown to close when click off it*/}
   useEffect(() => {
-    const handleclickout = (event) => {
-      if(dropdownRef.current && !dropdownRef.current.contains(event.target)){
-        setDropdownOpen(false)
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleclickout)
-    document.addEventListener("touchstart", handleclickout)
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleclickout)
-      document.removeEventListener("touchstart", handleclickout)
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
-  },[]);
+  }, []);
 
-  const NavItem = ({ to, icon: Icon, label }) => (
-    <div className={`${!navbarOpen ? 'pointer-events-none' : ''}`}>
-      <Link to={to} className="flex flex-row items-center text-base font-bold text-[#3D270A]">
-        <Icon className="mr-4 h-8 w-8" />
-        {navbarOpen && <span className="text-base font-bold">{label}</span>}
+  const NavItem = ({ to, icon: Icon, label }) => {
+    // Determine if this link is active
+    const isActive = location.pathname === to;
+    
+    return (
+      <Link 
+        to={to} 
+        className={`flex items-center py-3 px-4 rounded-lg transition-all duration-200 
+          ${isActive ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}`}
+      >
+        <Icon className={`mr-3 h-6 w-6 ${isActive ? 'text-black' : 'text-gray-700'}`} />
+        <span className={`text-sm ${isActive ? 'font-semibold text-black' : 'font-medium text-gray-800'}`}>{label}</span>
       </Link>
-    </div>
-  );
+    );
+  };
 
   return (
-    <nav className={`fixed top-0 left-0 h-full bg-white shadow-sm flex flex-col py-6 transition-width duration-200 ${navbarOpen ? 'w-64' : 'w-20'}`}>
-      {/* profile and notification */}
-      <div className="flex flex-col">
-        <div className="flex flex-row items-center px-5 pb-6 space-x-4 flex-shrink-0" ref={dropdownRef}>
-        {user?.photoURL ? (
-          <img
-            src={user.photoURL}
-            alt="Profile logo"
-            className={`w-10 h-10 rounded-full cursor-pointer ${!navbarOpen ? 'pointer-events-none' : ''}`}
+    <nav 
+      className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg flex flex-col py-6 z-10"
+      aria-label="Main navigation"
+    >
+      {/* Profile Section */}
+      <div className="flex flex-col mb-6">
+        <div className="flex items-center px-6" ref={dropdownRef}>
+          <div 
+            className="relative cursor-pointer group"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-          />
-        ) : (
-          <IoPersonCircle
-            className={`w-10 h-10 text-[#3D270A] cursor-pointer ${!navbarOpen ? 'pointer-events-none' : ''}`}
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          />
-        )}
-          {navbarOpen && (
-            <span className="text-base font-bold text-[#3D270A]" onClick={() => setDropdownOpen(!dropdownOpen)}>
-              {name}
-            </span>
-        )}
-          {dropdownOpen && (
-            <div className="absolute left-20 mt-20 mb-2 w-52 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
-              <div className='px-4 py-2 text-sm text-gray-700 border-b border-gray-200'>
-                <p className="font-semibold">{user?.displayName || 'User Name'}</p>
-                <p className="text-sm text-gray-500">{user?.email || 'user@example.com'}</p>
+            aria-haspopup="true"
+            aria-expanded={dropdownOpen}
+          >
+            {user?.photoURL ? (
+              <img
+                src={user.photoURL}
+                alt="Profile"
+                className="w-10 h-10 rounded-full border border-gray-200 transition-all group-hover:ring-2 group-hover:ring-gray-300"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center transition-all group-hover:bg-gray-200">
+                <IoPersonCircle className="w-8 h-8 text-gray-800" />
               </div>
+            )}
+          </div>
+          
+          <div className="ml-3 overflow-hidden">
+            <p className="text-sm font-medium text-gray-800 truncate">{name || "User"}</p>
+            <p className="text-xs text-gray-500 truncate">{user?.email || ""}</p>
+          </div>
+          
+          {dropdownOpen && (
+            <div className="absolute top-16 left-6 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-20 overflow-hidden">
+              <div className="p-4 border-b border-gray-100">
+                <p className="font-medium text-gray-800">{user?.displayName || name || 'User'}</p>
+                <p className="text-sm text-gray-600 truncate">{user?.email || ''}</p>
+              </div>
+              
               <Link to="/profile-setup" onClick={() => setDropdownOpen(false)}>
-                <button className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-100 border-b border-gray-200">
-                  <LuPencil className="w-5 h-5" />
-                  <span>Edit Profile</span>
-                </button>
+                <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                  <LuPencil className="w-5 h-5 text-gray-700" />
+                  <span className="text-sm text-gray-800">Edit Profile</span>
+                </div>
               </Link>
-              <button
+              
+              <div 
                 onClick={() => {
                   setDropdownOpen(false);
                   auth.signOut()
                     .then(() => navigate("/logout"))
                     .catch((error) => console.error("Logout failed:", error));
                 }}
-                className="w-full flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-t border-gray-100 transition-colors"
               >
-                <LuLogOut className="w-5 h-5" />
-                <span>Log Out</span>
-              </button>
-            </div>
-          )}
+                <LuLogOut className="w-5 h-5 text-gray-700" />
+                <span className="text-sm text-gray-800">Log Out</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center mb-10 text-[#3D270A]">
-          <IoMdNotifications className={`h-8 w-8 ${navbarOpen ? 'mr-4 ml-6' : 'mx-auto'}`} />
-          {navbarOpen && <span className="text-base font-bold">Notifications</span>}
+      {/* Divider */}
+      <div className="border-b border-gray-200 w-5/6 mx-auto mb-6"></div>
+
+      {/* Navigation Links */}
+      <div className="flex flex-col px-2 space-y-2">
+        <div className="mb-1 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Main
         </div>
-      </div>
-
-      {/* border between profile/notification and links */}
-      <div className="border-b-2 border-[#3D270A] w-7/8 mx-auto"></div>
-
-      {/* navigation links */}
-      <div className="flex flex-col items-start space-y-6 px-6 mt-6">
         <NavItem to="/home" icon={IoMdHome} label="Home" />
+        
+        <div className="mt-4 mb-1 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Connect
+        </div>
+        <NavItem to="/match" icon={FaHandshake} label="Match" />
         <NavItem to="/matches" icon={MdPeopleAlt} label="Network" />
         <NavItem to="/chat" icon={TbMessageCircleFilled} label="Messages" />
+        
+        <div className="mt-4 mb-1 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Help
+        </div>
         <NavItem to="/faq" icon={FaQuestion} label="FAQ" />
       </div>
-
-      <div className="flex-grow"></div>
-
-      <button className={`flex flex-row w-full px-4 ${navbarOpen ? 'justify-end' : 'justify-center'}`} onClick={() => handleOpenCloseNavBar()}>
-        {navbarOpen ? <LuArrowLeftFromLine className='h-5 w-5'/> : <LuArrowRightFromLine className='h-5 w-5'/>}
-      </button>
-
     </nav>
   );
 };
