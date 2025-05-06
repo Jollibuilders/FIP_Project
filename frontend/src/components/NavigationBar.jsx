@@ -172,8 +172,8 @@ const NavigationBar = ({ navbarWidth, setNavbarWidth }) => {
         <div className="mt-4 mb-1 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
           Connect
         </div>
-        <NavItem to="/matches" icon={MdPeopleAlt} label="Network" />
         <NavItem to="/match" icon={FaHandshake} label="Match" />
+        <NavItem to="/matches" icon={MdPeopleAlt} label="Network" />
         <NavItem to="/chat" icon={TbMessageCircleFilled} label="Messages" />
         
         <div className="mt-4 mb-1 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
