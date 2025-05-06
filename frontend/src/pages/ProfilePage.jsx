@@ -50,7 +50,9 @@ const ProfilePage = () => {
                 </h1>
                 <p className="text-md font-medium text-black">
                 {profileData.currentJobTitle || "Role Title"} @{" "}
-                {profileData.school || profileData.companyName || "N/A"}
+                {profileData.role === "Recruiter"
+                  ? profileData.companyName || "No company listed"
+                  : profileData.school || "No school listed"}
                 </p>
               <p className="text-sm text-gray-700">{profileData.location || "N/A"}</p>
             </div>
