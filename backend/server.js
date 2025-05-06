@@ -133,16 +133,25 @@ fastify.post('/api/like', { preHandler: [fastify.authenticate] }, async (request
         const toLikes = toDoc.data().likes || [];
         const fromUserName = doc.data().fullName;
         const toUserName = toDoc.data().fullName; //switched from name to fullName
+        const timestamp = admin.firestore.Timestamp.now();
         console.log(toUserName);
         if (toLikes.includes(fromUserId)) {
-            const matchRef = db.collection('matches').doc();
-            await matchRef.set({
-                user1: fromUserId,
-                user1name: fromUserName,
-                user2: toUserId,
-                user2name: toUserName,
-                timestamp: admin.firestore.FieldValue.serverTimestamp(), // Store timestamp from the server
-            });
+            await db.collection('matches').doc(fromUserId).set({
+                matches: admin.firestore.FieldValue.arrayUnion({
+                    userId: toUserId,
+                    name: toUserName,
+                    timestamp: timestamp,
+                }),
+            }, { merge: true });
+            
+            await db.collection('matches').doc(toUserId).set({
+                matches: admin.firestore.FieldValue.arrayUnion({
+                    userId: fromUserId,
+                    name: fromUserName,
+                    timestamp: timestamp,
+                }),
+            }, { merge: true });
+
             return reply.status(200).send({ message: 'Match detected' });
         }
 
@@ -219,25 +228,21 @@ fastify.get('/api/getMatches', { preHandler: [fastify.authenticate] }, async (re
         const fromUserId = request.user.uid;
 
         const matchesRef = db.collection('matches');
+        const matchesDoc = await matchesRef.doc(fromUserId).get();
         const matches = [];
 
-        const matchesSnapshot = await matchesRef
-            .where('user1', '==', fromUserId)
-            .get();
-
-        const matchesSnapshot2 = await matchesRef
-            .where('user2', '==', fromUserId)
-            .get();
-        //could do one get and just check later if user 1 or 2 is person
-        
-        matchesSnapshot.forEach(doc => {
-            matches.push({ id: doc.id, likedUser: doc.data().user2name,likedUserId: doc.data().user2, date: doc.data().timestamp });
-        });
-
-        matchesSnapshot2.forEach(doc => {
-            matches.push({ id: doc.id, likedUser: doc.data().user1name,likedUserId: doc.data().user1, date: doc.data().timestamp });
-        });
-
+        if (matchesDoc.exists) {
+            const matchesData = matchesDoc.data().matches;
+            if (matchesData) {
+                matchesData.forEach(match => {
+                    matches.push({
+                        id: match.userId,
+                        likedUser: match.name,
+                        date: match.timestamp
+                    });
+                });
+            }
+        }
         console.log(matches);
 
         return reply.status(200).send({
@@ -249,6 +254,144 @@ fastify.get('/api/getMatches', { preHandler: [fastify.authenticate] }, async (re
         return reply.status(400).send({ message: err.message });
     }
 });
+
+fastify.post('/api/addchat', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const { toUserId } = request.body;
+        console.log(toUserId)
+        const fromUserId = request.user.uid;
+        console.log(fromUserId)
+
+        if (!toUserId) {
+            throw { message: 'Invalid payload.' };
+        }
+
+        const chatRef = db.collection('conversations').doc();
+        await chatRef.set({
+            messages: [],
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+        const chatId = chatRef.id;
+        const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
+
+        const fromUserChatData = {
+            [chatId]: {
+                receiverId: toUserId,
+                lastMessage: '',
+                updatedAt: serverTimestamp,
+            }
+        };
+
+        const toUserChatData = {
+            [chatId]: {
+                receiverId: fromUserId,
+                lastMessage: '',
+                updatedAt: serverTimestamp,
+            }
+        };
+
+        await db.collection('userchats').doc(fromUserId).set(fromUserChatData, { merge: true });
+        await db.collection('userchats').doc(toUserId).set(toUserChatData, { merge: true });
+
+        return reply.status(200).send({ message: 'Chat successfully created.' });
+    } catch (err) {
+        fastify.log.error(err);
+        reply.status(400).send({ message: err.message });
+    }
+});
+
+
+fastify.post('/api/block', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const { toUserId } = request.body;
+        const fromUserId = request.user.id;
+        
+        if (!toUserId) { return reply.status(400).send({ message: 'Invalid payload.' })};
+
+        const userReference = db.collection('users').doc(fromUserId);
+        const doc = await userReference.get();
+
+        const toUserReference = db.collection('users').doc(toUserId); //switched to users
+        const toDoc = await toUserReference.get();
+
+        if (!doc.exists) {
+            return reply.status(404).send({ message: 'User does not exist.' });
+        }
+
+        if (!toDoc.exists) {
+            return reply.status(404).send({ message: 'Target user does not exist.' });
+        }
+        
+        await userReference.update({
+            blocks: admin.firestore.FieldValue.arrayUnion(toUserId),
+        })
+
+        return reply.status(200).send({ message: 'Block recorded' });
+
+    } catch(err) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
+fastify.post('/api/unblock', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const { toUserId } = request.body;
+        const fromUserId = request.user.uid;
+
+        if (!toUserId) { return reply.status(400).send({ message: 'Invalid payload.' }); }
+
+        const userReference = db.collection('users').doc(fromUserId);
+        const doc = await userReference.get();
+
+        const toUserReference = db.collection('users').doc(toUserId); //switched to users
+        const toDoc = await toUserReference.get();
+
+        if (!doc.exists) {
+            return reply.status(404).send({ message: 'User does not exist.' });
+        }
+
+        if (!toDoc.exists) {
+            return reply.status(404).send({ message: 'Blocked user does not exist.' });
+        }
+
+        const blocks = doc.data().blocks || [];
+        if(!blocks.includes(toUserId)) { throw { message: 'No block exists for this user.' }; }
+
+        await userReference.update({
+            blocks: admin.firestore.FieldValue.arrayRemove(toUserId),
+        })
+
+        return reply.status(200).send({ message: 'Unblock recorded'});
+
+    } catch(err)  {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
+fastify.get('/api/blocks', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    try {
+        const { toUserId } = request.body;
+        const fromUserId = request.user.uid;
+
+        const userReference = db.collection('users').doc(fromUserId);
+        const doc = await userReference.get();
+
+        if(!doc.exists) { throw { message: 'User does not exist.'}; }
+        const blocks = doc.data().blocks || [];
+        return reply.status(200).send({
+            message: blocks.length > 0 ? 'Success' : 'No likes',
+            blocks
+        });
+
+    } catch (err) {
+        fastify.log.error(err);
+        return reply.status(400).send({ message: err.message });
+    }
+});
+
 
 const start = async () => {
     try {

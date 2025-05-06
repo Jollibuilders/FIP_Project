@@ -29,7 +29,7 @@ const SelectRole = () => {
         try {
             const userRef = doc(db, 'users', user.uid);
             await setDoc(userRef, { role: selectedRole }, { merge: true});
-            navigate('/profile-setup');
+            navigate('/onboarding');
         } catch (err) {
             setError('Failed to save role. Please try again.');
             console.error('Error saving role:', err);
