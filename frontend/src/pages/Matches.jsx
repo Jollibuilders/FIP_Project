@@ -113,6 +113,7 @@ const Matches = () => {
                             <MatchesCard 
                                 key={match.id} 
                                 matchName={match.likedUser} 
+                                likedUserId={match.id}
                                 date={match.date}
                                 description={match.aboutMe || "No profile description available"}
                             />
