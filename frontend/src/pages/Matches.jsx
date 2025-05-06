@@ -62,7 +62,7 @@ const Matches = () => {
                 ))
             ) : (
                 <div className="flex flex-col w-full justify-center items-center">
-                    <div className="text-3xl w-1/8 font-semibold mt-10 mb-6 border-b border-gray-300 py-2">
+                    <div className="text-3xl w-1/2 font-semibold mt-10 mb-6 border-b border-gray-300 py-2">
                         <h1 className="text-center py-2">No Matches Found!</h1>
                     </div>
                     <div className="flex flex-row space-x-10">

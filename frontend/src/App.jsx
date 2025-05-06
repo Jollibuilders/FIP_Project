@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, React } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -15,16 +15,21 @@ import './App.css';
 import Onboarding from "./pages/Onboarding.jsx";
 
 // Layout for pages that should include the NavigationBar.
-const AppLayout = () => (
-  <>
-    <div className='mb-8'>
-      <NavigationBar />
+const AppLayout = ({ navbarWidth, setNavbarWidth }) => (
+  <div className="flex">
+    <div style={{ width: `${navbarWidth}px` }} className="z-10">
+      <NavigationBar navbarWidth={navbarWidth} setNavbarWidth={setNavbarWidth} />
     </div>
-    <Outlet />
-  </>
+
+    {/* Content area adjusts based on navbar width */}
+    <div className="flex-grow">
+      <Outlet />
+    </div>
+  </div>
 );
 
 function App() {
+  const [navbarWidth, setNavbarWidth] = useState(80);
   return (
     <Routes>
       {/* Public Routes: Login and Signup will render without NavigationBar */}
@@ -51,7 +56,7 @@ function App() {
       />
 
       {/* Routes wrapped with AppLayout will have the NavigationBar */}
-      <Route element={<AppLayout />}>
+      <Route element={<AppLayout navbarWidth={navbarWidth} setNavbarWidth={setNavbarWidth}/>}>
         {/* Redirect root to /home */}
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route
