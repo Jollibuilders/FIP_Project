@@ -7,6 +7,7 @@ import SelectRole from './pages/SelectRole';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfileSetup from './ProfileSetup';
 import NavigationBar from './components/NavigationBar';
+import ChatPage from './pages/Chat';
 import Match from './pages/Match';
 import Matches from './pages/Matches';
 import FAQPage from './pages/FAQPage';
@@ -16,7 +17,9 @@ import Onboarding from "./pages/Onboarding.jsx";
 // Layout for pages that should include the NavigationBar.
 const AppLayout = () => (
   <>
-    <NavigationBar />
+    <div className='mb-8'>
+      <NavigationBar />
+    </div>
     <Outlet />
   </>
 );
@@ -56,6 +59,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Home/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <ProtectedRoute>
+              <ChatPage/>
             </ProtectedRoute>
           }
         />
