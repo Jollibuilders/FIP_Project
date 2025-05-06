@@ -16,7 +16,7 @@ const MatchesCard = ({ matchName, date, likedUserId }) => {
             <div className="flex flex-col items-start w-full border-b border-gray-300 py-4">
                 <div className="flex flex-row justify-between items-center w-full">
                     <Link 
-                        to={`/profile=${likedUserId}`} 
+                        to={`/profile/${likedUserId}`} 
                         className="font-semibold text-black hover:underline"
                     >
                         {matchName}
