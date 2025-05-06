@@ -6,6 +6,7 @@ import MatchesCard from '../components/MatchesCard.jsx';
 const Matches = () => {
     const [matches, setMatches] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
         
     const getMatchesToDisplay = async () => {
         setIsLoading(true);
@@ -19,68 +20,125 @@ const Matches = () => {
             }
 
             const token = await user.getIdToken();
-            const response = await fetch("http://localhost:3000/api/getMatches", {
+            
+            const matchesResponse = await fetch("http://localhost:3000/api/getMatches", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
             });
-            const data = await response.json();
-            console.log(data);
+            
+            const matchesData = await matchesResponse.json();
 
-            if(response.ok) {
-                if(data.message === "Matches found") {
-                    setMatches(data.matches);
-                }
-                else {
-                    //no matches found
-                    setMatches([]);
-                }
-            } else {
-                console.error("Error retrieving matches:", error);
+            if (!matchesResponse.ok) {
+                console.error("Error retrieving matches:", matchesData.error);
+                setIsLoading(false);
+                return;
             }
+            
+            if (matchesData.message !== "Matches found" || !matchesData.matches || matchesData.matches.length === 0) {
+                setMatches([]);
+                setIsLoading(false);
+                return;
+            }
+            
+            const enhancedMatches = [];
+            
+            for (const match of matchesData.matches) {
+                try {
+                    const userProfileResponse = await fetch(`http://localhost:3000/profiles/${match.id}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    
+                    const userProfileData = await userProfileResponse.json();
+                    
+                    if (userProfileResponse.ok && userProfileData.user) {
+                        enhancedMatches.push({
+                            ...match,
+                            aboutMe: userProfileData.user.aboutMe || null,
+                        });
+                    } else {
+                        enhancedMatches.push(match);
+                    }
+                } catch (error) {
+                    console.error(`Error fetching profile for user ${match.id}:`, error);
+                    enhancedMatches.push(match);
+                }
+            }
+            
+            setMatches(enhancedMatches);
+            
         } catch (error) {
             console.error("Error fetching matches:", error);
         } finally {
             setIsLoading(false);
         }
-    }
+    };
     
-    //when page is first loaded or reloaded
     useEffect(() => {
         getMatchesToDisplay();
     }, []);
     
+    const filteredMatches = matches.filter(match => 
+        match.likedUser.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    
     return (
-        <div className="flex flex-col items-center mt-20">
-            {isLoading ? (
-                <h1 className="font-semibold text-2xl">Loading Matches...</h1>
-            ) : matches.length > 0 ? (
-                matches.map((match) => (
-                    <MatchesCard key={match.id} matchName={match.likedUser} date={match.date} />
-                ))
-            ) : (
-                <div className="flex flex-col w-full justify-center items-center">
-                    <div className="text-3xl w-1/2 font-semibold mt-10 mb-6 border-b border-gray-300 py-2">
-                        <h1 className="text-center py-2">No Matches Found!</h1>
-                    </div>
-                    <div className="flex flex-row space-x-10">
-                        <Link 
-                            className="hover:scale-110 hover:bg-[#0A0F24]/90 transition-transform duration-200 ease-in-out active:scale-95 bg-[#0A0F24] text-white shadow-md shadow-gray-300 px-4 py-2 rounded-lg font-semibold text-sm" 
-                            to="/home"
-                        >
-                            Return Home
-                        </Link>
-                        <Link 
-                            className="hover:scale-110 hover:bg-[#0A0F24]/90 transition-transform duration-200 ease-in-out active:scale-95 bg-[#0A0F24] text-white shadow-md shadow-gray-300 px-4 py-2 rounded-lg font-semibold text-sm" 
-                            to="/match"
-                        >
-                            Get New Matches
-                        </Link>
+        <div className="min-h-screen bg-white py-6 px-4">
+            <div className="max-w-2xl mx-auto">
+                <div className="mb-6">
+
+                    <div className="relative mb-6">
+                        <input
+                            type="text"
+                            placeholder="Search matches..."
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
                     </div>
                 </div>
-            )}
+                
+                {isLoading ? (
+                    <div className="flex justify-center items-center py-12">
+                        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-black"></div>
+                    </div>
+                ) : filteredMatches.length > 0 ? (
+                    <div className="space-y-4">
+                        {filteredMatches.map((match) => (
+                            <MatchesCard 
+                                key={match.id} 
+                                matchName={match.likedUser} 
+                                date={match.date}
+                                description={match.aboutMe || "No profile description available"}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="border border-gray-200 rounded-lg p-6 text-center">
+                        <h2 className="text-xl font-medium text-black mb-2">No Matches Found</h2>
+                        <p className="text-gray-500 text-sm mb-6">Start liking profiles to get matches</p>
+                        <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 justify-center">
+                            <Link 
+                                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none" 
+                                to="/home"
+                            >
+                                Return Home
+                            </Link>
+                            <Link 
+                                className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-black bg-white hover:bg-gray-50 focus:outline-none" 
+                                to="/match"
+                            >
+                                Find New Matches
+                            </Link>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
