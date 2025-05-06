@@ -20,9 +20,9 @@ const ProfileCard = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const jobStatusColors = {
-        "Internship": 'bg-green-300',
-        "Full-time": 'bg-indigo-300',
-        "Open to anything": 'bg-blue-300',
+        "Internship": 'bg-green-300 hover:bg-green-400',
+        "Full-time": 'bg-indigo-300 hover:bg-indigo-400',
+        "Open to anything": 'bg-blue-300 hover:bg-blue-400',
     };
 
     const handleSkip = () => {
@@ -117,7 +117,6 @@ const ProfileCard = () => {
         await getCurrentPerson();
         try {
             const querySnapshot = await getDocs(collection(db, "users"));
-            //switched to users from test-users
             const usersList = querySnapshot.docs.filter(doc => doc.id !== personsId && doc.data().role !== personsRole)
                 .map(doc => ({
                     id: doc.id,
@@ -203,83 +202,125 @@ const ProfileCard = () => {
 
     return (
         isLoading ? (
-            <h1 className="font-semibold text-2xl">Loading Profiles...</h1>
+            <div className="flex flex-col w-full items-center justify-center">
+                <div className="bg-white shadow-lg p-8 rounded-lg">
+                    <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 border-4 border-t-black border-gray-200 rounded-full animate-spin mb-4"></div>
+                        <h1 className="font-semibold text-xl">Loading Profiles...</h1>
+                    </div>
+                </div>
+            </div>
         ) : moreProfiles ? (
             <div className="flex flex-col w-full items-center justify-center">
                 {showMatchToast && (
-                    <div className="fixed top-10 bg-green-500 text-white w-auto px-4 py-2 rounded shadow-lg shadow-gray-300 z-20">
-                        Match with {displayedProfiles[currentIdx].fullName}!
-                        <button
-                            className="ml-2 text-sm text-white font-bold"
-                            onClick={() => setShowMatchToast(false)}
-                        >
-                            ✕
-                        </button>
-                        <div
-                            className="h-1 bg-white rounded mt-2"
-                            style={{
-                                width: `${toastProgress}%`,
-                                transition: "width 0.03s linear",
-                            }}
-                        />
+                    <div className="fixed top-6 inset-x-0 mx-auto max-w-sm z-50">
+                        <div className="bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center">
+                            <span className="font-semibold flex-grow">Match with {displayedProfiles[currentIdx].fullName}!</span>
+                            <button
+                                className="ml-2 text-white focus:outline-none"
+                                onClick={() => setShowMatchToast(false)}
+                            >
+                                ✕
+                            </button>
+                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-white bg-opacity-50 rounded-b-lg" style={{ width: `${toastProgress}%` }}></div>
+                        </div>
                     </div>
                 )}
-                <div className="bg-white shadow-md shadow-gray-300 p-10 rounded-lg m-10 sm:w-full sm:h-auto md:w-1/4 md:h-auto">
-                    <div className="flex flex-col text-left justify-start items-start w-full space-x-2">
-                        <div className="flex flex-row justify-center items-center">
-                            <img src={image} className="h-50 rounded-full mr-8"/>
-                            <div className="">
-                                <h1 className="font-bold text-2xl">
-                                    {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].fullName : "Loading..."}
+                <div className="bg-white shadow-lg p-8 rounded-lg m-6 max-w-md w-full transition-all duration-300 hover:shadow-xl">
+                    <div className="flex flex-col space-y-6">
+                        {/* Profile counter */}
+                        <div className="self-end bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+                            {currentIdx + 1} / {displayedProfiles.length}
+                        </div>
+                        
+                        {/* Profile header */}
+                        <div className="flex items-start space-x-4">
+                            <img src={image} className="h-20 w-20 rounded-full object-cover shadow-md" alt="Profile" />
+                            <div className="flex-1">
+                                <h1 className="font-bold text-xl text-gray-900">
+                                    {displayedProfiles[currentIdx]?.fullName || "Anonymous User"}
                                 </h1>
-                                <div className="flex space-x-2 mt-1 text-gray-400">
-                                    <span className="font-semibold text-sm">
-                                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].grad : "Loading..."}
-                                        {/* Missing from user table */}
-                                    </span>
-                                    <span className="font-semibold text-sm">
-                                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].age : "Loading..."}
-                                        {/* Missing from user table */}
-                                    </span>
+                                <div className="flex flex-wrap items-center mt-1 text-gray-500 text-sm">
+                                    {displayedProfiles[currentIdx]?.grad ? (
+                                        <span className="font-medium">
+                                            {displayedProfiles[currentIdx].grad}
+                                        </span>
+                                    ) : null}
+                                    {displayedProfiles[currentIdx]?.grad && displayedProfiles[currentIdx]?.age && (
+                                        <span className="mx-1">•</span>
+                                    )}
+                                    {displayedProfiles[currentIdx]?.age ? (
+                                        <span className="">
+                                            {displayedProfiles[currentIdx].age} years
+                                        </span>
+                                    ) : null}
                                 </div>
-                                <div className={`inline-block rounded-md px-3 py-1 text-sm font-semibold mt-6 ${jobStatusColors[displayedProfiles[currentIdx]?.employmentType]}`}>
-                                    <span className="text-gray-700">
-                                        {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].employmentType : "Loading..."}
-                                    </span>
-                                </div>
+                                {!displayedProfiles[currentIdx]?.grad && !displayedProfiles[currentIdx]?.age && (
+                                    <span className="text-gray-400 text-sm italic">No education or age info provided</span>
+                                )}
+                                {displayedProfiles[currentIdx]?.employmentType ? (
+                                    <div className="mt-2">
+                                        <span className={`inline-block rounded-full px-3 py-1 text-xs font-medium text-gray-700 transition-colors ${jobStatusColors[displayedProfiles[currentIdx].employmentType] || 'bg-gray-200'}`}>
+                                            {displayedProfiles[currentIdx].employmentType}
+                                        </span>
+                                    </div>
+                                ) : null}
                             </div>
                         </div>
-                        <div className="flex flex-wrap flex-1 items-start">
-                            {displayedProfiles[currentIdx] && displayedProfiles[currentIdx].keySkills ? displayedProfiles[currentIdx].keySkills.map((item, index) => (
-                                <SkillIcon key={index} text={item}/>
-                            )) : <></> }
+
+                        {/* Skills section */}
+                        {displayedProfiles[currentIdx]?.keySkills && displayedProfiles[currentIdx].keySkills.length > 0 ? (
+                            <div className="mt-4">
+                                <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-2">Skills</h2>
+                                <div className="flex flex-wrap -mx-1">
+                                    {displayedProfiles[currentIdx].keySkills.map((item, index) => (
+                                        <SkillIcon key={index} text={item}/>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="mt-4">
+                                <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-2">Skills</h2>
+                                <p className="text-gray-400 text-sm italic">No skills listed</p>
+                            </div>
+                        )}
+
+                        {/* About section */}
+                        <div className="mt-4">
+                            <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-2">About Me</h2>
+                            <p className="text-gray-700 leading-relaxed">
+                                {displayedProfiles[currentIdx]?.aboutMe || 
+                                 <span className="text-gray-400 italic">This user hasn't added an about section yet.</span>}
+                            </p>
                         </div>
-                        <div className="mt-10">
-                            <h1 className="font-semibold text-lg mb-2">
-                                About Me
-                            </h1>
-                            <span className="font-[500] text-gray-600">
-                                {displayedProfiles[currentIdx] ? displayedProfiles[currentIdx].aboutMe : "Loading..."}
-                            </span>
+
+                        {/* Action buttons */}
+                        <div className="flex justify-center space-x-6 mt-6 pt-4 border-t border-gray-100">
+                            <SkipButton onClick={handleSkip} />
+                            <LikeButton onClick={handleLike} />
                         </div>
-                    </div>
-                    <div className="flex flex-row justify-between w-full items-center mt-6">
-                        <SkipButton onClick={handleSkip} />
-                        <LikeButton onClick={handleLike} />
                     </div>
                 </div>
             </div>
         ) : (
-            <div className="flex flex-col w-full justify-center items-center">
-                <div className="flex w-1/4 text-3xl font-bold bg-white shadow-md shadow-gray-300 p-20 rounded-lg m-10 justify-center">
-                    <h1>No More Profiles!</h1>
+            <div className="flex flex-col w-full items-center justify-center">
+                <div className="bg-white shadow-lg p-10 rounded-lg text-center max-w-md w-full">
+                    <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 bg-gray-100 flex items-center justify-center rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h1 className="text-xl font-bold text-gray-800 mb-3">No More Profiles</h1>
+                        <p className="text-gray-600 mb-6">We've run out of profiles to show you. Check back later!</p>
+                        <Link 
+                            className="bg-black text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors shadow-sm" 
+                            to="/home"
+                        >
+                            Return Home
+                        </Link>
+                    </div>
                 </div>
-                <Link 
-                    className="hover:scale-110 hover:bg-[#0A0F24]/90 transition-transform duration-200 ease-in-out active:scale-95 bg-[#0A0F24] text-white shadow-md shadow-gray-300 px-4 py-2 rounded-lg font-semibold text-sm" 
-                    to="/home"
-                >
-                    Return Home
-                </Link>
             </div>
         )
     );
