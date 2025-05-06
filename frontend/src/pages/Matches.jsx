@@ -19,33 +19,68 @@ const Matches = () => {
             }
 
             const token = await user.getIdToken();
-            const response = await fetch("http://localhost:3000/api/getMatches", {
+            
+            const matchesResponse = await fetch("http://localhost:3000/api/getMatches", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
             });
-            const data = await response.json();
-            console.log(data);
+            
+            const matchesData = await matchesResponse.json();
+            console.log("Matches data:", matchesData);
 
-            if(response.ok) {
-                if(data.message === "Matches found") {
-                    setMatches(data.matches);
-                }
-                else {
-                    //no matches found
-                    setMatches([]);
-                }
-            } else {
-                console.error("Error retrieving matches:", error);
+            if (!matchesResponse.ok) {
+                console.error("Error retrieving matches:", matchesData.error);
+                setIsLoading(false);
+                return;
             }
+            
+            if (matchesData.message !== "Matches found" || !matchesData.matches || matchesData.matches.length === 0) {
+                // No matches found
+                setMatches([]);
+                setIsLoading(false);
+                return;
+            }
+            
+            // Create an array to hold the enhanced matches with user details
+            const enhancedMatches = [];
+            
+            // Fetch user details for each match
+            for (const match of matchesData.matches) {
+                try {
+                    const userProfileResponse = await fetch(`http://localhost:3000/profiles/${match.id}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    
+                    const userProfileData = await userProfileResponse.json();
+                    
+                    if (userProfileResponse.ok && userProfileData.user) {
+                        enhancedMatches.push({
+                            ...match,
+                            aboutMe: userProfileData.user.aboutMe || null,
+                        });
+                    } else {
+                        enhancedMatches.push(match);
+                    }
+                } catch (error) {
+                    console.error(`Error fetching profile for user ${match.id}:`, error);
+                    enhancedMatches.push(match);
+                }
+            }
+            
+            setMatches(enhancedMatches);
+            
         } catch (error) {
             console.error("Error fetching matches:", error);
         } finally {
             setIsLoading(false);
         }
-    }
+    };
     
     //when page is first loaded or reloaded
     useEffect(() => {
@@ -58,7 +93,12 @@ const Matches = () => {
                 <h1 className="font-semibold text-2xl">Loading Matches...</h1>
             ) : matches.length > 0 ? (
                 matches.map((match) => (
-                    <MatchesCard key={match.id} matchName={match.likedUser} date={match.date} />
+                    <MatchesCard 
+                        key={match.id} 
+                        matchName={match.likedUser} 
+                        date={match.date}
+                        description={match.aboutMe || "No profile description available"}
+                    />
                 ))
             ) : (
                 <div className="flex flex-col w-full justify-center items-center">

@@ -1,7 +1,7 @@
 import React from 'react';
 import image from '../assets/test_image.jpg';
 
-const MatchesCard = ({ matchName, date }) => {
+const MatchesCard = ({ matchName, date, description }) => {
     const formattedDate = date? 
         new Date(date._seconds * 1000).toLocaleDateString("en-US", { 
             month: "long",
@@ -18,7 +18,7 @@ const MatchesCard = ({ matchName, date }) => {
                     {/* matched date */}
                 </div> 
                 <p className="text-sm max-w-md text-left pt-2">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    {description || "No profile description available"}
                 </p>
             </div>
         </div>
