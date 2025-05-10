@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import image from '../assets/test_image.jpg';
+import jakesresume from '../assets/jakesresume.pdf'
 
 const ProfilePage = () => {
     const { id } = useParams()
@@ -153,6 +154,37 @@ const ProfilePage = () => {
               <h2 className="font-bold mb-2">Contact</h2>
               <p className="text-sm">Email: {profileData.email || profileData.contactEmail || 'N/A'}</p>
             </div>
+
+            {/* Resume Section */}
+            <div className="bg-[#F3F4F6] p-4 rounded-md">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="font-bold">Resume</h2>
+                <a 
+                  href={jakesresume} 
+                  download="Jakes_Resume.pdf"
+                  className="text-blue-600 hover:text-blue-800 text-sm flex items-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download
+                </a>
+              </div>
+              <div className="w-full h-96 border border-gray-300 rounded-md overflow-hidden">
+                <object
+                  data={jakesresume}
+                  type="application/pdf"
+                  className="w-full h-full"
+                >
+                  <p className="p-4 text-center">
+                    Your browser doesn't support embedded PDFs.
+                    <a href={jakesresume} className="text-blue-600 hover:underline ml-1">
+                      Click here to view the resume instead.
+                    </a>
+                  </p>
+                </object>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -160,5 +192,4 @@ const ProfilePage = () => {
   );
 };
   
-  export default ProfilePage;
-  
+export default ProfilePage;
