@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import fip_logo from "../assets/fip_logo.svg";
 
 const Home = () => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-white p-4 text-gray-800">
+            <img src={fip_logo} alt="FIP Logo" className="h-48 mb-4" />
             <h1 className="text-3xl font-bold text-center mb-2">Welcome to Job Connector</h1>
             <h2 className="text-lg text-center text-gray-600 mb-6">
                 Swipe. Match. Intern.
@@ -43,7 +45,6 @@ const Home = () => {
                     View Matches
                 </Link>
             </div>
-
         </div>
     );
 };
