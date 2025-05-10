@@ -11,6 +11,7 @@ import ChatPage from './pages/Chat';
 import Match from './pages/Match';
 import Matches from './pages/Matches';
 import FAQPage from './pages/FAQPage';
+import ProfilePage from './pages/ProfilePage'; 
 import './App.css';
 import Onboarding from "./pages/Onboarding.jsx";
 
@@ -107,7 +108,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="profile/:id"
+          element={
+            <ProtectedRoute>
+              <ProfilePage/>
+            </ProtectedRoute>
+          }
+          />
       </Route>
+      
+      
 
       {/* Fallback route */}
       <Route path="*" element={<Navigate to="/login" replace />} />

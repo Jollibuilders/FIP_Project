@@ -1,7 +1,8 @@
 import React from 'react';
 import image from '../assets/test_image.jpg';
+import { Link } from 'react-router-dom';
 
-const MatchesCard = ({ matchName, date, description }) => {
+const MatchesCard = ({ matchName, date, description, likedUserId }) => {
     const formattedDate = date? 
         new Date(date._seconds * 1000).toLocaleDateString("en-US", { 
             month: "long",
@@ -36,9 +37,12 @@ const MatchesCard = ({ matchName, date, description }) => {
                         <button className="bg-black hover:bg-gray-800 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200">
                             Message
                         </button>
-                        <button className="bg-white hover:bg-gray-50 text-black border border-gray-300 px-3 py-1 rounded text-xs font-medium transition-colors duration-200">
+                        <Link
+                            to={`/profile/${likedUserId}`}
+                            className="bg-white hover:bg-gray-50 text-black border border-gray-300 px-3 py-1 rounded text-xs font-medium transition-colors duration-200"
+                        >
                             View Profile
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>
