@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { getAuth } from 'firebase/auth';
 
-import { LuPencil, LuLogOut } from "react-icons/lu";
+import { LuPencil, LuLogOut, LuUser } from "react-icons/lu";
 import { IoMdHome } from "react-icons/io";
 import { IoPersonCircle } from "react-icons/io5";
 import { MdPeopleAlt } from "react-icons/md";
@@ -134,6 +134,13 @@ const NavigationBar = ({ navbarWidth, setNavbarWidth }) => {
                 <p className="font-medium text-gray-800">{user?.displayName || name || 'User'}</p>
                 <p className="text-sm text-gray-600 truncate">{user?.email || ''}</p>
               </div>
+              
+              <Link to={`/profile/${user?.uid}`} onClick={() => setDropdownOpen(false)}>
+                <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                  <LuUser className="w-5 h-5 text-gray-700" />
+                  <span className="text-sm text-gray-800">View Profile</span>
+                </div>
+              </Link>
               
               <Link to="/profile-setup" onClick={() => setDropdownOpen(false)}>
                 <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
