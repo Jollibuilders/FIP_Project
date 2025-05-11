@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import X from '../assets/x-icon.png';
-import SkipButton from "./SkipButton.jsx";
+import { IoClose } from "react-icons/io5";
 
 const RoleTags = ({ roles, setRoles }) => {
   const [inputValue, setInputValue] = useState('');
@@ -42,14 +41,11 @@ const RoleTags = ({ roles, setRoles }) => {
             key={index}
             className="flex items-center justify-center bg-gray-800 text-sm font-bold text-white px-2 py-1 rounded-full"
           >
-            <span className="ml-1 mr-1">{role}</span>
-            <button
-              type="button"
-              className="flex items-center justify-center text-white hover:text-red-300"
-              onClick={() => removeRole(role)}
-            >
-              <img src={X} className="w-4 h-4" />
-            </button>
+            <span className="ml-1 mr-2">{role}</span>
+            <IoClose 
+              onClick={() => removeRole(role)} 
+              className="flex items-center justify-center text-gray-300 hover:text-red-500 hover:scale-130 transition-transform duration-200 ease-in-out active:scale-95"
+            />
           </div>
         ))}
 
@@ -65,7 +61,7 @@ const RoleTags = ({ roles, setRoles }) => {
             />
           )}
           <div className="flex items-center w-4 h-4">
-            <SkipButton onClick={removeAll} className="flex-shrink-0" />
+            <IoClose onClick={removeAll} className="flex-shrink-0 hover:scale-140 hover:text-red-500 transition-transform duration-200 ease-in-out active:scale-95"/>
           </div>
         </div>
       </div>

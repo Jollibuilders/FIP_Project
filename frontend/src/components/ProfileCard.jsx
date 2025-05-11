@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { db } from '../firebase.js';
 import { collection, getDocs } from 'firebase/firestore';
-import LikeButton from './LikeButton';
-import SkipButton from './SkipButton';
 import image from '../assets/test_image.jpg';
 import SkillIcon from './SkillIcon.jsx';
+import { FaHeart } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
+
 
 const ProfileCard = () => {
     const [displayedProfiles, setDisplayedProfiles] = useState([]);
@@ -240,6 +241,7 @@ const ProfileCard = () => {
                                 <h1 className="font-bold text-xl text-gray-900">
                                     {displayedProfiles[currentIdx]?.fullName || "Anonymous User"}
                                 </h1>
+                                { /* Commented out grad section but can add in future
                                 <div className="flex flex-wrap items-center mt-1 text-gray-500 text-sm">
                                     {displayedProfiles[currentIdx]?.grad ? (
                                         <span className="font-medium">
@@ -254,10 +256,10 @@ const ProfileCard = () => {
                                             {displayedProfiles[currentIdx].age} years
                                         </span>
                                     ) : null}
-                                </div>
-                                {!displayedProfiles[currentIdx]?.grad && !displayedProfiles[currentIdx]?.age && (
-                                    <span className="text-gray-400 text-sm italic">No education or age info provided</span>
-                                )}
+                                </div> */ }
+                                <span className="text-gray-400 text-sm italic">
+                                    {displayedProfiles[currentIdx]?.school || "No school listed"}
+                                </span>
                                 {displayedProfiles[currentIdx]?.employmentType ? (
                                     <div className="mt-2">
                                         <span className={`inline-block rounded-full px-3 py-1 text-xs font-medium text-gray-700 transition-colors ${jobStatusColors[displayedProfiles[currentIdx].employmentType] || 'bg-gray-200'}`}>
@@ -295,9 +297,15 @@ const ProfileCard = () => {
                         </div>
 
                         {/* Action buttons */}
-                        <div className="flex justify-center space-x-6 mt-6 pt-4 border-t border-gray-100">
-                            <SkipButton onClick={handleSkip} />
-                            <LikeButton onClick={handleLike} />
+                        <div className="flex flex-row items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                            <IoClose 
+                                className="w-8 h-8 text-black hover:text-red-300 hover:scale-140 transition-transform duration-200 ease-in-out active:scale-95" 
+                                onClick={handleLike}
+                            />
+                            <FaHeart 
+                                className="w-6 h-6 text-black hover:text-red-500 hover:scale-140 transition-transform duration-200 ease-in-out active:scale-95" 
+                                onClick={handleLike}
+                            />
                         </div>
                     </div>
                 </div>
