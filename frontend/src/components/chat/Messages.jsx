@@ -8,7 +8,7 @@ import { IoSend } from "react-icons/io5";
 import { onSnapshot, doc, arrayUnion, updateDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 
-const Messages = ({ chatId, otherUserId }) => {
+const Messages = ({ chatId, otherUserId, otherUserName }) => {
     const [message, setMessage] = useState("");
     const [conversation, setConversation] = useState([]);
     const scrollContainerRef = useRef(null);
@@ -75,7 +75,7 @@ const Messages = ({ chatId, otherUserId }) => {
     return (
         <div className='flex justify-center items-center w-full h-full rounded-r-xl p-10' style={{ backgroundColor: '#CBB497'}}>
             <div className='flex flex-col w-full h-full rounded-md py-6 px-8' style={{ backgroundColor: '#F6F3EE' }}>
-                <TopUserCard user={"Test user"}/>
+                <TopUserCard name={otherUserName}/>
 
                 <PerfectScrollbar 
                     containerRef={ref => { scrollContainerRef.current = ref; }} 
@@ -110,12 +110,15 @@ const Messages = ({ chatId, otherUserId }) => {
 
                 <div className='flex flex-row justify-between w-full h-[8vh] items-center p-4 rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)]' style={{ backgroundColor: '#CBB497' }}>
                     <div className='flex flex-row w-full justify-center items-center'>
-                        <button className='flex items-center justify-center p-2 mr-8 rounded-full' style={{ backgroundColor: '#F6F3EE' }}>
+                        <button 
+                            className='flex items-center justify-center p-2 mr-8 rounded-full hover:scale-115 active:scale-95 transition-all duration-200' 
+                            style={{ backgroundColor: '#F6F3EE' }}
+                        >
                             <FaPlus/>
                         </button>
                         <input
                             type="text"
-                            className="flex-1 p-2 rounded-md mr-8"
+                            className="flex-1 p-2 rounded-md mr-8 text-black text-semibold"
                             placeholder="Message..."
                             style={{ backgroundColor: 'transparent', border: 'none', outline: 'none' }}
                             value={message}
@@ -124,11 +127,11 @@ const Messages = ({ chatId, otherUserId }) => {
                         />
                     </div>
                     <button 
-                        className='flex items-center justify-center p-2 w-16 rounded-full'
+                        className='flex items-center justify-center p-2 w-16 rounded-full hover:scale-115 active:scale-95 transition-all duration-200'
                         style={{ backgroundColor: '#F6F3EE' }}
                         onClick={handleSend}
                     >
-                        <IoSend/>
+                        <IoSend className="text-md"/>
                     </button>
                 </div>
             </div>

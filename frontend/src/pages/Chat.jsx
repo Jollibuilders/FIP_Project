@@ -5,13 +5,14 @@ import List from '../components/chat/List';
 const ChatPage = () => {
     const [chatId, setChatId] = useState(null);
     const [otherUserId, setOtherUserId] = useState(null);
+    const [otherUserName, setOtherUserName] = useState(null);
 
     return (
         <div className="flex h-screen justify-center items-center" style={{ backgroundColor: '#F6F3EE' }}>
             <div className="flex flex-row w-[95%] h-[90%]">
-                <List setChatId={setChatId} setOtherUserId={setOtherUserId}/>
+                <List setChatId={setChatId} setOtherUserId={setOtherUserId} setOtherUserName={setOtherUserName}/>
                 {chatId ? (
-                    <Messages chatId={chatId} otherUserId={otherUserId}/>
+                    <Messages chatId={chatId} otherUserId={otherUserId} otherUserName={otherUserName}/>
                 ) : (
                     <div className="flex flex-col items-center justify-center w-full h-full rounded-r-xl p-10 bg-white shadow-md">
                         <div className="w-20 h-20 flex items-center justify-center rounded-full mb-6" style={{ backgroundColor: '#CBB497' }}>
