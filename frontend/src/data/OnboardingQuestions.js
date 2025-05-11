@@ -78,10 +78,10 @@ export const getRecruiterQuestions = () => [
     options: ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"]
   },
   {
-    key: "companyLocation",
+    key: "companyLocationType",
     question: "What location types does your company offer?",
     type: "multiselect",
-    options: ["Remote", "Hybrid", "On-site"]
+    options: ["Remote", "Hybrid", "On-Site"]
   },
   {
     key: "companyEmploymentType",

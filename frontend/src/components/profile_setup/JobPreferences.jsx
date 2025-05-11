@@ -53,18 +53,16 @@ const JobPreferences = ({ formData, setFormData }) => {
           <span className="text-red-600">* </span>
           Desired Location
         </label>
-        <select
+        <input
+          type="text"
           name="desiredLocation"
           id="desiredLocation"
           value={formData.desiredLocation}
           onChange={handleChange}
+          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
+          placeholder="Enter your desired job location"
           required
-          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3">
-          <option value="">Select an option</option>
-          <option value="Remote">Remote</option>
-          <option value="Hybrid">Hybrid</option>
-          <option value="On-Site">On-Site</option>
-        </select>
+        />
       </div>
 
       <div className="mb-4">

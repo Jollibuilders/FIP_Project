@@ -178,7 +178,7 @@ const ProfilePage = () => {
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Location</p>
-                      <p className="text-sm text-gray-800">{profileData.companyLocation || 'N/A'}</p>
+                      <p className="text-sm text-gray-800">{(profileData.location?.split(',').slice(0, 2).join(',') || 'N/A')}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Work Types</p>

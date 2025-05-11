@@ -56,7 +56,7 @@ const BasicInfo = ({ formData, setFormData, role }) => {
         <div className="mb-4">
           <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
             <span className="text-red-600">* </span>
-            Location (City, Country)
+            Location (City, State, Country)
           </label>
           <input
             type="text"

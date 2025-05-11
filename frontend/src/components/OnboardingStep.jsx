@@ -139,7 +139,7 @@ const OnboardingStep = ({ questionData, formData, onInputChange, onMultiSelectCh
                 value={skillInputValue}
                 onChange={(e) => setSkillInputValue(e.target.value)}
                 onKeyDown={handleSkillKeyDown}
-                placeholder="Add a skill and press Enter"
+                placeholder="Add a role and press Enter"
                 className="w-full p-3 border border-gray-300 rounded-lg mt-4 h-12 box-border"
                 style={{ minHeight: '48px', fontSize: '1rem' }}
               />

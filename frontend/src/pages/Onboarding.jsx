@@ -30,7 +30,7 @@ const Onboarding = () => {
     // recruiter fields
     companyName: '',
     companySize: '',
-    companyLocation: [],
+    companyLocationType: [],
     companyEmploymentType: [],
     rolesHiringFor: [],
     contactEmail: '',
