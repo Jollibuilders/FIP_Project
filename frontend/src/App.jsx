@@ -2,7 +2,7 @@ import { useState, React } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import SignUp from './pages/Signup';
+import SignUp from './pages/SignUp';
 import SelectRole from './pages/SelectRole';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfileSetup from './ProfileSetup';

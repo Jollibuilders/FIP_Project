@@ -75,7 +75,7 @@ const Messages = ({ chatId, otherUserId, otherUserName }) => {
     return (
         <div className='flex justify-center items-center w-full h-full rounded-r-xl p-10' style={{ backgroundColor: '#CBB497'}}>
             <div className='flex flex-col w-full h-full rounded-md py-6 px-8' style={{ backgroundColor: '#F6F3EE' }}>
-                <TopUserCard name={otherUserName}/>
+                <TopUserCard name={otherUserName} id={otherUserId}/>
 
                 <PerfectScrollbar 
                     containerRef={ref => { scrollContainerRef.current = ref; }} 
