@@ -40,7 +40,6 @@ const ProfileSetup = () => {
     // recruiter fields
     companyName: '',
     companySize: '',
-    companyLocation: '',
     companyLocationType: [],
     companyEmploymentType: [],
     rolesHiringFor: [],
@@ -59,6 +58,7 @@ const ProfileSetup = () => {
               ...prevState,
               ...docSnap.data()
             }));
+            console.log(formData)
             if (docSnap.data().role) {
               setSelectedRole(docSnap.data().role);
             }
@@ -127,7 +127,7 @@ const ProfileSetup = () => {
 
   const validateBasicPersonalInfo = (data) => {
     if (!data.fullName.trim()) return "Full Name is required.";
-    if (!data.email.trim()) return "Email is required.";
+    if (selectedRole !== "Recruiter" && !data.email.trim()) return "Email is required.";
     if (!data.location.trim()) return "Location is required.";
     if (!data.currentJobTitle.trim()) return "Current Job Title is required.";
     if (data.yearsOfExperience === null || data.yearsOfExperience === "") return "Years Of Experience is required.";
@@ -145,7 +145,7 @@ const ProfileSetup = () => {
     } else if (role === "Recruiter") {
       if (!data.companyName.trim()) return "Company Name is required.";
       if (!data.companySize) return "Company Size is required.";
-      if (!data.companyLocation || data.companyLocation.length === 0) return "At least one Company Location Type is required.";
+      if (!data.companyLocationType || data.companyLocationType.length === 0) return "At least one Company Location Type is required.";
       if (!data.companyEmploymentType || data.companyEmploymentType.length === 0) return "At least one Company Employment Type is required.";
       if (!data.rolesHiringFor || data.rolesHiringFor.length === 0) return "At least one Role Hiring For is required.";
       if (!data.contactEmail.trim()) return "Contact Email is required.";
@@ -196,7 +196,6 @@ const ProfileSetup = () => {
       } else if (selectedRole === 'Recruiter') {
         dataToSubmit.companyName = formData.companyName;
         dataToSubmit.companySize = formData.companySize;
-        dataToSubmit.companyLocation = formData.companyLocation;
         dataToSubmit.companyLocationType = formData.companyLocationType;
         dataToSubmit.companyEmploymentType = formData.companyEmploymentType;
         dataToSubmit.rolesHiringFor = formData.rolesHiringFor;

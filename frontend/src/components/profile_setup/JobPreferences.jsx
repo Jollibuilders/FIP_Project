@@ -39,7 +39,7 @@ const JobPreferences = ({ formData, setFormData }) => {
           value={formData.employmentType}
           onChange={handleChange}
           required
-          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3">
+          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3 appearance-none">
           <option value="">Select an option</option>
           <option value="Full-time">Full-time</option>
           <option value="Part-time">Part-time</option>
@@ -53,18 +53,16 @@ const JobPreferences = ({ formData, setFormData }) => {
           <span className="text-red-600">* </span>
           Desired Location
         </label>
-        <select
+        <input
+          type="text"
           name="desiredLocation"
           id="desiredLocation"
           value={formData.desiredLocation}
           onChange={handleChange}
+          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3"
+          placeholder="Enter your desired job location"
           required
-          className="w-full h-12 border border-gray-200 rounded-md text-sm focus:border-gray-900 focus:ring-0 transition-colors px-3">
-          <option value="">Select an option</option>
-          <option value="Remote">Remote</option>
-          <option value="Hybrid">Hybrid</option>
-          <option value="On-Site">On-Site</option>
-        </select>
+        />
       </div>
 
       <div className="mb-4">
@@ -81,7 +79,7 @@ const JobPreferences = ({ formData, setFormData }) => {
             className="absolute w-full h-full opacity-0 cursor-pointer"
           />
           <div className="absolute inset-0 flex items-center px-3 text-sm text-black pointer-events-none">
-            <button className="border border-black bg-gray-300 px-2 py-1 font-medium">Choose file</button>
+            <button className="border border-black bg-gray-300 px-2 py-1 font-medium rounded">Choose file</button>
             <span className="ml-auto">
               {formData.resume ? formData.resume : "No file chosen"}
             </span>

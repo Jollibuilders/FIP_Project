@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import X from '../assets/x-icon.png';
-import SkipButton from "./SkipButton.jsx";
+import { IoClose } from "react-icons/io5";
 
 const SkillTags = ({ skills, setSkills }) => {
   const [inputValue, setInputValue] = useState('');
@@ -36,41 +35,55 @@ const SkillTags = ({ skills, setSkills }) => {
       <label className="block text-sm font-medium text-gray-700 mb-1">
         Skills (Up to five)
       </label>
-      <div className="flex flex-wrap items-center gap-2 border border-gray-200 rounded-md p-2">
-        {skills.map((skill, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-center bg-gray-800 text-sm font-bold text-white px-2 py-1 rounded-full"
-          >
-            <span className="ml-1 mr-1">{skill}</span>
-            <button
-              type="button"
-              className="flex items-center justify-center text-white hover:text-red-300"
-              onClick={() => removeSkill(skill)}
-            >
-              <img src={X} className="w-4 h-4" />
-            </button>
+      <div className="relative border border-gray-200 rounded-md p-2">
+        {/* Remove All Button - Top Right (when there are skills) */}
+        {skills.length > 0 && (
+          <IoClose 
+            onClick={removeAll} 
+            className="absolute top-2 right-2 cursor-pointer text-gray-400 hover:text-red-500 hover:scale-125 transition-transform duration-200 ease-in-out active:scale-95" 
+          />
+        )}
+  
+        {/* Skill Tags */}
+        {skills.length > 0 && (
+          <div className="flex flex-wrap gap-2 pr-6 mb-2">
+            {skills.map((skill, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-center bg-gray-800 text-sm font-bold text-white px-2 py-1 rounded-full"
+              >
+                <span className="ml-1 mr-2">{skill}</span>
+                <IoClose 
+                  onClick={() => removeSkill(skill)} 
+                  className="flex items-center justify-center text-gray-300 hover:text-red-500 hover:scale-130 transition-transform duration-200 ease-in-out active:scale-95"
+                />
+              </div>
+            ))}
           </div>
-        ))}
-
-        <div className="flex flex-1 flex-row justify-between items-center w-full px-1">
-          {skills.length < 5 && (
+        )}
+  
+        {/* Input and Remove All in One Line (when no skills) */}
+        {skills.length < 5 && (
+          <div className={`flex items-center ${skills.length === 0 ? 'justify-between' : 'mt-2'}`}>
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={skills.length === 0 ? "Add a skill and press Enter" : ""}
-              className="flex-1 focus:outline-none text-sm py-1"
+              placeholder="Add a skill and press Enter"
+              className="w-full focus:outline-none text-sm py-1"
             />
-          )}
-          <div className="flex items-center w-4 h-4">
-            <SkipButton onClick={removeAll} className="flex-shrink-0" />
+            {skills.length === 0 && (
+              <IoClose 
+                onClick={removeAll} 
+                className="ml-2 cursor-pointer text-gray-400 hover:text-red-500 hover:scale-125 transition-transform duration-200 ease-in-out active:scale-95" 
+              />
+            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
-  );
+  );  
 };
 
 export default SkillTags;

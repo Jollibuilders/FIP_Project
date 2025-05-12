@@ -34,9 +34,10 @@ const MatchesCard = ({ matchName, date, description, likedUserId }) => {
                     </p>
                     
                     <div className="flex space-x-2">
-                        <button className="bg-black hover:bg-gray-800 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200">
+                        <Link to={"/chat"}
+                            className="bg-black hover:bg-gray-800 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200">
                             Message
-                        </button>
+                        </Link>
                         <Link
                             to={`/profile/${likedUserId}`}
                             className="bg-white hover:bg-gray-50 text-black border border-gray-300 px-3 py-1 rounded text-xs font-medium transition-colors duration-200"

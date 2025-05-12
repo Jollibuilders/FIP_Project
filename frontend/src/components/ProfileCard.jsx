@@ -3,14 +3,13 @@ import { Link } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { db } from '../firebase.js';
 import { collection, getDocs } from 'firebase/firestore';
-import LikeButton from './LikeButton';
-import SkipButton from './SkipButton';
 import image from '../assets/test_image.jpg';
 import SkillIcon from './SkillIcon.jsx';
+import { FaHeart } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
 
 const ProfileCard = () => {
     const [displayedProfiles, setDisplayedProfiles] = useState([]);
-    const [alreadyLikedProfiles, setAlreadyLikedProfiles] = useState([]);
     const [personsRole, setPersonsRole] = useState("");
     const [personsId, setPersonsId] = useState("");
     const [currentIdx, setCurrentIdx] = useState(0);
@@ -25,8 +24,7 @@ const ProfileCard = () => {
         "Open to anything": 'bg-blue-300 hover:bg-blue-400',
     };
 
-    const handleSkip = () => {
-        console.log("You skipped " + displayedProfiles[currentIdx].id);
+    const goToNextProfile = () => {
         setCurrentIdx((prevIdx) => {
             if (prevIdx + 1 < displayedProfiles.length) {
                 return prevIdx + 1;
@@ -34,6 +32,11 @@ const ProfileCard = () => {
             setMoreProfiles(false);
             return 0;
         });
+    };
+
+    const handleSkip = () => {
+        console.log("You skipped " + displayedProfiles[currentIdx].id);
+        goToNextProfile();
     };
     
     const handleLike = async () => {
@@ -60,7 +63,10 @@ const ProfileCard = () => {
                 if (data.message === "Match detected") {
                     setShowMatchToast(true);
                     setToastProgress(100);
-                    setTimeout(() => setShowMatchToast(false), 3000);
+                    setTimeout(() => {
+                        setShowMatchToast(false);
+                        goToNextProfile();
+                    }, 3000);
                 } else if (data.message === "Like recorded") {
                     setCurrentIdx((prevIdx) => {
                         if (prevIdx + 1 < displayedProfiles.length) {
@@ -82,12 +88,13 @@ const ProfileCard = () => {
     const getCurrentPerson = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
-        setPersonsId(user.uid);
 
         if (!user) {
             console.error("User not authenticated.");
             return;
         }
+
+        setPersonsId(user.uid);
 
         try {
             const token = await user.getIdToken();
@@ -114,7 +121,6 @@ const ProfileCard = () => {
     
     const getUsersToDisplay = async () => {
         setIsLoading(true);
-        await getCurrentPerson();
         try {
             const querySnapshot = await getDocs(collection(db, "users"));
             const usersList = querySnapshot.docs.filter(doc => doc.id !== personsId && doc.data().role !== personsRole)
@@ -150,11 +156,9 @@ const ProfileCard = () => {
                 const filteredUsers = usersList.filter(user => !likedUserIds.includes(user.id));
                 console.log(filteredUsers);
 
-                setAlreadyLikedProfiles(likedUserIds);
                 setDisplayedProfiles(filteredUsers);
                 setMoreProfiles(filteredUsers.length > 0);
             } else {
-                setAlreadyLikedProfiles([]);
                 setDisplayedProfiles([]);
                 setMoreProfiles(false);
             }
@@ -186,19 +190,10 @@ const ProfileCard = () => {
                     }
                     return prev - 1;
                 });
-            }, 30); 
+            }, 30);
             return () => clearInterval(interval);
         }
-        if (!showMatchToast) {
-            setCurrentIdx((prevIdx) => {
-                if (prevIdx + 1 < displayedProfiles.length) {
-                    return prevIdx + 1;
-                }
-                setMoreProfiles(true);
-                return 0;
-            });
-        }
-    }, [showMatchToast]);
+    }, [showMatchToast]);    
 
     return (
         isLoading ? (
@@ -211,18 +206,24 @@ const ProfileCard = () => {
                 </div>
             </div>
         ) : moreProfiles ? (
-            <div className="flex flex-col w-full items-center justify-center">
+            <div className="relative w-full max-w-lg mx-auto mt-10">
                 {showMatchToast && (
-                    <div className="fixed top-6 inset-x-0 mx-auto max-w-sm z-50">
-                        <div className="bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center">
-                            <span className="font-semibold flex-grow">Match with {displayedProfiles[currentIdx].fullName}!</span>
-                            <button
-                                className="ml-2 text-white focus:outline-none"
-                                onClick={() => setShowMatchToast(false)}
-                            >
-                                ✕
-                            </button>
-                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-white bg-opacity-50 rounded-b-lg" style={{ width: `${toastProgress}%` }}></div>
+                    <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-50">
+                        <div className="bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center relative">
+                            <span className="font-semibold flex-grow">
+                                Match with {displayedProfiles[currentIdx].fullName}!
+                            </span>
+                            <IoClose
+                                className="ml-2 text-white focus:outline-none hover:scale-140 transition-transform duration-200 ease-in-out active:scale-95"
+                                onClick={() => {
+                                    setShowMatchToast(false);
+                                    goToNextProfile();
+                                }}
+                            />
+                            <div
+                                className="absolute bottom-0 left-0 right-0 h-1 bg-white bg-opacity-50 rounded-b-lg"
+                                style={{ width: `${toastProgress}%` }}
+                            ></div>
                         </div>
                     </div>
                 )}
@@ -240,6 +241,7 @@ const ProfileCard = () => {
                                 <h1 className="font-bold text-xl text-gray-900">
                                     {displayedProfiles[currentIdx]?.fullName || "Anonymous User"}
                                 </h1>
+                                { /* Commented out grad section but can add in future
                                 <div className="flex flex-wrap items-center mt-1 text-gray-500 text-sm">
                                     {displayedProfiles[currentIdx]?.grad ? (
                                         <span className="font-medium">
@@ -254,10 +256,10 @@ const ProfileCard = () => {
                                             {displayedProfiles[currentIdx].age} years
                                         </span>
                                     ) : null}
-                                </div>
-                                {!displayedProfiles[currentIdx]?.grad && !displayedProfiles[currentIdx]?.age && (
-                                    <span className="text-gray-400 text-sm italic">No education or age info provided</span>
-                                )}
+                                </div> */ }
+                                <span className="text-gray-400 text-sm italic">
+                                    {displayedProfiles[currentIdx]?.school || "No school listed"}
+                                </span>
                                 {displayedProfiles[currentIdx]?.employmentType ? (
                                     <div className="mt-2">
                                         <span className={`inline-block rounded-full px-3 py-1 text-xs font-medium text-gray-700 transition-colors ${jobStatusColors[displayedProfiles[currentIdx].employmentType] || 'bg-gray-200'}`}>
@@ -295,9 +297,15 @@ const ProfileCard = () => {
                         </div>
 
                         {/* Action buttons */}
-                        <div className="flex justify-center space-x-6 mt-6 pt-4 border-t border-gray-100">
-                            <SkipButton onClick={handleSkip} />
-                            <LikeButton onClick={handleLike} />
+                        <div className="flex flex-row items-center justify-between mt-6 pt-4 border-t border-gray-100">
+                            <IoClose 
+                                className="w-8 h-8 text-black hover:text-red-300 hover:scale-140 transition-transform duration-200 ease-in-out active:scale-95" 
+                                onClick={handleSkip}
+                            />
+                            <FaHeart 
+                                className="w-6 h-6 text-black hover:text-red-500 hover:scale-140 transition-transform duration-200 ease-in-out active:scale-95" 
+                                onClick={handleLike}
+                            />
                         </div>
                     </div>
                 </div>

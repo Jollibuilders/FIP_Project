@@ -1,16 +1,15 @@
 import { React, useState, useEffect } from "react";
-import { db, auth } from '../firebase';
+import { db, auth } from '../../firebase';
 import { getAuth } from 'firebase/auth';
 import { collection, query, where, getDoc, doc, getDocs } from 'firebase/firestore';
-import profile from "../assets/user_logo.png";
+import profile from "../../assets/test_image.jpg";
 
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaTimes } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
-import { setUserId } from "firebase/analytics";
 
-const MessageCards = ({ listOfUsers, setChatId, setOtherUserId }) => {
+const MessageCards = ({ listOfUsers, setChatId, setOtherUserId, setOtherUserName }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [justOpened, setJustOpened] = useState(false);
     const [searchInput, setSearchInput] = useState("");
@@ -35,18 +34,19 @@ const MessageCards = ({ listOfUsers, setChatId, setOtherUserId }) => {
         try {
             const auth = getAuth();
             const currentUser = auth.currentUser;
+            console.log(currentUser.uid)
 
             const userChatsDoc = await getDoc(doc(db, 'userchats', currentUser.uid));
+            console.log(userChatsDoc)
             if (!userChatsDoc.exists()) {
                 console.log("No userchats found for user.");
-                return;
             }
 
-            const userChatsData = userChatsDoc.data();
+            const userChatsData = userChatsDoc.data() || {}; // empty if the user has no chats
             const existingUserIds = Object.values(userChatsData).map(chat => chat.receiverId);
             const matchDocRef = collection(db, 'matches');
             const userMatchDoc = await getDocs(query(matchDocRef, where('__name__', '==', auth.currentUser.uid)));
-    
+            console.log(userMatchDoc)
             if (userMatchDoc.empty) {
                 setMatchedUsers([]);
                 return;
@@ -100,9 +100,11 @@ const MessageCards = ({ listOfUsers, setChatId, setOtherUserId }) => {
         }
     };
 
-    const handleOpenChat = (chatId, otherUserId) => {
+    const handleOpenChat = (chatId, otherUserId, name) => {
         setChatId(chatId)
         setOtherUserId(otherUserId)
+        setOtherUserName(name)
+        console.log(name)
     }
 
     return (
@@ -111,8 +113,8 @@ const MessageCards = ({ listOfUsers, setChatId, setOtherUserId }) => {
                 className='flex flex-col w-full h-20 justify-center items-center bg-white rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] mb-6 transform transition-transform duration-200 hover:scale-105 active:scale-95'
                 onClick={handleOpenSearch}    
             >
-                <span className='font-bold text-xl text-[#3D270A] mb-2'>Schedule Coffee Chat</span>
-                <FaCirclePlus color="#3D270A" size={24}/>
+                <span className='font-bold text-lg text-[#3D270A] mb-2'>Send Message</span>
+                <FaCirclePlus color="#3D270A" size={20}/>
             </button>
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
@@ -160,12 +162,12 @@ const MessageCards = ({ listOfUsers, setChatId, setOtherUserId }) => {
                     return (
                         <div
                             key={chatId}
-                            onClick={() => handleOpenChat(chatId, convo.uid)}
+                            onClick={() => handleOpenChat(chatId, convo.uid, name)}
                             className='flex flex-row items-center w-full h-20 rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] mt-6 bg-white px-6 transform transition-transform duration-200 hover:scale-105 active:scale-95'
                         >
                             <img src={profile} alt="User Profile" className="w-10 h-10 rounded-full mr-4" />
                             <div className="flex flex-col w-full overflow-hidden whitespace-nowrap">
-                                <span className='font-semibold text-[#3D270A] text-xl truncate'>{name}</span>
+                                <span className='font-semibold text-[#3D270A] text-lg truncate'>{name}</span>
                                 <span className='text-[#3D270A] text-sm truncate'>{lastMessage || 'No messages yet'}</span>
                             </div>
                             
