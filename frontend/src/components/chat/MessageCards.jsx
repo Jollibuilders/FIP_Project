@@ -113,7 +113,7 @@ const MessageCards = ({ listOfUsers, setChatId, setOtherUserId, setOtherUserName
                 className='flex flex-col w-full h-20 justify-center items-center bg-white rounded-md shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] mb-6 transform transition-transform duration-200 hover:scale-105 active:scale-95'
                 onClick={handleOpenSearch}    
             >
-                <span className='font-bold text-lg text-[#3D270A] mb-2'>Schedule Coffee Chat</span>
+                <span className='font-bold text-lg text-[#3D270A] mb-2'>Send Message</span>
                 <FaCirclePlus color="#3D270A" size={20}/>
             </button>
             {isModalOpen && (

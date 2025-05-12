@@ -7,7 +7,7 @@ const Home = () => {
     return (
         <div className="max-h-screen flex flex-col items-center justify-center bg-white p-4 text-gray-800">
             <img src={fip_logo} alt="FIP Logo" className="h-48 mb-4" />
-            <h1 className="text-3xl font-bold text-center mb-2">Welcome to Job Connector</h1>
+            <h1 className="text-3xl font-bold text-center mb-2">Welcome to KapeChat</h1>
             <h2 className="text-lg text-center text-gray-600 mb-6">
                 Swipe. Match. Intern.
             </h2>
@@ -15,7 +15,7 @@ const Home = () => {
             <div className="max-w-xl text-left">
                 <h3 className="text-2xl font-bold mb-2">How it works</h3>
                 <p className="text-sm mb-3">
-                    Job Connector helps you connect with recruiters and students through a swipe-based matching system designed for quick and easy networking. Connections are mutual and non-binding.
+                    KapeChat helps you connect with recruiters and students through a swipe-based matching system designed for quick and easy networking. Connections are mutual and non-binding.
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -28,8 +28,8 @@ const Home = () => {
                         <p className="text-sm">Explore profiles and swipe to connect with recruiters or students based on mutual interest.</p>
                     </div>
                     <div>
-                        <h4 className="font-bold mb-1">Matching Period</h4>
-                        <p className="text-sm">Contact information is shared between mutual matches, enabling direct communication.</p>
+                        <h4 className="font-bold mb-1">Network</h4>
+                        <p className="text-sm">Direct communication and scheduling coffee events are enabled if messages are accepted.</p>
                     </div>
                 </div>
             </div>
