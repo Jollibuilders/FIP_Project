@@ -4,12 +4,12 @@ import { FaTimes, FaPlus } from "react-icons/fa";
 
 function FAQPage() {
     const faqs = [
-        {question: "How do I get started?", answer: "When you sign up, you’ll start with the Free plan. It's ideal for new teams and allows unlimited team members, but only 1 active editable project at a time. For more advanced features, check out our Basic, Premium, or Enterprise plans." },
-        {question: "What is included in the Free Plan?", answer: "place holder answer"},
-        {question: "What is included in the Free Plan?", answer: "placeholder answer"},
-        {question: "How do I cancel my membership?", answer: "placeholder answer"},
-        {question: "How do I transfer my membership to a different account?", answer: "placeholder answer"},
-        {question: "What is the refund policy?", answer: "placeholder answer"},
+        {question: "How do I get started?", answer: "When you sign up, you’ll start with the Free plan. It's ideal for new mentees and allows all basic capabilites, but only limited connections. For more advanced features, check out our Basic, Premium, or Enterprise plans." },
+        {question: "How will I know when a mentor or mentee has connected with me?", answer: "You will be able to view this new connection through the Networks tab."},
+        {question: "What is the point of the app?", answer: "The app is designed to help you connect with mentors and mentees. It allows you to find people who can help you grow in your career or personal life."},
+        {question: "What is included in the Free Plan?", answer: "Well the Free plan allows unlimited access to mentors or mentees, but only limited connections a day. Additionally, our free plan allows to see others but with numbered access. Members can upgrade at any time to unlock more features."},
+        {question: "How do I transfer my membership to a different account?", answer: "Memberships are auotmatically transferred to the new account. If you are having issues, please contact support."},
+        {question: "What is the refund policy?", answer: "Membership fees are non-refundable. However, if you cancel your membership before the next billing cycle, you will not be charged again."},
     ];
     const [openIndex, setOpenIndex] = useState(null);
 
@@ -18,7 +18,7 @@ function FAQPage() {
     };
     return (
         <div className="p-6 max-w-3xl mx-auto bg-gray-100 rounded-lg shadow-lg mt-20">
-            <h1 className="text-3xl font-bold text-center mb-6">Frequently Asked Questions</h1>
+            <h1 className="text-3xl font-semibold text-center mb-6">Frequently Asked Questions</h1>
             <div className="space-y-4">
                 {faqs.map((faqs, index)=>( 
                     <div key={index} className="bg-white p-4 rounded-lg shadow-md cursor-pointer" onClick={() => toggleFAQ(index)}>
