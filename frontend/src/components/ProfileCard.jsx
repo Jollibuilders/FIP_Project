@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { db } from '../firebase.js';
@@ -17,6 +17,7 @@ const ProfileCard = () => {
     const [toastProgress, setToastProgress] = useState(100);
     const [moreProfiles, setMoreProfiles] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const toastTimeoutRef = useRef(null);
 
     const jobStatusColors = {
         "Internship": 'bg-green-300 hover:bg-green-400',
@@ -63,7 +64,7 @@ const ProfileCard = () => {
                 if (data.message === "Match detected") {
                     setShowMatchToast(true);
                     setToastProgress(100);
-                    setTimeout(() => {
+                    toastTimeoutRef.current = setTimeout(() => {
                         setShowMatchToast(false);
                         goToNextProfile();
                     }, 3000);
@@ -217,6 +218,7 @@ const ProfileCard = () => {
                                 className="ml-2 text-white focus:outline-none hover:scale-140 transition-transform duration-200 ease-in-out active:scale-95"
                                 onClick={() => {
                                     setShowMatchToast(false);
+                                    clearTimeout(toastTimeoutRef.current);
                                     goToNextProfile();
                                 }}
                             />

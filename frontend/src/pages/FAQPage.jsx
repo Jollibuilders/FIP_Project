@@ -4,12 +4,10 @@ import { FaTimes, FaPlus } from "react-icons/fa";
 
 function FAQPage() {
     const faqs = [
-        {question: "How do I get started?", answer: "When you sign up, you’ll start with the Free plan. It's ideal for new mentees and allows all basic capabilites, but only limited connections. For more advanced features, check out our Basic, Premium, or Enterprise plans." },
+        {question: "How do I get started?", answer: "When you sign up everyone is on the Free Plan. It's ideal for new mentees and allows all basic capabilites with unlimited connections." },
         {question: "How will I know when a mentor or mentee has connected with me?", answer: "You will be able to view this new connection through the Networks tab."},
         {question: "What is the point of the app?", answer: "The app is designed to help you connect with mentors and mentees. It allows you to find people who can help you grow in your career or personal life."},
-        {question: "What is included in the Free Plan?", answer: "Well the Free plan allows unlimited access to mentors or mentees, but only limited connections a day. Additionally, our free plan allows to see others but with numbered access. Members can upgrade at any time to unlock more features."},
-        {question: "How do I transfer my membership to a different account?", answer: "Memberships are auotmatically transferred to the new account. If you are having issues, please contact support."},
-        {question: "What is the refund policy?", answer: "Membership fees are non-refundable. However, if you cancel your membership before the next billing cycle, you will not be charged again."},
+        {question: "What is included in the Free Plan?", answer: "Well the Free plan allows unlimited access to mentors or mentees and our free plan allows to see others. We only have a free plan!"},
     ];
     const [openIndex, setOpenIndex] = useState(null);
 
